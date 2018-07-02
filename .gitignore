@@ -13,3 +13,4 @@
 *.swp
 /.deps
 /Makefile.in
+/freedom-ldscript-generator-*.tar.gz
