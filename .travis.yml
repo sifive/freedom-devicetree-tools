@@ -57,3 +57,4 @@ deploy:
   file: freedom-ldscript-generator-0.1.0-dev.tar.gz
   on:
     repo: sifive/freedom-ldscript-generator
+    tags: true
