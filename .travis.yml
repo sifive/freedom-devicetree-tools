@@ -11,7 +11,9 @@ language: cpp
 
 # The matrix of targets that we're interested in.
 env:
-  - HOST="ubuntu:16.04"
+  - HOST="ubuntu:16.04" CXXFLAGS="-Og -fsanitize=address"
+  - HOST="ubuntu:16.04" CXXFLAGS="-O2"
+  - HOST="ubuntu:16.04" CXXFLAGS="-Wall -Werror"
 
 # Before running the install phase we need to set up docker container that runs
 # the target machine.

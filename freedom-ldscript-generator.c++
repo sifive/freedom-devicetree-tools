@@ -47,7 +47,7 @@ memory::memory (std::string mtype, std::string alias, std::string name, int star
 static char *dts_blob;
 static std::vector<memory> dts_memory_list;
 
-static bool has_memory (std::string mem)
+static inline bool has_memory (std::string mem)
 {
   for (auto entry : dts_memory_list) {
     if (entry.mem_alias.compare(mem) == 0) {
