@@ -14,3 +14,8 @@ sources:
 
 * `autoconf`
 * `automake`
+
+If you're planning on running the test cases, then you'll also need the
+following programs
+
+* `device-tree-compiler`

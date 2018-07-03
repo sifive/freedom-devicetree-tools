@@ -18,9 +18,15 @@ AC_PROG_CXX
 # This code requires C++ 11
 AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])
 
-# This depends on the device tree compiler
+# This depends on the device tree compiler as well as the associated device
+# tree parsing libraries.
 AC_CHECK_HEADER([libfdt.h])
 AC_SEARCH_LIBS([fdt_getprop], [fdt])
+AC_CHECK_PROG(HAVE_DTC, dtc, [yes], [no])
+if test "$HAVE_DTC" != "yes"
+then
+    AC_MSG_FAILURE([The dtc program cannot be found.])
+fi
 
 # Generates the remainder of the build system.
 AC_CONFIG_FILES([Makefile])

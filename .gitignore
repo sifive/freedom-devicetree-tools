@@ -14,3 +14,6 @@
 /.deps
 /Makefile.in
 /freedom-ldscript-generator-*.tar.gz
+/test-driver
+*.log
+*.trs
