@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # The name, version, and maintainer of this package
-AC_INIT([freedom-ldscript-generator], [0.1.0-dev], [bsou@sifive.com])
+AC_INIT([freedom-ldscript-generator], [m4_esyscmd_s([git describe --always])], [bsou@sifive.com])
 
 AC_CONFIG_MACRO_DIR([m4])
 
