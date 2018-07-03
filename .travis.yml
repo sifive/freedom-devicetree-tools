@@ -48,3 +48,12 @@ script:
   - docker exec -t dist bash -c "cd /travis/freedom-ldscript-generator-0.1.0-dev && make install"
   - docker exec -t dist bash -c "cd /travis/freedom-ldscript-generator-0.1.0-dev && make check"
   - docker exec -t dist bash -c "cd /travis/freedom-ldscript-generator-0.1.0-dev && cat test-suite.log"
+
+# Upload after the build succeeds
+deploy:
+  provider: releases
+  api_key:
+    secure: gtmVDVERq0aO0B8KGddg+FLccdPlQ0A0GaXY+/qTg7PWkjSp7AJdCg01j1mFyhxOtd1G8UdI4NaMmeFQJLIa9kmVfTlXdljYAM/eJaGcUOKUmRSDNJibWPSHCGpX5Q5Kq9ns6ajrfL5+k0RrRj9mk+hbedLlRAtWMZwFyb1BwXAPu7jZrHu6/O+68dvQPOpH6QkBV35BCKw6jiLQOGVpggbFbuFkcfaeFtz6dSnCxw+PGLBbRVjV9el+0DmvK8byrmnjyJhTWdvhIcKyYdM1qKTf7DSw7E1x7kHZGqrrrADwhJmoz1QrgL6GydvB16/mCvh1z8FNy8u9mkAIElOSDSo4VS+ZP/m5LEEQ1QxRpeINuiqNmP/aRnwW8THlmWRxZ7H1aBvs2lH0mTsXcaGKIYUBGb0YvBkoR40K5g0mCJPlGmHpz5YCBGm4ifRmknqo5U8jnOnRExBly70z4/Qod9755uNPXtBdUuWIR33xUV3jxfzIu/pakD+b7P7mgM5ZpbqEHnzkGqkmmqQRoFE7ZxlxGQ1dR7pg8khP1vP3wtrxwXSIEOE4NcndtVhHqJfSlhmRCE13Q1tjPNDB9MqHVC86NajYjK+6Bcll7fUgLguAj+4dfzYJ/ieXPq1FKFoz8k6KI8RxMt5zNjt1TpjMXYA1aMcUFTj5Sr2lJ0i/I2k=
+  file: freedom-ldscript-generator-0.1.0-dev.tar.gz
+  on:
+    repo: sifive/freedom-ldscript-generator
