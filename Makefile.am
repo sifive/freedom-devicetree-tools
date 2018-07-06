@@ -22,8 +22,12 @@ AM_TESTS_ENVIRONMENT = \
 TESTS       =
 EXTRA_DIST  =
 TESTS      += tests/e31-arty-ldscript.bash
+TESTS      += tests/e31-arty-openocd.bash
+TESTS      += tests/e31-arty-makeattributes.bash
 EXTRA_DIST += tests/e31-arty.dts
 TESTS      += tests/e51-arty-ldscript.bash
+TESTS      += tests/e51-arty-openocd.bash
+TESTS      += tests/e51-arty-makeattributes.bash
 EXTRA_DIST += tests/e51-arty.dts
 
 EXTRA_DIST += $(TESTS)
