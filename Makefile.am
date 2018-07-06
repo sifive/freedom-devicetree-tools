@@ -3,8 +3,8 @@
 
 # A linker script generator for SiFive's Freedom platform.
 bin_PROGRAMS =  freedom-ldscript-generator \
-		freedom_openocdcfg_generator \
-		freedom_makeattributes_generator
+		freedom-openocdcfg-generator \
+		freedom-makeattributes-generator
 
 freedom_ldscript_generator_SOURCES = \
 	freedom-ldscript-generator.c++
