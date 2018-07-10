@@ -19,3 +19,5 @@
 /test-driver
 *.log
 *.trs
+/freedom-mee_header-generator
+*.swo
