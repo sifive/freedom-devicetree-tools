@@ -4,7 +4,8 @@
 # A linker script generator for SiFive's Freedom platform.
 bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-openocdcfg-generator \
-		freedom-makeattributes-generator
+		freedom-makeattributes-generator \
+		freedom-mee_header-generator
 
 freedom_ldscript_generator_SOURCES = \
 	freedom-ldscript-generator.c++
@@ -15,6 +16,9 @@ freedom_openocdcfg_generator_SOURCES = \
 freedom_makeattributes_generator_SOURCES = \
 	freedom-makeattributes-generator.c++
 
+freedom_mee_header_generator_SOURCES = \
+	freedom-mee_header-generator.c++
+
 AM_TESTS_ENVIRONMENT = \
   export SOURCE_DIR=$(abspath $(srcdir)); \
   export WORK_DIR=$(abspath .);
@@ -24,10 +28,12 @@ EXTRA_DIST  =
 TESTS      += tests/e31-arty-ldscript.bash
 TESTS      += tests/e31-arty-openocd.bash
 TESTS      += tests/e31-arty-makeattributes.bash
+TESTS      += tests/e31-arty-mee_header.bash
 EXTRA_DIST += tests/e31-arty.dts
 TESTS      += tests/e51-arty-ldscript.bash
 TESTS      += tests/e51-arty-openocd.bash
 TESTS      += tests/e51-arty-makeattributes.bash
+TESTS      += tests/e51-arty-mee_header.bash
 EXTRA_DIST += tests/e51-arty.dts
 
 EXTRA_DIST += $(TESTS)

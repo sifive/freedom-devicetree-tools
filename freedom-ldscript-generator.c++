@@ -210,7 +210,7 @@ static void write_linker_file (fstream &os)
 {
   //os << "#" << __FUNCTION__ << std::endl;
     os << "OUTPUT_ARCH(\"riscv\")" << std::endl << std::endl;
-    os << "ENTRY(_start)" << std::endl << std::endl;
+    os << "ENTRY(_enter)" << std::endl << std::endl;
 }
 
 static void write_linker_memory (fstream &os, bool scratchpad)
@@ -261,7 +261,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata)
     /* Define init section */
     os << "\t.init \t\t:" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\tKEEP (*(.text.libsifive.init.start))" << std::endl;
+    os << "\t\tKEEP (*(.text.mee.init.enter))" << std::endl;
     os << "\t\tKEEP (*(SORT_NONE(.init)))" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram" << std::endl;
@@ -408,6 +408,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata)
     os << "\t{" << std::endl;
     os << "\t\t. = ALIGN(4);" << std::endl;
     os << "\t\tPROVIDE( _data_lma = . );" << std::endl;
+    os << "\t\tPROVIDE( mee_segment_data_source_start = . );" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram" << std::endl;
     } else {
@@ -419,7 +420,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata)
     os << "\t.dalign \t\t:" << std::endl;
     os << "\t{" << std::endl;
     os << "\t\t. = ALIGN(4);" << std::endl;
-    os << "\t\tPROVIDE( _data = . );" << std::endl;
+    os << "\t\tPROVIDE( mee_segment_data_target_start = . );" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram_init" << std::endl;
     } else {
@@ -458,9 +459,11 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata)
     os << "\t. = ALIGN(4);" << std::endl;
     os << "\tPROVIDE( _edata = . );" << std::endl;
     os << "\tPROVIDE( edata = . );" << std::endl;
+    os << "\tPROVIDE( mee_segment_data_target_end = . );" << std::endl;
 
     os << "\tPROVIDE( _fbss = . );" << std::endl;
     os << "\tPROVIDE( __bss_start = . );" << std::endl;
+    os << "\tPROVIDE( mee_segment_bss_target_start = . );" << std::endl;
 
     os << std::endl << std::endl;
     /* Define bss section */
@@ -479,6 +482,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata)
     os << "\t. = ALIGN(8);" << std::endl;
     os << "\tPROVIDE( _end = . );" << std::endl;
     os << "\tPROVIDE( end = . );" << std::endl;
+    os << "\tPROVIDE( mee_segment_bss_target_end = . );" << std::endl;
 
     os << std::endl << std::endl;
     /* Define stack section */
@@ -489,12 +493,14 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata)
       os << "\t\t. += __stack_size;" << std::endl;
       os << "\t\tPROVIDE( _sp = . );" << std::endl;
       os << "\t\tPROVIDE( _heap_end = . );" << std::endl;
+      os << "\t\tPROVIDE(mee_segment_stack_end = .);" << std::endl;
     } else {
       os << "\t.stack ORIGIN(ram) + LENGTH(ram) - __stack_size :" << std::endl;
       os << "\t{" << std::endl;
       os << "\t\tPROVIDE( _heap_end = . );" << std::endl;;
       os << "\t\t. = __stack_size;" << std::endl;
       os << "\t\tPROVIDE( _sp = . );" << std::endl;
+      os << "\t\tPROVIDE(mee_segment_stack_end = .);" << std::endl;
     }
     os << "\t} >ram AT>ram :ram" << std::endl;
 
