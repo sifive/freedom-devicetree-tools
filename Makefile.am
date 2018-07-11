@@ -37,3 +37,5 @@ TESTS      += tests/e51-arty-mee_header.bash
 EXTRA_DIST += tests/e51-arty.dts
 
 EXTRA_DIST += $(TESTS)
+
+EXTRA_DIST += README.md
