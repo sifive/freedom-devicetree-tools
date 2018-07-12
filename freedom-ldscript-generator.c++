@@ -485,6 +485,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata)
     os << "\tPROVIDE( _end = . );" << std::endl;
     os << "\tPROVIDE( end = . );" << std::endl;
     os << "\tPROVIDE( mee_segment_bss_target_end = . );" << std::endl;
+    os << "\tPROVIDE( mee_segment_heap_target_start = . );" << std::endl;
 
     os << std::endl << std::endl;
     /* Define stack section */
@@ -499,6 +500,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata)
     } else {
       os << "\t.stack ORIGIN(ram) + LENGTH(ram) - __stack_size :" << std::endl;
       os << "\t{" << std::endl;
+      os << "\t\tPROVIDE( mee_segment_heap_target_end = . );" << std::endl;;
       os << "\t\tPROVIDE( _heap_end = . );" << std::endl;;
       os << "\t\t. = __stack_size;" << std::endl;
       os << "\t\tPROVIDE( _sp = . );" << std::endl;
