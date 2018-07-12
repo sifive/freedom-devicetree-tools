@@ -162,6 +162,7 @@ static string get_dts_attribute (const string path, const string tag)
     const char *value;
 
     node = fdt_path_offset(dts_blob, path.c_str());
+    if (node < 0) return "";
     value = (const char *)fdt_getprop(dts_blob, node, tag.c_str(), &len);
     std::cout << string(value) << std::endl;
     return string(value);

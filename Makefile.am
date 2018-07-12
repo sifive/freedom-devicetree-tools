@@ -35,6 +35,11 @@ TESTS      += tests/e51-arty-openocd.bash
 TESTS      += tests/e51-arty-makeattributes.bash
 TESTS      += tests/e51-arty-mee_header.bash
 EXTRA_DIST += tests/e51-arty.dts
+TESTS      += tests/qemu-sifive_e-32-ldscript.bash
+TESTS      += tests/qemu-sifive_e-32-openocd.bash
+TESTS      += tests/qemu-sifive_e-32-makeattributes.bash
+TESTS      += tests/qemu-sifive_e-32-mee_header.bash
+EXTRA_DIST += tests/qemu-sifive_e-32.dts
 
 EXTRA_DIST += $(TESTS)
 
