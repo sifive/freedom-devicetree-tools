@@ -240,13 +240,16 @@ static void write_linker_memory (fstream &os, bool scratchpad)
     os << "}" << std::endl << std::endl;
 }
 
-static void write_linker_phdrs (fstream &os)
+static void write_linker_phdrs (fstream &os, bool scratchpad)
 {
   //os << "#" << __FUNCTION__ << std::endl;
     os << "PHDRS" << std::endl << "{" << std::endl;
     os << "\tflash PT_LOAD;" << std::endl;
     os << "\tram_init PT_LOAD;" << std::endl;
-    os << "\tram PT_NULL;" << std::endl;
+    if (scratchpad == false)
+        os << "\tram PT_NULL;" << std::endl;
+    else
+        os << "\tram PT_LOAD;" << std::endl;
     os << "}" << std::endl << std::endl;
 }
 
@@ -607,6 +610,9 @@ int main (int argc, char* argv[])
   get_dts_attribute("/cpus/cpu@0", "riscv,isa");
   dts_memory();
 
+  if (has_memory("spi") == 0 && has_memory("testram"))
+    scratchpad = true;
+
   if (!linker_file.empty()) {
     std::fstream lds;
 
@@ -618,7 +624,7 @@ int main (int argc, char* argv[])
 
     write_linker_file(lds);
     write_linker_memory(lds, scratchpad);
-    write_linker_phdrs(lds);
+    write_linker_phdrs(lds, scratchpad);
     write_linker_sections(lds, scratchpad, ramrodata);
   }
 
