@@ -17,7 +17,8 @@ freedom_makeattributes_generator_SOURCES = \
 	freedom-makeattributes-generator.c++
 
 freedom_mee_header_generator_SOURCES = \
-	freedom-mee_header-generator.c++
+	freedom-mee_header-generator.c++ \
+	fdt.c++
 
 AM_TESTS_ENVIRONMENT = \
   export SOURCE_DIR=$(abspath $(srcdir)); \
@@ -40,7 +41,14 @@ TESTS      += tests/qemu-sifive_e-32-openocd.bash
 TESTS      += tests/qemu-sifive_e-32-makeattributes.bash
 TESTS      += tests/qemu-sifive_e-32-mee_header.bash
 EXTRA_DIST += tests/qemu-sifive_e-32.dts
+TESTS      += tests/hifive1-ldscript.bash
+TESTS      += tests/hifive1-openocd.bash
+TESTS      += tests/hifive1-makeattributes.bash
+TESTS      += tests/hifive1-mee_header.bash
+EXTRA_DIST += tests/hifive1.dts
 
 EXTRA_DIST += $(TESTS)
 
 EXTRA_DIST += README.md
+EXTRA_DIST += fdt.h++
+EXTRA_DIST += libfdt.h++

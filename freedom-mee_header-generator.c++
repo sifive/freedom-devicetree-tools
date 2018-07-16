@@ -1,287 +1,18 @@
 /* Copyright 2018 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdarg.h>
-#include <iostream>
+#include "fdt.h++"
+#include "libfdt.h++"
 #include <fstream>
+#include <iostream>
+#include <map>
+#include <set>
 #include <string>
-#include <sstream>
-#include <vector>
-#include <iterator>
-#ifdef __cplusplus
-extern "C"{
-#endif
-#include <libfdt.h>
-#ifdef __cplusplus
-}
-#endif
 
-using std::cout;
+using std::cerr;
 using std::endl;
-using std::ifstream;
-using std::ofstream;
 using std::fstream;
 using std::string;
-class memory {
-public:
-  std::string mem_type;
-  std::string mem_alias;
-  std::string mem_name;
-  int mem_base;
-  int mem_start;
-  int mem_length;
-
-  memory() {}
-  memory(std::string, std::string, std::string, int, int, int);
-};
-
-memory::memory (std::string mtype, std::string alias, std::string name,
-		int base, int start, int length)
-{
-  mem_type = mtype;
-  mem_alias = alias;
-  mem_name = name;
-  mem_base = base;
-  mem_start = start;
-  mem_length = length;
-}
-
-static char *dts_blob;
-static std::vector<memory> dts_memory_list;
-
-static bool find_memory (std::string mem, std::string mtype, memory &object)
-{
-  for (auto entry : dts_memory_list) {
-    if ((entry.mem_name.compare(mem) == 0)
-	&&
-	(entry.mem_type.compare(mtype) == 0)) {
-      std::cout << "found " << mem << std::endl;
-      object = entry;
-      return true;
-    }
-  }
-  return false;
-}
-
-static bool has_memory (std::string mem)
-{
-  for (auto entry : dts_memory_list) {
-    if (entry.mem_alias.compare(mem) == 0) {
-      std::cout << "found " << mem << std::endl;
-      return true;
-    }
-  }
-  return false;
-}
-
-static void alias_memory (std::string from, std::string to)
-{
-  std::vector<memory>::iterator it;
-
-  for (it = dts_memory_list.begin(); it != dts_memory_list.end(); ++it) {
-    if (it->mem_alias.compare(from) == 0) {
-      it->mem_alias = to;
-      std::cout << "alias " << from << " to " << it->mem_alias << std::endl;
-      break;
-    }
-  }
-}
-
-template<typename Out>
-void split(const std::string &s, char delim, Out result) {
-  std::stringstream ss(s);
-  std::string item;
-  while (std::getline(ss, item, delim)) {
-    *(result++) = item;
-  }
-}
-
-std::vector<std::string> split(const std::string &s, char delim) {
-  std::vector<std::string> elems;
-  split(s, delim, std::back_inserter(elems));
-  return elems;
-}
-
-std::string trim(const std::string& str,
-		 const std::string& whitespace = " \t")
-{
-  const auto strBegin = str.find_first_not_of(whitespace);
-  if (strBegin == std::string::npos)
-    return "";
-
-  const auto strEnd = str.find_last_not_of(whitespace);
-  const auto strRange = strEnd - strBegin + 1;
-
-  return str.substr(strBegin, strRange);
-}
-
-static char *dts_read (const char *filename)
-{
-    char *buf = NULL;
-    int fd = 0;	/* assume stdin */
-    size_t bufsize = 1024, offset =0;;
-    int ret = 0;
-
-    if (strcmp(filename, "-") != 0) {
-        fd = open(filename, O_RDONLY);
-	if (fd < 0)
-	    return buf;
-    }
-
-    /* Loop until we have read everything */
-    buf = (char *)malloc(bufsize);
-    do {
-        /* Expand the buffer to hold the next chunk */
-        if (offset == bufsize) {
-	    bufsize *= 2;
-	    buf = (char *)realloc(buf, bufsize);
-	}
-
-	ret = read(fd, &buf[offset], bufsize - offset);
-	if (ret < 0) {
-	    break;
-	}
-	offset += ret;
-    } while (ret != 0);
-
-    /* Clean up, including closing stdin; return errno on error */
-    close(fd);
-    if (ret) {
-        free(buf);
-	return NULL;
-    }
-    return buf;
-}
-
-static string get_dts_attribute (const string path, const string tag)
-{
-    int node, len;
-    const char *value;
-
-    node = fdt_path_offset(dts_blob, path.c_str());
-    if (node < 0) return "";
-    value = (const char *)fdt_getprop(dts_blob, node, tag.c_str(), &len);
-    std::cout << string(value) << std::endl;
-    return string(value);
-}
-
-static long get_dts_attribute_long (const string path, const string tag)
-{
-    int node, len;
-
-    node = fdt_path_offset(dts_blob, path.c_str());
-    if (node < 0) return -1;
-    auto value = *((const uint32_t *)(fdt_getprop(dts_blob, node, tag.c_str(), &len)));
-    return ntohl(value);
-}
-
-static void dts_memory (void)
-{
-    int offset, depth = 0;
-
-    if (!dts_blob)
-        return;
-
-    std::cout << __FUNCTION__ << std::endl;
-
-    offset = fdt_path_offset(dts_blob, "/soc");
-    for (offset = fdt_next_node(dts_blob, offset, &depth);
-	 offset >= 0 && depth >= 0;
-	 offset = fdt_next_node(dts_blob, offset, &depth)) {
-        const char *nodep;
-        const char *regnamep, *s;
-	int regnamelen;
-
-        nodep = fdt_get_name(dts_blob, offset, NULL);
-	regnamep = (const char *)fdt_getprop(dts_blob, offset, "reg-names", &regnamelen);
-	if (regnamelen > 0) {
-	    const char *regp;
-	    int reglen, regidx;
-	    s = regnamep;
-	    regidx = 0;
-	    do {
-	        long base = 0;
-		std::vector<std::string> splices = split(string(nodep), '@');
-		regp = (const char *)fdt_getprop(dts_blob, offset, "reg", &reglen);
-		if (reglen > 0) {
-		    const fdt32_t *cell = (const fdt32_t *)regp;
-		    base = std::stol(splices[1], nullptr, 16);
-		    dts_memory_list.push_back(memory(s, splices[0], splices[0],
-						     base,
-						     fdt32_to_cpu(cell[regidx]),
-						     fdt32_to_cpu(cell[regidx + 1]))
-					      );
-		}
-		s += strlen(regnamep) + 1;
-		regidx += 2;
-	    } while (s < regnamep + regnamelen);
-	}
-    }
-    alias_memory("dtim", "ram");
-    alias_memory("spi", "flash");
-}
-
-static void write_config_file (fstream &os)
-{
-    string isa;
-    string serial;
-    int clk_count = 0;
-    int uart_count = 0;
-
-    os << "/* Automatically generated by freedom-mee_header-generator, do not edit. */" << std::endl;
-    os << "#ifndef MEE_MACHINE_H" << std::endl;
-    os << "#define MEE_MACHINE_H" << std::endl;
-
-    do {
-        auto n = get_dts_attribute("/soc/refclk", "compatible");
-        std::size_t found = n.find("fixed-clock");
-        if (found != std::string::npos) {
-            clk_count++;
-            os << "#define __MEE_DT_FIXED_CLOCK_0_HANDLE (&__mee_driver_fixed_clock_0)" << std::endl;
-            os << "#define __MEE_DT_CLOCK_0_HANDLE (&__mee_driver_fixed_clock_0.clock)" << std::endl;
-            os << "#define __MEE_DT_FIXED_CLOCK_0_RATE " << get_dts_attribute_long("/soc/refclk", "clock-frequency") << "UL" << std::endl;
-        }
-    } while (0);
-
-    do {
-        serial = get_dts_attribute("/soc/serial@20000000", "compatible");
-        std::size_t found = serial.find("uart0");
-        if (found != std::string::npos) {
-            uart_count++;
-            os << "#define __MEE_DT_SIFIVE_UART0_0_BASE 0x20000000UL" << std::endl;
-        }
-    } while (0);
-
-    do {
-        serial = get_dts_attribute("/soc/serial@10013000", "compatible");
-        std::size_t found = serial.find("uart0");
-        if (found != std::string::npos) {
-            uart_count++;
-            os << "#define __MEE_DT_SIFIVE_UART0_0_BASE 0x10013000UL" << std::endl;
-        }
-    } while(0);
-
-    if (uart_count == 0) {
-    } else if (uart_count == 1) {
-        os << "#define __MEE_DT_SIFIVE_UART0_0_HANDLE (&__mee_driver_sifive_uart0_0)" << std::endl;
-        os << "#define __MEE_DT_UART_0_HANDLE (&__mee_driver_sifive_uart0_0.uart)" << std::endl;
-        if (clk_count == 1) {
-            os << "#define __MEE_DT_SIFIVE_UART0_0_CLOCK __MEE_DT_CLOCK_0_HANDLE" << std::endl;
-        } else {
-            std::cerr << "SiFive UART detected, but there are multiple clocks" << std::endl;
-            abort();
-        }
-    } else {
-        std::cerr << "only one UART is supported" << std::endl;
-        abort();
-    }
-
-    os << "#endif /*MEE_MACHINE_H*/" << std::endl;
-}
 
 static void show_usage(string name)
 {
@@ -291,6 +22,192 @@ static void show_usage(string name)
 	    << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
 	    << "\t-o,--output <eg. openocd.cfg>\t\tGenerate openocd config file\n"
 	    << endl;
+}
+
+static void write_config_file(const fdt &dtb, fstream &os)
+{
+  os << "#ifndef ASSEMBLY\n";
+
+  auto emit_comment = [&](const node &n) {
+    os << "/* From " << n.name() << " */\n";
+  };
+
+  auto emit_handle = [&](std::string d, const node &n, std::string v) {
+    emit_comment(n);
+    os << "#define __MEE_DTB_HANDLE_" << d << "_" << n.handle() << " " << v << "\n";
+  };
+
+  auto emit_def_handle = [&](std::string handle, const node &n, std::string field) {
+    emit_comment(n);
+    os << "#define " << handle << " (&__mee_dt_" << n.handle() << field << ")\n";
+  };
+
+  std::set<std::string> included;
+  auto emit_include = [&](std::string d) {
+    if (included.find(d) != included.end())
+      return;
+    os << "#include <mee/drivers/" << d << ".h>\n";
+    included.insert(d);
+  };
+
+  /* Emits the header for a structure.  This is particularly tricky: here we're
+   * telling GCC that the structure is a constant, but then telling the
+   * assembler than it can be optimized.  This allows GCC to inline these
+   * constants when that helps code generation, but still allows the linker to
+   * merge together multiple copies of the structure so we don't use too much
+   * memory.  This isn't technically kosher, but since we own the entire
+   * "__mee_" namespace */
+  auto emit_struct_decl = [&](std::string type, const node &n) {
+    emit_comment(n);
+    os << "asm (\".weak __mee_dt_" << n.handle() << "\");\n";
+    os << "struct __mee_driver_" << type << " __mee_dt_" << n.handle() << ";\n\n";
+  };
+
+
+  auto emit_struct_begin = [&](std::string type, const node &n) {
+    emit_comment(n);
+    os << "struct __mee_driver_" << type << " __mee_dt_" << n.handle() << " = {\n";
+  };
+
+  auto emit_struct_field = [&](std::string field, std::string value) {
+    os << "    ." << field << " = " << value << ",\n";
+  };
+
+  auto emit_struct_field_null = [&](std::string field) {
+    os << "    ." << field << " = NULL,\n";
+  };
+
+  auto emit_struct_field_tl = [&](std::string field, target_long value) {
+    os << "    ." << field << " = " << std::to_string(value) << "UL,\n";
+  };
+
+  auto emit_struct_field_node = [&](std::string field, const node& n, std::string subfield) {
+    emit_comment(n);
+    os << "    ." << field << " = &" << "__mee_dt_" << n.handle() << subfield << ",\n";
+  };
+
+  auto emit_struct_end = [&](void) {
+    os << "};\n\n";
+  };
+
+  /* First, find the required headers that must be included in order to make
+   * this a sane MEE instance. */
+  dtb.match(
+    std::regex("fixed-clock"),              [&](node n) { emit_include("fixed-clock");              },
+    std::regex("sifive,fe310-g000,pll"),    [&](node n) { emit_include("sifive,fe310-g000,pll");    },
+    std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_include("sifive,fe310-g000,prci");   },
+    std::regex("sifive,fe310-g000,hfxosc"), [&](node n) { emit_include("sifive,fe310-g000,hfxosc"); },
+    std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_include("sifive,fe310-g000,hfrosc"); },
+    std::regex("sifive,uart0"),             [&](node n) { emit_include("sifive,uart0");             }
+  );
+
+  /* Now emit the various nodes's header definitons. */
+  dtb.match(
+    std::regex("fixed-clock"),              [&](node n) { emit_struct_decl("fixed_clock",              n); },
+    std::regex("sifive,fe310-g000,pll"),    [&](node n) { emit_struct_decl("sifive_fe310_g000_pll",    n); },
+    std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_struct_decl("sifive_fe310_g000_prci",   n); },
+    std::regex("sifive,fe310-g000,hfxosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfxosc", n); },
+    std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfrosc", n); },
+    std::regex("sifive,uart0"),             [&](node n) { emit_struct_decl("sifive_uart0",             n); }
+  );
+
+  /* Walk through the device tree, emitting various nodes as we know about
+   * them. */
+  dtb.match(
+    std::regex("fixed-clock"), [&](node n) {
+      emit_struct_begin("fixed_clock", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_fixed_clock");
+      emit_struct_field("clock.vtable", "&__mee_driver_vtable_fixed_clock.clock");
+      emit_struct_field_tl("rate", n.get_field<target_long>("clock-frequency"));
+      emit_struct_end();
+    }, std::regex("sifive,fe310-g000,pll"), [&](node n) {
+      emit_struct_begin("sifive_fe310_g000_pll", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_pll");
+      emit_struct_field("clock.vtable", "&__mee_driver_vtable_sifive_fe310_g000_pll.clock");
+      n.named_tuples(
+        "clock-names", "clocks",
+        "pllref", tuple_t<node>(), [&](node base) {
+          emit_struct_field_node("pllref", base, ".clock");
+        },
+        "pllsel0", tuple_t<node>(), [&](node base) {
+          emit_struct_field_node("pllsel0", base, ".clock");
+        });
+      n.named_tuples(
+        "reg-names", "reg",
+        "config", tuple_t<node, target_long>(), [&](node base, target_long off) {
+          emit_struct_field_node("config_base", base, "");
+          emit_struct_field_tl("config_offset", off);
+        },
+        "divider", tuple_t<node, target_long>(), [&](node base, target_long off) {
+          emit_struct_field_node("divider_base", base, "");
+          emit_struct_field_tl("divider_offset", off);
+        });
+      emit_struct_end();
+    }, std::regex("sifive,fe310-g000,prci"), [&](node n) {
+      emit_struct_begin("sifive_fe310_g000_prci", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_prci");
+      n.named_tuples(
+        "reg-names", "reg",
+        "control", tuple_t<node, target_long>(), [&](node base, target_long size) {
+          emit_struct_field_node("base", base, "");
+          emit_struct_field_tl("size", size);
+        });
+      emit_struct_end();
+    }, std::regex("sifive,fe310-g000,hfxosc"), [&](node n) {
+      emit_struct_begin("sifive_fe310_g000_hfxosc", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_hfxosc");
+      emit_struct_field("clock.vtable", "&__mee_driver_vtable_sifive_fe310_g000_hfxosc.clock");
+      emit_struct_field_node("ref", n.get_field<node>("clocks"), ".clock");
+      n.named_tuples(
+        "reg-names", "reg",
+        "config", tuple_t<node, target_long>(), [&](node base, target_long offset) {
+          emit_struct_field_node("config_base", base, "");
+          emit_struct_field_tl("config_offset", offset);
+        });
+      emit_struct_end();
+    }, std::regex("sifive,fe310-g000,hfrosc"), [&](node n) {
+      emit_struct_begin("sifive_fe310_g000_hfrosc", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_hfrosc");
+      emit_struct_field("clock.vtable", "&__mee_driver_vtable_sifive_fe310_g000_hfrosc.clock");
+      emit_struct_field_node("ref", n.get_field<node>("clocks"), ".clock");
+      n.named_tuples(
+        "reg-names", "reg",
+        "config", tuple_t<node, target_long>(), [&](node base, target_long offset) {
+          emit_struct_field_node("config_base", base, "");
+          emit_struct_field_tl("config_offset", offset);
+        });
+      emit_struct_end();
+    }, std::regex("sifive,uart0"), [&](node n) {
+      emit_struct_begin("sifive_uart0", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_uart0");
+      emit_struct_field("uart.vtable", "&__mee_driver_vtable_sifive_uart0.uart");
+      n.named_tuples(
+        "reg-names", "reg",
+        "control", tuple_t<target_long, target_long>(), [&](target_long base, target_long size) {
+          emit_struct_field_tl("control_base", base);
+          emit_struct_field_tl("control_size", size);
+        });
+      n.maybe_tuple(
+        "clock", tuple_t<node>(),
+        [&](){ emit_struct_field_null("clock"); },
+        [&](node n) { emit_struct_field_node("clock", n, ".clock"); });
+      emit_struct_end();
+    }
+  );
+
+  /* Create links from the internal MEE environment into the user-visible
+   * environment. */
+  dtb.chosen(
+    "stdout-path", tuple_t<std::string>(), [&](std::string info) {
+      if (info.find(":") == decltype(info)::npos)
+        return;
+      auto path = info.substr(0, info.find(":"));
+      auto target = dtb.node_by_path(path);
+      emit_def_handle("__MEE_DT_STDOUT_UART_HANDLE", target, ".uart");
+    }
+  );
+
+  os << "#endif/*ASSEMBLY*/\n";
 }
 
 int main (int argc, char* argv[])
@@ -332,13 +249,8 @@ int main (int argc, char* argv[])
       show_usage(argv[0]);
       return 1;
   }
-  dts_blob = dts_read(dtb_file.c_str());
-  if (!dts_blob) {
-      std::cerr << "ABORT: Failed to read " << dtb_file << std::endl;
-      return 1;
-  }
 
-  dts_memory();
+  fdt f(dtb_file);
 
   if (!config_file.empty()) {
     std::fstream cfg;
@@ -349,7 +261,7 @@ int main (int argc, char* argv[])
       return 1;
     }
 
-    write_config_file(cfg);
+    write_config_file(f, cfg);
   }
 
   return 0;
