@@ -46,6 +46,11 @@ TESTS      += tests/hifive1-openocd.bash
 TESTS      += tests/hifive1-makeattributes.bash
 TESTS      += tests/hifive1-mee_header.bash
 EXTRA_DIST += tests/hifive1.dts
+TESTS      += tests/e31-eval-ldscript.bash
+TESTS      += tests/e31-eval-openocd.bash
+TESTS      += tests/e31-eval-makeattributes.bash
+TESTS      += tests/e31-eval-mee_header.bash
+EXTRA_DIST += tests/e31-eval.dts
 
 EXTRA_DIST += $(TESTS)
 

@@ -189,6 +189,7 @@ static void dts_memory (void)
     }
     alias_memory("dtim", "ram");
     alias_memory("spi", "flash");
+    alias_memory("testram", "flash");
 }
 
 static void show_dts_memory (string mtype)
@@ -224,7 +225,8 @@ static void write_linker_memory (fstream &os, bool scratchpad)
       if (!scratchpad &&
 	  (entry.mem_type.compare("mem") == 0) &&
 	  (entry.mem_alias.compare("flash") == 0)) {
-	flash_offset = 0x400000;
+        if (entry.mem_name.compare("spi") == 0)
+	  flash_offset = 0x400000;
 	os << "\t" << entry.mem_alias <<  " (rxai!w)";
       } else if (entry.mem_alias.compare("ram") == 0) {
 	os << "\t" << entry.mem_alias <<  " (wxa!ri)";
