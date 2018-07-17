@@ -194,7 +194,7 @@ static void write_config_file(const fdt &dtb, fstream &os)
           emit_struct_field_tl("control_size", size);
         });
       n.maybe_tuple(
-        "clock", tuple_t<node>(),
+        "clocks", tuple_t<node>(),
         [&](){ emit_struct_field_null("clock"); },
         [&](node n) { emit_struct_field_node("clock", n, ".clock"); });
       emit_struct_end();
