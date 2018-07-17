@@ -98,7 +98,8 @@ static void write_config_file(const fdt &dtb, fstream &os)
     std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_include("sifive,fe310-g000,prci");   },
     std::regex("sifive,fe310-g000,hfxosc"), [&](node n) { emit_include("sifive,fe310-g000,hfxosc"); },
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_include("sifive,fe310-g000,hfrosc"); },
-    std::regex("sifive,uart0"),             [&](node n) { emit_include("sifive,uart0");             }
+    std::regex("sifive,uart0"),             [&](node n) { emit_include("sifive,uart0");             },
+    std::regex("sifive,test0"),             [&](node n) { emit_include("sifive,test0");             }
   );
 
   /* Now emit the various nodes's header definitons. */
@@ -108,7 +109,8 @@ static void write_config_file(const fdt &dtb, fstream &os)
     std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_struct_decl("sifive_fe310_g000_prci",   n); },
     std::regex("sifive,fe310-g000,hfxosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfxosc", n); },
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfrosc", n); },
-    std::regex("sifive,uart0"),             [&](node n) { emit_struct_decl("sifive_uart0",             n); }
+    std::regex("sifive,uart0"),             [&](node n) { emit_struct_decl("sifive_uart0",             n); },
+    std::regex("sifive,test0"),             [&](node n) { emit_struct_decl("sifive_test0",             n); }
   );
 
   /* Walk through the device tree, emitting various nodes as we know about
@@ -192,6 +194,18 @@ static void write_config_file(const fdt &dtb, fstream &os)
         [&](){ emit_struct_field_null("clock"); },
         [&](node n) { emit_struct_field_node("clock", n, ".clock"); });
       emit_struct_end();
+    }, std::regex("sifive,test0"), [&](node n) {
+      emit_struct_begin("sifive_test0", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_test0");
+      emit_struct_field("shutdown.vtable", "&__mee_driver_vtable_sifive_test0.shutdown");
+      n.named_tuples(
+        "reg-names", "reg",
+        "control", tuple_t<target_long, target_long>(), [&](target_long base, target_long size) {
+          emit_struct_field_tl("base", base);
+          emit_struct_field_tl("size", size);
+        });
+      emit_struct_end();
+      emit_def_handle("__MEE_DT_SHUTDOWN_HANDLE", n, ".shutdown");
     }
   );
 
