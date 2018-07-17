@@ -102,6 +102,7 @@ static void write_config_file(const fdt &dtb, fstream &os)
     std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_include("sifive,fe310-g000,prci");   },
     std::regex("sifive,fe310-g000,hfxosc"), [&](node n) { emit_include("sifive,fe310-g000,hfxosc"); },
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_include("sifive,fe310-g000,hfrosc"); },
+    std::regex("sifive,gpio0"),             [&](node n) { emit_include("sifive,gpio0");             },
     std::regex("sifive,uart0"),             [&](node n) { emit_include("sifive,uart0");             },
     std::regex("sifive,test0"),             [&](node n) { emit_include("sifive,test0");             }
   );
@@ -113,6 +114,7 @@ static void write_config_file(const fdt &dtb, fstream &os)
     std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_struct_decl("sifive_fe310_g000_prci",   n); },
     std::regex("sifive,fe310-g000,hfxosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfxosc", n); },
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfrosc", n); },
+    std::regex("sifive,gpio0"),             [&](node n) { emit_struct_decl("sifive_gpio0",             n); },
     std::regex("sifive,uart0"),             [&](node n) { emit_struct_decl("sifive_uart0",             n); },
     std::regex("sifive,test0"),             [&](node n) { emit_struct_decl("sifive_test0",             n); }
   );
@@ -183,6 +185,16 @@ static void write_config_file(const fdt &dtb, fstream &os)
           emit_struct_field_tl("config_offset", offset);
         });
       emit_struct_end();
+    }, std::regex("sifive,gpio0"), [&](node n) {
+      emit_struct_begin("sifive_gpio0", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_gpio0");
+      n.named_tuples(
+        "reg-names", "reg",
+        "control", tuple_t<target_long, target_long>(), [&](target_long base, target_long size) {
+          emit_struct_field_tl("base", base);
+          emit_struct_field_tl("size", size);
+        });
+      emit_struct_end();
     }, std::regex("sifive,uart0"), [&](node n) {
       emit_struct_begin("sifive_uart0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_uart0");
@@ -197,6 +209,14 @@ static void write_config_file(const fdt &dtb, fstream &os)
         "clocks", tuple_t<node>(),
         [&](){ emit_struct_field_null("clock"); },
         [&](node n) { emit_struct_field_node("clock", n, ".clock"); });
+      n.maybe_tuple(
+        "pinmux", tuple_t<node, target_long, target_long>(),
+        [&](){ emit_struct_field_null("pinmux"); },
+        [&](node n, target_long dest, target_long source) {
+            emit_struct_field_node("pinmux", n, "");
+            emit_struct_field_tl("pinmux_output_selector", dest);
+            emit_struct_field_tl("pinmux_source_selector", source);
+        });
       emit_struct_end();
     }, std::regex("sifive,test0"), [&](node n) {
       emit_struct_begin("sifive_test0", n);
