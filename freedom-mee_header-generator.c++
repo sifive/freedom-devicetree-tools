@@ -42,6 +42,10 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << "#define " << handle << " (&__mee_dt_" << n.handle() << field << ")\n";
   };
 
+  auto emit_def = [&](std::string handle, std::string field) {
+    os << "#define " << handle << " " << field << "\n";
+  };
+
   std::set<std::string> included;
   auto emit_include = [&](std::string d) {
     if (included.find(d) != included.end())
@@ -218,6 +222,8 @@ static void write_config_file(const fdt &dtb, fstream &os)
       auto path = info.substr(0, info.find(":"));
       auto target = dtb.node_by_path(path);
       emit_def_handle("__MEE_DT_STDOUT_UART_HANDLE", target, ".uart");
+      auto baud = info.substr(info.find(":")+1);
+      emit_def("__MEE_DT_STDOUT_UART_BAUD", baud);
     }
   );
 
