@@ -47,6 +47,11 @@ void apply(func_t f, std::tuple<a_t, b_t> t) {
     return f(std::get<0>(t), std::get<1>(t));
 }
 
+template<typename func_t, typename a_t, typename b_t, typename c_t>
+void apply(func_t f, std::tuple<a_t, b_t, c_t> t) {
+    return f(std::get<0>(t), std::get<1>(t), std::get<2>(t));
+}
+
 template <typename... element_types>
 class tuple_t {
 public:
@@ -112,6 +117,29 @@ public:
         *consumed += one_consumed;
     
         v.push_back(std::make_tuple(a_v[0], b_v[0]));
+    }
+
+    template<typename a_t, typename b_t, typename c_t>
+    void obtain_one(std::vector<std::tuple<a_t, b_t, c_t>> &v, const uint8_t *buf, int len, int offset, int *consumed) const {
+        int one_consumed;
+        *consumed = 0;
+
+        std::vector<a_t> a_v;
+        obtain_one(a_v, buf, len, offset, &one_consumed);
+        offset += one_consumed;
+        *consumed += one_consumed;
+
+        std::vector<b_t> b_v;
+        obtain_one(b_v, buf, len, offset, &one_consumed);
+        offset += one_consumed;
+        *consumed += one_consumed;
+
+        std::vector<c_t> c_v;
+        obtain_one(c_v, buf, len, offset, &one_consumed);
+        offset += one_consumed;
+        *consumed += one_consumed;
+
+        v.push_back(std::make_tuple(a_v[0], b_v[0], c_v[0]));
     }
 
     template<typename t> t get_field(std::string name) const {
