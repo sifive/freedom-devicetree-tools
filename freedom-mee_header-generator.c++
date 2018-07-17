@@ -154,8 +154,8 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_prci");
       n.named_tuples(
         "reg-names", "reg",
-        "control", tuple_t<node, target_long>(), [&](node base, target_long size) {
-          emit_struct_field_node("base", base, "");
+        "mem", tuple_t<target_long, target_long>(), [&](target_long base, target_long size) {
+          emit_struct_field_tl("base", base);
           emit_struct_field_tl("size", size);
         });
       emit_struct_end();
