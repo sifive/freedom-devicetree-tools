@@ -8,7 +8,8 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-mee_header-generator
 
 freedom_ldscript_generator_SOURCES = \
-	freedom-ldscript-generator.c++
+	freedom-ldscript-generator.c++ \
+	fdt.c++
 
 freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++

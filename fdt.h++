@@ -11,23 +11,42 @@
 #include <string>
 #include <tuple>
 
-class target_long {
+class target_addr {
 private:
     const int64_t _value;
 
 public:
-    target_long()
+    target_addr()
     : _value(-1)
     {}
 
-    target_long(int64_t value)
+    target_addr(int64_t value)
     : _value(value)
     {}
 
 public:
     std::string as_string(void) const { return std::to_string(_value); }
 
-    operator uint32_t() const { return _value; }
+    operator uint64_t() const { return _value; }
+};
+
+class target_size {
+private:
+    const int64_t _value;
+
+public:
+    target_size()
+    : _value(-1)
+    {}
+
+    target_size(int64_t value)
+    : _value(value)
+    {}
+
+public:
+    std::string as_string(void) const { return std::to_string(_value); }
+
+    operator uint64_t() const { return _value; }
 };
 
 class node;
@@ -59,7 +78,8 @@ public:
 };
 
 namespace std {
-    static inline std::string to_string(const target_long& tl) { return tl.as_string(); }
+    static inline std::string to_string(const target_size& tl) { return tl.as_string(); }
+    static inline std::string to_string(const target_addr& tl) { return tl.as_string(); }
 }
 
 /* Represents a node within a device tree, which may point to other nodes. */
@@ -82,10 +102,17 @@ public:
 
     std::string handle(void) const;
 
+    node parent(void) const;
+
     bool field_exists(std::string) const;
 
+    int num_addr_cells(void) const;
+    int num_size_cells(void) const;
+
     void obtain_one(std::vector<node> &v, const uint8_t *buf, int len, int offset, int *consumed) const;
-    void obtain_one(std::vector<target_long> &v, const uint8_t *buf, int len, int offset, int *consumed) const;
+    void obtain_one(std::vector<uint32_t> &v, const uint8_t *buf, int len, int offset, int *consumed) const;
+    void obtain_one(std::vector<target_addr> &v, const uint8_t *buf, int len, int offset, int *consumed) const;
+    void obtain_one(std::vector<target_size> &v, const uint8_t *buf, int len, int offset, int *consumed) const;
     void obtain_one(std::vector<std::string> &v, const uint8_t *buf, int len, int offset, int *consumed) const;
     
     template<typename a_t>
@@ -217,12 +244,16 @@ public:
 class fdt {
 private:
     const uint8_t *_dts_blob;
+    const bool _allocated;
 
 public:
-    fdt(const char *path);
+    fdt(const uint8_t *blob);
     fdt(const std::string path);
 
-    ~fdt(void) { delete _dts_blob; }
+    ~fdt(void) {
+        if (_allocated)
+            delete _dts_blob;
+    }
 
     bool path_exists(std::string) const;
     node node_by_path(std::string) const;

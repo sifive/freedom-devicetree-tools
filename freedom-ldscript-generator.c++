@@ -11,13 +11,7 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
-#ifdef __cplusplus
-extern "C"{
-#endif
-#include <libfdt.h>
-#ifdef __cplusplus
-}
-#endif
+#include <fdt.h++>
 
 using std::cout;
 using std::endl;
@@ -30,14 +24,14 @@ public:
   std::string mem_type;
   std::string mem_alias;
   std::string mem_name;
-  int mem_start;
-  int mem_length;
+  uint64_t mem_start;
+  uint64_t mem_length;
 
   memory() {}
-  memory(std::string, std::string, std::string, int, int);
+  memory(std::string, std::string, std::string, uint64_t, uint64_t);
 };
 
-memory::memory (std::string mtype, std::string alias, std::string name, int start, int length)
+memory::memory (std::string mtype, std::string alias, std::string name, uint64_t start, uint64_t length)
 {
   mem_type = mtype;
   mem_alias = alias;
@@ -150,43 +144,40 @@ static void get_dts_attribute (const string path, const string tag)
 
 static void dts_memory (void)
 {
-    int offset, depth = 0;
-
-    if (!dts_blob)
+    if (dts_blob == nullptr)
         return;
 
-    std::cout << __FUNCTION__ << std::endl;
+    auto dtb = fdt((const uint8_t *)dts_blob);
+    dtb.match(
+        std::regex("sifive,dtim0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    auto basestr = std::to_string(base);
+                    dts_memory_list.push_back(memory("mem", "dtim", basestr, base, size));
+                });
+        },
+        std::regex("sifive,testram0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    auto basestr = std::to_string(base);
+                    dts_memory_list.push_back(memory("mem", "spi", basestr, base, size));
+                });
+        },
+        std::regex("sifive,spi0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {},
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    auto basestr = std::to_string(base);
+                    dts_memory_list.push_back(memory("mem", "testram", basestr, base, size));
+                });
+        });
 
-    offset = fdt_path_offset(dts_blob, "/soc");
-    for (offset = fdt_next_node(dts_blob, offset, &depth);
-	 offset >= 0 && depth >= 0;
-	 offset = fdt_next_node(dts_blob, offset, &depth)) {
-        const char *nodep;
-        const char *regnamep, *s;
-	int regnamelen;
-
-        nodep = fdt_get_name(dts_blob, offset, NULL);
-	regnamep = (const char *)fdt_getprop(dts_blob, offset, "reg-names", &regnamelen);
-	if (regnamelen > 0) {
-	    const char *regp;
-	    int reglen, regidx;
-	    s = regnamep;
-	    regidx = 0;
-	    do {
-		std::vector<std::string> splices = split(string(nodep), '@');
-		regp = (const char *)fdt_getprop(dts_blob, offset, "reg", &reglen);
-		if (reglen > 0) {
-		    const fdt32_t *cell = (const fdt32_t *)regp;
-		    dts_memory_list.push_back(memory(s, splices[0], splices[0],
-						     fdt32_to_cpu(cell[regidx]),
-						     fdt32_to_cpu(cell[regidx + 1]))
-					      );
-		}
-		s += strlen(regnamep) + 1;
-		regidx += 2;
-	    } while (s < regnamep + regnamelen);
-	}
-    }
     alias_memory("dtim", "ram");
     alias_memory("spi", "flash");
     alias_memory("testram", "flash");
