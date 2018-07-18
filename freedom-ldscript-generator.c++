@@ -147,6 +147,14 @@ static void dts_memory (void)
     if (dts_blob == nullptr)
         return;
 
+    /* FIXME: This is particularly ugly, but we'll have to live with it for
+     * now.  The idea is to avoid defining a single memory multiple times,
+     * which will happen if there's multiple memories of a single type in a
+     * design.  For example, multi-core designs will have multiple DTIMs. */
+    int dtim_count = 0;
+    int testram_count = 0;
+    int spi_count = 0;
+
     auto dtb = fdt((const uint8_t *)dts_blob);
     dtb.match(
         std::regex("sifive,dtim0"), [&](node n) {
@@ -155,7 +163,9 @@ static void dts_memory (void)
                 "reg-names", "reg",
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
                     auto basestr = std::to_string(base);
-                    dts_memory_list.push_back(memory("mem", "dtim", basestr, base, size));
+                    if (dtim_count == 0)
+                        dts_memory_list.push_back(memory("mem", "dtim", basestr, base, size));
+                    dtim_count++;
                 });
         },
         std::regex("sifive,testram0"), [&](node n) {
@@ -164,7 +174,9 @@ static void dts_memory (void)
                 "reg-names", "reg",
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
                     auto basestr = std::to_string(base);
-                    dts_memory_list.push_back(memory("mem", "spi", basestr, base, size));
+                    if (testram_count == 0)
+                        dts_memory_list.push_back(memory("mem", "spi", basestr, base, size));
+                    testram_count++;
                 });
         },
         std::regex("sifive,spi0"), [&](node n) {
@@ -174,7 +186,9 @@ static void dts_memory (void)
                 "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {},
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
                     auto basestr = std::to_string(base);
-                    dts_memory_list.push_back(memory("mem", "testram", basestr, base, size));
+                    if (spi_count == 0)
+                        dts_memory_list.push_back(memory("mem", "testram", basestr, base, size));
+                    spi_count++;
                 });
         });
 

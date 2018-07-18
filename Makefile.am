@@ -52,6 +52,11 @@ TESTS      += tests/e31-eval-openocd.bash
 TESTS      += tests/e31-eval-makeattributes.bash
 TESTS      += tests/e31-eval-mee_header.bash
 EXTRA_DIST += tests/e31-eval.dts
+TESTS      += tests/multi-e31-arty-ldscript.bash
+TESTS      += tests/multi-e31-arty-openocd.bash
+TESTS      += tests/multi-e31-arty-makeattributes.bash
+TESTS      += tests/multi-e31-arty-mee_header.bash
+EXTRA_DIST += tests/multi-e31-arty.dts
 
 EXTRA_DIST += $(TESTS)
 
