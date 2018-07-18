@@ -81,7 +81,15 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << "    ." << field << " = NULL,\n";
   };
 
-  auto emit_struct_field_tl = [&](std::string field, target_long value) {
+  auto emit_struct_field_u32 = [&](std::string field, uint32_t value) {
+    os << "    ." << field << " = " << std::to_string(value) << "UL,\n";
+  };
+
+  auto emit_struct_field_ta = [&](std::string field, target_addr value) {
+    os << "    ." << field << " = " << std::to_string(value) << "UL,\n";
+  };
+
+  auto emit_struct_field_ts = [&](std::string field, target_size value) {
     os << "    ." << field << " = " << std::to_string(value) << "UL,\n";
   };
 
@@ -126,7 +134,7 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_struct_begin("fixed_clock", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_fixed_clock");
       emit_struct_field("clock.vtable", "&__mee_driver_vtable_fixed_clock.clock");
-      emit_struct_field_tl("rate", n.get_field<target_long>("clock-frequency"));
+      emit_struct_field_u32("rate", n.get_field<uint32_t>("clock-frequency"));
       emit_struct_end();
     }, std::regex("sifive,fe310-g000,pll"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_pll", n);
@@ -142,13 +150,13 @@ static void write_config_file(const fdt &dtb, fstream &os)
         });
       n.named_tuples(
         "reg-names", "reg",
-        "config", tuple_t<node, target_long>(), [&](node base, target_long off) {
+        "config", tuple_t<node, target_size>(), [&](node base, target_size off) {
           emit_struct_field_node("config_base", base, "");
-          emit_struct_field_tl("config_offset", off);
+          emit_struct_field_ts("config_offset", off);
         },
-        "divider", tuple_t<node, target_long>(), [&](node base, target_long off) {
+        "divider", tuple_t<node, target_size>(), [&](node base, target_size off) {
           emit_struct_field_node("divider_base", base, "");
-          emit_struct_field_tl("divider_offset", off);
+          emit_struct_field_ts("divider_offset", off);
         });
       emit_struct_end();
     }, std::regex("sifive,fe310-g000,prci"), [&](node n) {
@@ -156,9 +164,9 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_prci");
       n.named_tuples(
         "reg-names", "reg",
-        "mem", tuple_t<target_long, target_long>(), [&](target_long base, target_long size) {
-          emit_struct_field_tl("base", base);
-          emit_struct_field_tl("size", size);
+        "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+          emit_struct_field_ta("base", base);
+          emit_struct_field_ts("size", size);
         });
       emit_struct_end();
     }, std::regex("sifive,fe310-g000,hfxosc"), [&](node n) {
@@ -168,9 +176,9 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_struct_field_node("ref", n.get_field<node>("clocks"), ".clock");
       n.named_tuples(
         "reg-names", "reg",
-        "config", tuple_t<node, target_long>(), [&](node base, target_long offset) {
+        "config", tuple_t<node, target_size>(), [&](node base, target_size offset) {
           emit_struct_field_node("config_base", base, "");
-          emit_struct_field_tl("config_offset", offset);
+          emit_struct_field_ts("config_offset", offset);
         });
       emit_struct_end();
     }, std::regex("sifive,fe310-g000,hfrosc"), [&](node n) {
@@ -180,9 +188,9 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_struct_field_node("ref", n.get_field<node>("clocks"), ".clock");
       n.named_tuples(
         "reg-names", "reg",
-        "config", tuple_t<node, target_long>(), [&](node base, target_long offset) {
+        "config", tuple_t<node, target_size>(), [&](node base, target_size offset) {
           emit_struct_field_node("config_base", base, "");
-          emit_struct_field_tl("config_offset", offset);
+          emit_struct_field_ts("config_offset", offset);
         });
       emit_struct_end();
     }, std::regex("sifive,gpio0"), [&](node n) {
@@ -190,9 +198,9 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_gpio0");
       n.named_tuples(
         "reg-names", "reg",
-        "control", tuple_t<target_long, target_long>(), [&](target_long base, target_long size) {
-          emit_struct_field_tl("base", base);
-          emit_struct_field_tl("size", size);
+        "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+          emit_struct_field_ta("base", base);
+          emit_struct_field_ts("size", size);
         });
       emit_struct_end();
     }, std::regex("sifive,uart0"), [&](node n) {
@@ -201,21 +209,21 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_struct_field("uart.vtable", "&__mee_driver_vtable_sifive_uart0.uart");
       n.named_tuples(
         "reg-names", "reg",
-        "control", tuple_t<target_long, target_long>(), [&](target_long base, target_long size) {
-          emit_struct_field_tl("control_base", base);
-          emit_struct_field_tl("control_size", size);
+        "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+          emit_struct_field_ta("control_base", base);
+          emit_struct_field_ts("control_size", size);
         });
       n.maybe_tuple(
         "clocks", tuple_t<node>(),
         [&](){ emit_struct_field_null("clock"); },
         [&](node n) { emit_struct_field_node("clock", n, ".clock"); });
       n.maybe_tuple(
-        "pinmux", tuple_t<node, target_long, target_long>(),
+        "pinmux", tuple_t<node, uint32_t, uint32_t>(),
         [&](){ emit_struct_field_null("pinmux"); },
-        [&](node n, target_long dest, target_long source) {
+        [&](node n, uint32_t dest, uint32_t source) {
             emit_struct_field_node("pinmux", n, "");
-            emit_struct_field_tl("pinmux_output_selector", dest);
-            emit_struct_field_tl("pinmux_source_selector", source);
+            emit_struct_field_u32("pinmux_output_selector", dest);
+            emit_struct_field_u32("pinmux_source_selector", source);
         });
       emit_struct_end();
     }, std::regex("sifive,test0"), [&](node n) {
@@ -224,9 +232,9 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_struct_field("shutdown.vtable", "&__mee_driver_vtable_sifive_test0.shutdown");
       n.named_tuples(
         "reg-names", "reg",
-        "control", tuple_t<target_long, target_long>(), [&](target_long base, target_long size) {
-          emit_struct_field_tl("base", base);
-          emit_struct_field_tl("size", size);
+        "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+          emit_struct_field_ta("base", base);
+          emit_struct_field_ts("size", size);
         });
       emit_struct_end();
       emit_def_handle("__MEE_DT_SHUTDOWN_HANDLE", n, ".shutdown");
