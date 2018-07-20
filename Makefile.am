@@ -57,6 +57,11 @@ TESTS      += tests/multi-e31-arty-openocd.bash
 TESTS      += tests/multi-e31-arty-makeattributes.bash
 TESTS      += tests/multi-e31-arty-mee_header.bash
 EXTRA_DIST += tests/multi-e31-arty.dts
+TESTS      += tests/e31-bigmem-ldscript.bash
+TESTS      += tests/e31-bigmem-openocd.bash
+TESTS      += tests/e31-bigmem-makeattributes.bash
+TESTS      += tests/e31-bigmem-mee_header.bash
+EXTRA_DIST += tests/e31-bigmem.dts
 
 EXTRA_DIST += $(TESTS)
 

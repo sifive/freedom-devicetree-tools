@@ -242,7 +242,10 @@ static void write_linker_memory (fstream &os, bool scratchpad)
 	continue;
       }
       os << " : ORIGIN = 0x" << std::hex << (entry.mem_start + flash_offset);
-      os << ", LENGTH = 0x" << entry.mem_length;
+      /* FIXME: Here we restrict the length of any segment to 2GiB.  While this
+       * isn't technically correct, it does at least prevent us from ending up
+       * with segments that are too large for */
+      os << ", LENGTH = 0x" << ((entry.mem_length > 0x80000000UL) ? 0x80000000UL : entry.mem_length);
       os << std::dec << std::endl;
     }
     os << "}" << std::endl << std::endl;
