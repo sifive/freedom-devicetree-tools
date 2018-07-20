@@ -175,7 +175,7 @@ static void dts_memory (void)
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
                     auto basestr = std::to_string(base);
                     if (testram_count == 0)
-                        dts_memory_list.push_back(memory("mem", "spi", basestr, base, size));
+                        dts_memory_list.push_back(memory("mem", "testram", basestr, base, size));
                     testram_count++;
                 });
         },
@@ -187,14 +187,17 @@ static void dts_memory (void)
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
                     auto basestr = std::to_string(base);
                     if (spi_count == 0)
-                        dts_memory_list.push_back(memory("mem", "testram", basestr, base, size));
+                        dts_memory_list.push_back(memory("mem", "spi", basestr, base, size));
                     spi_count++;
                 });
         });
 
-    alias_memory("dtim", "ram");
-    alias_memory("spi", "flash");
-    alias_memory("testram", "flash");
+    if (testram_count > 0)
+        alias_memory("testram", "ram");
+    else {
+        alias_memory("dtim", "ram");
+        alias_memory("spi", "flash");
+    }
 }
 
 static void show_dts_memory (string mtype)
@@ -615,7 +618,7 @@ int main (int argc, char* argv[])
   get_dts_attribute("/cpus/cpu@0", "riscv,isa");
   dts_memory();
 
-  if (has_memory("spi") == 0 && has_memory("testram"))
+  if (has_memory("spi") == 0)
     scratchpad = true;
 
   if (!linker_file.empty()) {
