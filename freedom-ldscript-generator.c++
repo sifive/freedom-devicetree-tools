@@ -175,7 +175,7 @@ static void dts_memory (void)
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
                     auto basestr = std::to_string(base);
                     if (testram_count == 0)
-                        dts_memory_list.push_back(memory("mem", "spi", basestr, base, size));
+                        dts_memory_list.push_back(memory("mem", "testram", basestr, base, size));
                     testram_count++;
                 });
         },
@@ -187,14 +187,17 @@ static void dts_memory (void)
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
                     auto basestr = std::to_string(base);
                     if (spi_count == 0)
-                        dts_memory_list.push_back(memory("mem", "testram", basestr, base, size));
+                        dts_memory_list.push_back(memory("mem", "spi", basestr, base, size));
                     spi_count++;
                 });
         });
 
-    alias_memory("dtim", "ram");
-    alias_memory("spi", "flash");
-    alias_memory("testram", "flash");
+    if (testram_count > 0)
+        alias_memory("testram", "ram");
+    else {
+        alias_memory("dtim", "ram");
+        alias_memory("spi", "flash");
+    }
 }
 
 static void show_dts_memory (string mtype)
@@ -239,7 +242,10 @@ static void write_linker_memory (fstream &os, bool scratchpad)
 	continue;
       }
       os << " : ORIGIN = 0x" << std::hex << (entry.mem_start + flash_offset);
-      os << ", LENGTH = 0x" << entry.mem_length;
+      /* FIXME: Here we restrict the length of any segment to 2GiB.  While this
+       * isn't technically correct, it does at least prevent us from ending up
+       * with segments that are too large for */
+      os << ", LENGTH = 0x" << ((entry.mem_length > 0x80000000UL) ? 0x80000000UL : entry.mem_length);
       os << std::dec << std::endl;
     }
     os << "}" << std::endl << std::endl;
@@ -615,7 +621,7 @@ int main (int argc, char* argv[])
   get_dts_attribute("/cpus/cpu@0", "riscv,isa");
   dts_memory();
 
-  if (has_memory("spi") == 0 && has_memory("testram"))
+  if (has_memory("spi") == 0)
     scratchpad = true;
 
   if (!linker_file.empty()) {
