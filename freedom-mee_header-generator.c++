@@ -158,7 +158,9 @@ static void write_config_file(const fdt &dtb, fstream &os)
           emit_struct_field_node("divider_base", base, "");
           emit_struct_field_ts("divider_offset", off);
         });
+      emit_struct_field_u32("init_rate", n.get_field<uint32_t>("clock-frequency"));
       emit_struct_end();
+      emit_def_handle("__MEE_DT_SIFIVE_FE310_G000_PLL_HANDLE", n, "");
     }, std::regex("sifive,fe310-g000,prci"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_prci", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_prci");
