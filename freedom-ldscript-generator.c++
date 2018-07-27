@@ -46,7 +46,7 @@ static std::vector<memory> dts_memory_list;
 static inline bool has_memory (std::string mem)
 {
   for (auto entry : dts_memory_list) {
-    if (entry.mem_alias.compare(mem) == 0) {
+    if (entry.mem_name.find("spi") != std::string::npos) {
       std::cout << "found " << mem << std::endl;
       return true;
     }
@@ -162,9 +162,8 @@ static void dts_memory (void)
             n.named_tuples(
                 "reg-names", "reg",
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-                    auto basestr = std::to_string(base);
                     if (dtim_count == 0)
-                        dts_memory_list.push_back(memory("mem", "dtim", basestr, base, size));
+                        dts_memory_list.push_back(memory("mem", "dtim", "sifive,dtim0", base, size));
                     dtim_count++;
                 });
         },
@@ -173,9 +172,8 @@ static void dts_memory (void)
             n.named_tuples(
                 "reg-names", "reg",
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-                    auto basestr = std::to_string(base);
                     if (testram_count == 0)
-                        dts_memory_list.push_back(memory("mem", "testram", basestr, base, size));
+                        dts_memory_list.push_back(memory("mem", "testram", "sifive,testram0", base, size));
                     testram_count++;
                 });
         },
@@ -185,9 +183,8 @@ static void dts_memory (void)
                 "reg-names", "reg",
                 "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {},
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-                    auto basestr = std::to_string(base);
                     if (spi_count == 0)
-                        dts_memory_list.push_back(memory("mem", "spi", basestr, base, size));
+                        dts_memory_list.push_back(memory("mem", "spi", "sifive,spi0", base, size));
                     spi_count++;
                 });
         });
@@ -233,8 +230,9 @@ static void write_linker_memory (fstream &os, bool scratchpad)
       if (!scratchpad &&
 	  (entry.mem_type.compare("mem") == 0) &&
 	  (entry.mem_alias.compare("flash") == 0)) {
-        if (entry.mem_name.compare("spi") == 0)
+        if (entry.mem_name.find("spi") != std::string::npos) {
 	  flash_offset = 0x400000;
+	}
 	os << "\t" << entry.mem_alias <<  " (rxai!w)";
       } else if (entry.mem_alias.compare("ram") == 0) {
 	os << "\t" << entry.mem_alias <<  " (wxa!ri)";
@@ -621,10 +619,15 @@ int main (int argc, char* argv[])
   get_dts_attribute("/cpus/cpu@0", "riscv,isa");
   dts_memory();
 
-  if (has_memory("spi") == 0)
+  /**
+   * scratchpad is when we load and run everything from memory, whether it is
+   * dtim, testram.
+   */
+  if ( !has_memory("spi") ) {
     scratchpad = true;
+  }
 
-  if (!linker_file.empty()) {
+  if ( !linker_file.empty() ) {
     std::fstream lds;
 
     lds.open(linker_file, fstream::in | fstream::out | fstream::trunc);
