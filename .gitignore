@@ -9,6 +9,7 @@
 /freedom-ldscript-generator
 /freedom-openocdcfg-generator
 /freedom-makeattributes-generator
+/freedom-zephyrdtsfixup-generator
 *.o
 /install-sh
 /missing
