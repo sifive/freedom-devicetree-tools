@@ -22,6 +22,9 @@ this project:
   described by the given device tree.
 * `freedom-openocdcfg-generator`: Generates an OpenOCD configuration
   file from a device tree.
+* `freedom-zephyrdtsfixup-generator`: Generates a dts.fixup configuration
+  file from a device tree. This is a temporary requirement of the Zephyr
+  RTOS project to support DTS-based driver configuration.
 
 ## How to Build
 
