@@ -53,6 +53,11 @@ static void write_config_file(const fdt &dtb, fstream &os)
     emit_fixup(out_prefix, in_prefix, dev_num, base, "SIZE");
   };
 
+  auto emit_current_speed = [&](string out_prefix, string in_prefix, int dev_num,
+      target_addr base) {
+    emit_fixup(out_prefix, in_prefix, dev_num, base, "CURRENT_SPEED");
+  };
+
   auto emit_irq = [&](string out_prefix, string in_prefix, int dev_num, target_addr base, int irq_num) {
     emit_fixup(out_prefix, in_prefix, dev_num, base, "IRQ_" + std::to_string(irq_num)); 
   };
@@ -85,6 +90,7 @@ static void write_config_file(const fdt &dtb, fstream &os)
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
           emit_base_addr("FE310_UART", "SIFIVE_UART0", dev_num, base);
+          emit_current_speed("FE310_UART", "SIFIVE_UART0", dev_num, base);
           emit_irqs(n, "FE310_UART", "SIFIVE_UART0", dev_num, base);
           emit_size("FE310_UART", "SIFIVE_UART0", dev_num, base);
       });
