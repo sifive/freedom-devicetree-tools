@@ -77,9 +77,9 @@ static void write_config_file(const fdt &dtb, fstream &os)
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-          emit_base_addr("FE310_GPIO", "SIFIVE_GPIO0", dev_num, base);
-          emit_irqs(n, "FE310_GPIO", "SIFIVE_GPIO0", dev_num, base);
-          emit_size("FE310_GPIO", "SIFIVE_GPIO0", dev_num, base);
+          emit_base_addr("SIFIVE_GPIO", "SIFIVE_GPIO0", dev_num, base);
+          emit_irqs(n, "SIFIVE_GPIO", "SIFIVE_GPIO0", dev_num, base);
+          emit_size("SIFIVE_GPIO", "SIFIVE_GPIO0", dev_num, base);
       });
       dev_num++;
     },
@@ -89,10 +89,10 @@ static void write_config_file(const fdt &dtb, fstream &os)
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-          emit_base_addr("FE310_UART", "SIFIVE_UART0", dev_num, base);
-          emit_current_speed("FE310_UART", "SIFIVE_UART0", dev_num, base);
-          emit_irqs(n, "FE310_UART", "SIFIVE_UART0", dev_num, base);
-          emit_size("FE310_UART", "SIFIVE_UART0", dev_num, base);
+          emit_base_addr("SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
+          emit_current_speed("SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
+          emit_irqs(n, "SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
+          emit_size("SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
       });
       dev_num++;
     }
