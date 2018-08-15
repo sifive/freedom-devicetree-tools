@@ -6,7 +6,8 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-openocdcfg-generator \
 		freedom-makeattributes-generator \
 		freedom-mee_header-generator \
-		freedom-zephyrdtsfixup-generator
+		freedom-zephyrdtsfixup-generator \
+		freedom-mee_specs-generator
 
 freedom_ldscript_generator_SOURCES = \
 	freedom-ldscript-generator.c++ \
@@ -24,6 +25,10 @@ freedom_mee_header_generator_SOURCES = \
 
 freedom_zephyrdtsfixup_generator_SOURCES = \
 	freedom-zephyrdtsfixup-generator.c++ \
+	fdt.c++
+
+freedom_mee_specs_generator_SOURCES = \
+	freedom-mee_specs-generator.c++ \
 	fdt.c++
 
 AM_TESTS_ENVIRONMENT = \
@@ -52,6 +57,7 @@ TESTS      += tests/hifive1-openocd.bash
 TESTS      += tests/hifive1-makeattributes.bash
 TESTS      += tests/hifive1-mee_header.bash
 TESTS      += tests/hifive1-zephyrdtsfixup.bash
+TESTS      += tests/hifive1-mee_specs.bash
 EXTRA_DIST += tests/hifive1.dts
 TESTS      += tests/e31-eval-ldscript.bash
 TESTS      += tests/e31-eval-openocd.bash
