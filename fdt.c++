@@ -195,7 +195,10 @@ int fdt::match(const std::regex& r, std::function<void(const node&)> f) const
         if (compat_bytes != nullptr) {
             for (int i = 0; i < compat_len; i += strlen(compat_bytes)) {
                 auto compat = std::string(&compat_bytes[i]);
-                if (compat.length() == 0 || !std::regex_match(compat, r))
+                i++;
+                if (i >= compat_len)
+                    break;
+                if (!std::regex_match(compat, r))
                     continue;
                 f(node(_dts_blob, offset, depth));
                 matches++;
