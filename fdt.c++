@@ -193,9 +193,8 @@ int fdt::match(const std::regex& r, std::function<void(const node&)> f) const
         int compat_len;
         auto compat_bytes = (const char *)fdt_getprop(_dts_blob, offset, "compatible", &compat_len);
         if (compat_bytes != nullptr) {
-            for (int i = 0; i < compat_len; i += strlen(compat_bytes)) {
+            for (int i = 0; i < compat_len; i += strlen(&compat_bytes[i]) + 1) {
                 auto compat = std::string(&compat_bytes[i]);
-                i++;
                 if (i >= compat_len)
                     break;
                 if (!std::regex_match(compat, r))
