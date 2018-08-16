@@ -18,6 +18,7 @@ extern "C"{
 #ifdef __cplusplus
 }
 #endif
+#include "multilib.h++"
 
 using std::cout;
 using std::endl;
@@ -229,10 +230,9 @@ static void write_config_file (fstream &os, std::string board)
 
     os << "#" << __FUNCTION__ << std::endl << std::endl;
 
-    isa = get_dts_attribute("/cpus/cpu@0", "riscv,isa");
+    isa = arch2arch(get_dts_attribute("/cpus/cpu@0", "riscv,isa"));
     os << "FRAMEWORK_BOARD_DTS_MARCH=" << isa << std::endl;
-    os << "FRAMEWORK_BOARD_DTS_MABI="
-       << ((isa.compare("rv64imac") == 0) ? "lp64" : "ilp32") << std::endl;
+    os << "FRAMEWORK_BOARD_DTS_MABI=" << arch2abi(isa) << std::endl;
 
     serial = get_dts_attribute("/soc/serial@20000000", "compatible");
     std::size_t found = serial.find("uart0");
