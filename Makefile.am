@@ -74,9 +74,16 @@ TESTS      += tests/e31-bigmem-openocd.bash
 TESTS      += tests/e31-bigmem-makeattributes.bash
 TESTS      += tests/e31-bigmem-mee_header.bash
 EXTRA_DIST += tests/e31-bigmem.dts
+TESTS      += tests/e34-eval-ldscript.bash
+TESTS      += tests/e34-eval-openocd.bash
+TESTS      += tests/e34-eval-makeattributes.bash
+TESTS      += tests/e34-eval-mee_header.bash
+TESTS      += tests/e34-eval-mee_specs.bash
+EXTRA_DIST += tests/e34-eval.dts
 
 EXTRA_DIST += $(TESTS)
 
 EXTRA_DIST += README.md
 EXTRA_DIST += fdt.h++
 EXTRA_DIST += libfdt.h++
+EXTRA_DIST += multilib.h++

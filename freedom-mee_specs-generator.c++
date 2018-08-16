@@ -18,6 +18,7 @@ extern "C"{
 #ifdef __cplusplus
 }
 #endif
+#include "multilib.h++"
 
 using std::cout;
 using std::endl;
@@ -220,9 +221,9 @@ static void show_dts_attributes (void)
 
 static void write_specs_file (fstream &os, std::string machine, std::string prefix, std::string tuple, std::string gcc_version)
 {
-    string isa = get_dts_attribute("/cpus/cpu@0", "riscv,isa");
-    string abi = (isa.compare("rv64imac") == 0) ? "lp64" : "ilp32";
-    string emul = (abi.compare("lp64") == 0) ? "elf64lriscv" : "elf32lriscv";
+    string isa = arch2arch(get_dts_attribute("/cpus/cpu@0", "riscv,isa"));
+    string abi = arch2abi(isa);
+    string emul = arch2elf(isa);
 
     os << "%rename asm  mee_machine__asm\n";
     os << "*asm:\n";
