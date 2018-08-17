@@ -156,7 +156,6 @@ static void dts_memory (void)
     int spi_count = 0;
     int periph_count = 0;
     int sys_count = 0;
-    int bus_count = 0;
 
     auto dtb = fdt((const uint8_t *)dts_blob);
     dtb.match(
@@ -204,18 +203,6 @@ static void dts_memory (void)
                     sys_count++;
                 });
         },
-        std::regex("simple-bus"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (bus_count == 0)
-                        dts_memory_list.push_back(memory("mem", "bus_ram", "simple-bus", src, len));
-
-                    bus_count++;
-                });
-        },
         std::regex("sifive,spi0"), [&](node n) {
             auto name = n.name();
             n.named_tuples(
@@ -234,8 +221,6 @@ static void dts_memory (void)
         alias_memory("periph_ram", "ram");
     else if (sys_count > 0)
         alias_memory("sys_ram", "ram");
-    else if (bus_count > 0)
-        alias_memory("bus_ram", "ram");
     else {
         alias_memory("dtim", "ram");
         alias_memory("spi", "flash");

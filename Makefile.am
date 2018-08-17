@@ -80,11 +80,6 @@ TESTS      += tests/e34-eval-makeattributes.bash
 TESTS      += tests/e34-eval-mee_header.bash
 TESTS      += tests/e34-eval-mee_specs.bash
 EXTRA_DIST += tests/e34-eval.dts
-TESTS      += tests/e31-eval-simple_bus-ldscript.bash
-TESTS      += tests/e31-eval-simple_bus-openocd.bash
-TESTS      += tests/e31-eval-simple_bus-makeattributes.bash
-TESTS      += tests/e31-eval-simple_bus-mee_header.bash
-EXTRA_DIST += tests/e31-eval-simple_bus.dts
 
 EXTRA_DIST += $(TESTS)
 
