@@ -230,12 +230,16 @@ public:
     template<typename zero_function_t, typename one_function_t, typename... args_v>
     void maybe_tuple(std::string key, tuple_t<args_v...> value, zero_function_t zero_func, one_function_t one_func) const {
         auto out = get_fields<std::tuple<args_v...>>(key);
-        if (out.size() == 0)
-            return apply(zero_func);
-        if (out.size() == 1)
-            return apply(one_func, out[0]);
-
-        std::cerr << "requested field \"" << key << "\" in node \"" << name() << "\", but multiple found\n";
+	int s = out.size(); ;
+	for (int i = 0; s >= 0; s--, i++) {
+	    if (s == 0)
+	        return apply(zero_func);
+	    if (s == 1)
+                return apply(one_func, out[i]);
+	    apply(one_func, out[i]);
+	}
+        std::cerr << "requested field \"" << key << "\" in node \"" << name()
+		  << "\", found " << out.size() << " fields\n";
         abort();
     }
 };
