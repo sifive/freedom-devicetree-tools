@@ -43,9 +43,16 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << in_prefix << "_" << std::hex << base << std::dec << "_" << suffix << endl;
   };
 
+  auto emit_assymetric_fixup = [&](string out_prefix, string in_prefix, int dev_num, target_addr base, string out_suffix, string in_suffix) {
+    os << "#define ";
+    os << out_prefix << "_" << dev_num << "_" << out_suffix << "\t";
+    os << in_prefix << "_" << std::hex << base << std::dec << "_" << in_suffix << endl;
+  };
+
+
   auto emit_base_addr = [&](string out_prefix, string in_prefix, int dev_num, 
       target_addr base) {
-    emit_fixup(out_prefix, in_prefix, dev_num, base, "BASE_ADDR");
+    emit_assymetric_fixup(out_prefix, in_prefix, dev_num, base, "BASE_ADDR", "BASE_ADDRESS");
   };
 
   auto emit_size = [&](string out_prefix, string in_prefix, int dev_num,
@@ -56,6 +63,11 @@ static void write_config_file(const fdt &dtb, fstream &os)
   auto emit_current_speed = [&](string out_prefix, string in_prefix, int dev_num,
       target_addr base) {
     emit_fixup(out_prefix, in_prefix, dev_num, base, "CURRENT_SPEED");
+  };
+
+  auto emit_label = [&](string out_prefix, string in_prefix, int dev_num,
+      target_addr base) {
+    emit_fixup(out_prefix, in_prefix, dev_num, base, "LABEL");
   };
 
   auto emit_irq = [&](string out_prefix, string in_prefix, int dev_num, target_addr base, int irq_num) {
@@ -77,9 +89,9 @@ static void write_config_file(const fdt &dtb, fstream &os)
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-          emit_base_addr("FE310_GPIO", "SIFIVE_GPIO0", dev_num, base);
-          emit_irqs(n, "FE310_GPIO", "SIFIVE_GPIO0", dev_num, base);
-          emit_size("FE310_GPIO", "SIFIVE_GPIO0", dev_num, base);
+          emit_base_addr("CONFIG_SIFIVE_GPIO", "SIFIVE_GPIO0", dev_num, base);
+          emit_irqs(n, "CONFIG_SIFIVE_GPIO", "SIFIVE_GPIO0", dev_num, base);
+          emit_size("CONFIG_SIFIVE_GPIO", "SIFIVE_GPIO0", dev_num, base);
       });
       dev_num++;
     },
@@ -89,10 +101,11 @@ static void write_config_file(const fdt &dtb, fstream &os)
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-          emit_base_addr("FE310_UART", "SIFIVE_UART0", dev_num, base);
-          emit_current_speed("FE310_UART", "SIFIVE_UART0", dev_num, base);
-          emit_irqs(n, "FE310_UART", "SIFIVE_UART0", dev_num, base);
-          emit_size("FE310_UART", "SIFIVE_UART0", dev_num, base);
+          emit_base_addr("CONFIG_SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
+          emit_current_speed("CONFIG_SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
+          emit_irqs(n, "CONFIG_SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
+          emit_label("CONFIG_SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
+          emit_size("CONFIG_SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
       });
       dev_num++;
     }
