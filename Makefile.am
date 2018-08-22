@@ -80,6 +80,16 @@ TESTS      += tests/e34-eval-makeattributes.bash
 TESTS      += tests/e34-eval-mee_header.bash
 TESTS      += tests/e34-eval-mee_specs.bash
 EXTRA_DIST += tests/e34-eval.dts
+TESTS      += tests/e31-memory-ldscript.bash
+TESTS      += tests/e31-memory-openocd.bash
+TESTS      += tests/e31-memory-makeattributes.bash
+TESTS      += tests/e31-memory-mee_header.bash
+EXTRA_DIST += tests/e31-memory.dts
+TESTS      += tests/e31-ranges-ldscript.bash
+TESTS      += tests/e31-ranges-openocd.bash
+TESTS      += tests/e31-ranges-makeattributes.bash
+TESTS      += tests/e31-ranges-mee_header.bash
+EXTRA_DIST += tests/e31-ranges.dts
 
 EXTRA_DIST += $(TESTS)
 

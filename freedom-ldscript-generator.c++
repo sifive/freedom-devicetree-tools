@@ -154,11 +154,23 @@ static void dts_memory (void)
     int dtim_count = 0;
     int testram_count = 0;
     int spi_count = 0;
+    int memory_count = 0;
     int periph_count = 0;
     int sys_count = 0;
 
     auto dtb = fdt((const uint8_t *)dts_blob);
     dtb.match(
+        std::regex("memory"), [&](node n) {
+            auto name = n.name();
+            n.maybe_tuple(
+                "reg", tuple_t<target_addr, target_size>(),
+                [&]() {},
+		[&](target_addr base, target_size size) {
+                    if (memory_count == 0)
+                        dts_memory_list.push_back(memory("mem", "memory", "memory", base, size));
+                    memory_count++;
+                });
+        },
         std::regex("sifive,dtim0"), [&](node n) {
             auto name = n.name();
             n.named_tuples(
@@ -217,6 +229,8 @@ static void dts_memory (void)
 
     if (testram_count > 0)
         alias_memory("testram", "ram");
+    else if (memory_count > 0)
+        alias_memory("memory", "ram");
     else if (periph_count > 0)
         alias_memory("periph_ram", "ram");
     else if (sys_count > 0)

@@ -191,10 +191,10 @@ int fdt::match(const std::regex& r, std::function<void(const node&)> f) const
     offset = fdt_path_offset(_dts_blob, "/");
     while (offset >= 0 && depth >= 0) {
         int compat_len;
-        auto compat_bytes = (const char *)fdt_getprop(_dts_blob, offset, "compatible", &compat_len);
-        if (compat_bytes != nullptr) {
-            for (int i = 0; i < compat_len; i += strlen(&compat_bytes[i]) + 1) {
-                auto compat = std::string(&compat_bytes[i]);
+        auto device_bytes = (const char *)fdt_getprop(_dts_blob, offset, "device_type", &compat_len);
+        if (device_bytes != nullptr) {
+            for (int i = 0; i < compat_len; i += strlen(&device_bytes[i]) + 1) {
+                auto compat = std::string(&device_bytes[i]);
                 if (i >= compat_len)
                     break;
                 if (!std::regex_match(compat, r))
@@ -202,7 +202,20 @@ int fdt::match(const std::regex& r, std::function<void(const node&)> f) const
                 f(node(_dts_blob, offset, depth));
                 matches++;
             }
-        }
+        } else {
+	    auto compat_bytes = (const char *)fdt_getprop(_dts_blob, offset, "compatible", &compat_len);
+	    if (compat_bytes != nullptr) {
+	        for (int i = 0; i < compat_len; i += strlen(&compat_bytes[i]) + 1) {
+		    auto compat = std::string(&compat_bytes[i]);
+		    if (i >= compat_len)
+		        break;
+		    if (!std::regex_match(compat, r))
+		        continue;
+		    f(node(_dts_blob, offset, depth));
+		    matches++;
+		}
+	    }
+	}
 
         offset = fdt_next_node(_dts_blob, offset, &depth);
     }
