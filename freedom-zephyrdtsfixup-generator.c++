@@ -108,6 +108,18 @@ static void write_config_file(const fdt &dtb, fstream &os)
           emit_size("CONFIG_SIFIVE_UART", "SIFIVE_UART0", dev_num, base);
       });
       dev_num++;
+    },
+    std::regex("sifive,spi0"), [&](node n) {
+      static int dev_num = 0;
+      emit_comment(n, "SPI", dev_num);
+      n.named_tuples(
+        "reg-names", "reg",
+        "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+          emit_base_addr("CONFIG_SIFIVE_SPI", "SIFIVE_SPI0", dev_num, base);
+          emit_label("CONFIG_SIFIVE_SPI", "SIFIVE_SPI0", dev_num, base);
+          emit_size("CONFIG_SIFIVE_SPI", "SIFIVE_SPI0", dev_num, base);
+      });
+      dev_num++;
     }
   );
 };
