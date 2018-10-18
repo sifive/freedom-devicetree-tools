@@ -256,7 +256,7 @@ static void write_specs_file (fstream &os, std::string machine, std::string pref
 
     os << "%rename link   mee_machine__link\n";
     os << "*link:\n";
-    os << "-Triscv__mmachine__" << machine << ".lds"
+    os << "%{!T*:-Triscv__mmachine__" << machine << ".lds}"
        << " --gc-sections"
        << " -march=" << isa
        << " -mabi=" << abi
