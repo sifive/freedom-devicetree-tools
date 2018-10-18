@@ -263,7 +263,7 @@ static void write_specs_file (fstream &os, std::string machine, std::string pref
        << " -m" << emul
        << " -L" << prefix << "/" << tuple << "/lib/" << isa << "/" << abi << "/"
        << " -L" << prefix << "/lib/gcc/" << tuple << "/" << gcc_version << "/" << isa << "/" << abi << "/"
-       << " -lgcc"
+       << " %{!nostdlib:-lgcc}"
        << " %(mee_machine__link)\n";
     os << "\n";
 }
