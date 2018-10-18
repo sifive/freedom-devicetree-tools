@@ -246,12 +246,12 @@ static void write_specs_file (fstream &os, std::string machine, std::string pref
     os << "\n";
 
     os << "*startfile:\n";
-    os << ""  << prefix << "/" << tuple << "/lib/" << isa << "/" << abi << "/crt0__mee.o"
-       << " " << prefix << "/lib/gcc/" << tuple << "/" << gcc_version << "/" << isa << "/" << abi << "/crtbegin.o\n";
+    os << "%{!nostartfiles:"  << prefix << "/" << tuple << "/lib/" << isa << "/" << abi << "/crt0__mee.o"
+       << " " << prefix << "/lib/gcc/" << tuple << "/" << gcc_version << "/" << isa << "/" << abi << "/crtbegin.o}\n";
     os << "\n";
 
     os << "*endfile:\n";
-    os << ""  << prefix << "/lib/gcc/" << tuple << "/" << gcc_version << "/" << isa << "/" << abi << "/crtend.o\n";
+    os << "%{!nostartfiles:"  << prefix << "/lib/gcc/" << tuple << "/" << gcc_version << "/" << isa << "/" << abi << "/crtend.o}\n";
     os << "\n";
 
     os << "%rename link   mee_machine__link\n";
