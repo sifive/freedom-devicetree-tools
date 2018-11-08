@@ -146,6 +146,13 @@ std::string node::handle(void) const
     return n;
 }
 
+std::string node::instance(void) const
+{
+    auto n = name();
+    std::size_t p = n.find('@');
+    return (p != std::string::npos) ? n.substr(p+1) : "";
+}
+
 bool node::field_exists(std::string name) const
 {
     int len;

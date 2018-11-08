@@ -102,6 +102,8 @@ public:
 
     std::string handle(void) const;
 
+    std::string instance(void) const;
+
     node parent(void) const;
 
     bool field_exists(std::string) const;

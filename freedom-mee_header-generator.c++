@@ -20,12 +20,13 @@ static void show_usage(string name)
 	    << "Options:\n"
 	    << "\t-h,--help\t\t\tShow this help message\n"
 	    << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
-	    << "\t-o,--output <eg. openocd.cfg>\t\tGenerate openocd config file\n"
+	    << "\t-o,--output <eg. ${machine}.h>\tGenerate machine header file\n"
 	    << endl;
 }
 
 static void write_config_file(const fdt &dtb, fstream &os)
 {
+  int cpus;
   os << "#ifndef ASSEMBLY\n";
 
   auto emit_comment = [&](const node &n) {
@@ -42,8 +43,21 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << "#define " << handle << " (&__mee_dt_" << n.handle() << field << ")\n";
   };
 
+  auto emit_def_index_handle = [&](std::string handle, std::string name, std::string field) {
+    os << "#define " << handle << "(idx)" << " (__mee_dt_" << name << "[idx]" << field << ")\n\n";
+  };
+
+  auto emit_def_key_handle = [&](std::string handle, std::string key, std::string name, std::string field) {
+    os << "#define " << handle << "(" << key << ")" << " (&__mee_dt_" << name << "_#" << key << field << ")\n\n";
+  };
+
   auto emit_def = [&](std::string handle, std::string field) {
-    os << "#define " << handle << " " << field << "\n";
+    os << "#define " << handle << " " << field << "\n\n";
+  };
+
+  auto emit_def_instance = [&](std::string handle, const node &n, std::string field) {
+    os << "#define " << handle << "_" << n.handle()
+       << " " << ((field != "") ? field : n.instance()) << "\n\n";
   };
 
   std::set<std::string> included;
@@ -66,7 +80,6 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << "asm (\".weak __mee_dt_" << n.handle() << "\");\n";
     os << "struct __mee_driver_" << type << " __mee_dt_" << n.handle() << ";\n\n";
   };
-
 
   auto emit_struct_begin = [&](std::string type, const node &n) {
     emit_comment(n);
@@ -102,9 +115,20 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << "};\n\n";
   };
 
+  auto emit_struct_array_def_begin = [&](std::string type, std::string name, std::string size) {
+    os << "/* Custom array definition */\n";
+    os << "asm (\".weak __mee_dt_" << name << "\");\n";
+    os << "struct __mee_driver_" << type << " __mee_dt_" << name << "[ ] = {\n";
+  };
+
+  auto emit_struct_array_elem_node = [&](const node& n) {
+    os << "                    &__mee_dt_" << n.handle() << ",\n";
+  };
+
   /* First, find the required headers that must be included in order to make
    * this a sane MEE instance. */
   dtb.match(
+    std::regex("cpu"),                      [&](node n) { emit_include("riscv,cpu");                },
     std::regex("fixed-clock"),              [&](node n) { emit_include("fixed-clock");              },
     std::regex("sifive,fe310-g000,pll"),    [&](node n) { emit_include("sifive,fe310-g000,pll");    },
     std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_include("sifive,fe310-g000,prci");   },
@@ -117,6 +141,7 @@ static void write_config_file(const fdt &dtb, fstream &os)
 
   /* Now emit the various nodes's header definitons. */
   dtb.match(
+    std::regex("cpu"),                      [&](node n) { emit_struct_decl("cpu",                      n); },
     std::regex("fixed-clock"),              [&](node n) { emit_struct_decl("fixed_clock",              n); },
     std::regex("sifive,fe310-g000,pll"),    [&](node n) { emit_struct_decl("sifive_fe310_g000_pll",    n); },
     std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_struct_decl("sifive_fe310_g000_prci",   n); },
@@ -129,8 +154,18 @@ static void write_config_file(const fdt &dtb, fstream &os)
 
   /* Walk through the device tree, emitting various nodes as we know about
    * them. */
+  cpus = 0;
   dtb.match(
-    std::regex("fixed-clock"), [&](node n) {
+    std::regex("cpu"), [&](node n) {
+      emit_struct_begin("cpu", n);
+      emit_struct_field("timer_vtable", "&__mee_driver_vtable_cpu");
+      emit_struct_field("timer.vtable", "&__mee_driver_vtable_cpu.timer_vtable");
+      emit_struct_field_u32("timebase", n.get_field<uint32_t>("timebase-frequency"));
+      emit_struct_end();
+      emit_def_instance("__MEE_DT_TIMEBASE_FREQUENCY", n, std::to_string(n.get_field<uint32_t>("timebase-frequency")));
+      emit_def_instance("__MEE_DT_HART", n, "");
+      cpus++;
+    }, std::regex("fixed-clock"), [&](node n) {
       emit_struct_begin("fixed_clock", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_fixed_clock");
       emit_struct_field("clock.vtable", "&__mee_driver_vtable_fixed_clock.clock");
@@ -256,6 +291,16 @@ static void write_config_file(const fdt &dtb, fstream &os)
       emit_def("__MEE_DT_STDOUT_UART_BAUD", baud);
     }
   );
+
+  /* Create a list of cpus timers. */
+  emit_def("__MEE_DT_MAX_HARTS", std::to_string(cpus));
+  emit_def_key_handle("__MEE_DT_TIMER_HANDLE", "key", "cpu", ".timer");
+  emit_struct_array_def_begin("cpu *", "cpus", "__MEE_DT_MAX_HARTS");
+  dtb.match(
+    std::regex("cpu"), [&](node n) { emit_struct_array_elem_node(n); }
+  );
+  emit_struct_end();
+  emit_def_index_handle("__MEE_DT_CPU_HANDLE", "cpus", "");
 
   os << "#endif/*ASSEMBLY*/\n";
 }
