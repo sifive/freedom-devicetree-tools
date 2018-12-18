@@ -61,14 +61,44 @@ void apply(func_t f, std::tuple<a_t> t) {
     return f(std::get<0>(t));
 }
 
+template<typename func_t, typename a_t>
+void apply_index(func_t f, std::tuple<a_t> t, int idx) {
+    return f(idx, std::get<0>(t));
+}
+
+template<typename func_t, typename a_t>
+void apply_size(func_t f, std::tuple<a_t> t, int a_s) {
+    return f(a_s, std::get<0>(t));
+}
+
 template<typename func_t, typename a_t, typename b_t>
 void apply(func_t f, std::tuple<a_t, b_t> t) {
     return f(std::get<0>(t), std::get<1>(t));
 }
 
+template<typename func_t, typename a_t, typename b_t>
+void apply_index(func_t f, std::tuple<a_t, b_t> t, int idx) {
+    return f(idx, std::get<0>(t), std::get<1>(t));
+}
+
+template<typename func_t, typename a_t, typename b_t>
+void apply_size(func_t f, std::tuple<a_t, b_t> t, int a_s) {
+    return f(a_s, std::get<0>(t), std::get<1>(t));
+}
+
 template<typename func_t, typename a_t, typename b_t, typename c_t>
 void apply(func_t f, std::tuple<a_t, b_t, c_t> t) {
     return f(std::get<0>(t), std::get<1>(t), std::get<2>(t));
+}
+
+template<typename func_t, typename a_t, typename b_t, typename c_t>
+void apply_index(func_t f, std::tuple<a_t, b_t, c_t> t, int idx) {
+    return f(idx, std::get<0>(t), std::get<1>(t), std::get<2>(t));
+}
+
+template<typename func_t, typename a_t, typename b_t, typename c_t>
+void apply_size(func_t f, std::tuple<a_t, b_t, c_t> t, int a_s) {
+    return f(a_s, std::get<0>(t), std::get<1>(t), std::get<2>(t));
 }
 
 template <typename... element_types>
@@ -101,6 +131,10 @@ public:
     std::string name(void) const;
 
     std::string handle(void) const;
+
+    std::string handle_cap(void) const;
+
+    std::string instance(void) const;
 
     node parent(void) const;
 
@@ -200,6 +234,45 @@ public:
         return out;
     }
 
+    template<typename t> int get_fields_count(std::string name) const {
+        int len;
+        auto buf = (const uint8_t *)fdt_getprop(_dts_blob, _offset, name.c_str(), &len);
+
+        if (buf == nullptr)
+            return 0;
+
+        int i = 0;
+        int count = 0;
+        auto out = std::vector<t>();
+        while (i < len) {
+            int consumed = -1;
+            obtain_one(out, buf, len, i, &consumed);
+            if (consumed == -1)
+                break;
+            i += consumed;
+            count++;
+        }
+        return count;
+    }
+
+    template<typename value_t, typename function_t>
+    int named(std::string name, value_t value, function_t function) const
+    {
+        auto vals = get_fields<typename value_t::tuple>(name);
+
+        apply(function, vals[0]);
+
+        return 1;
+    }
+
+    template<typename value_t, typename function_t, typename... args_v>
+    int named(std::string name,
+              value_t value, function_t function, args_v... args) const
+    {
+        return named(name, std::forward<args_v>(args)...)
+               + named(name, value, function);
+    }
+
     template<typename value_t, typename function_t>
     int named_tuples(std::string key_name, std::string value_name,
                      std::string key, value_t value, function_t function) const
@@ -240,6 +313,38 @@ public:
 	}
         std::cerr << "requested field \"" << key << "\" in node \"" << name()
 		  << "\", found " << out.size() << " fields\n";
+        abort();
+    }
+
+    template<typename zero_function_t, typename one_function_t, typename... args_v>
+    void maybe_tuple_index(std::string key, tuple_t<args_v...> value, zero_function_t zero_func, one_function_t one_func) const {
+        auto out = get_fields<std::tuple<args_v...>>(key);
+        int s = out.size(); ;
+        for (int i = 0; s >= 0; s--, i++) {
+            if (s == 0)
+                return apply(zero_func);
+            if (s == 1)
+                return apply_index(one_func, out[i], i);
+            apply_index(one_func, out[i], i);
+        }
+        std::cerr << "requested field \"" << key << "\" in node \"" << name()
+                  << "\", found " << out.size() << " fields\n";
+        abort();
+    }
+
+    template<typename zero_function_t, typename one_function_t, typename... args_v>
+    void maybe_tuple_size(std::string key, tuple_t<args_v...> value, zero_function_t zero_func, one_function_t one_func) const {
+        auto out = get_fields<std::tuple<args_v...>>(key);
+        int s = out.size(); ;
+        for (int i = 0; s >= 0; s--, i++) {
+            if (s == 0)
+                return apply(zero_func);
+            if (s == 1)
+                return apply_size(one_func, out[i], out.size());
+            apply_size(one_func, out[i], s);
+        }
+        std::cerr << "requested field \"" << key << "\" in node \"" << name()
+                  << "\", found " << out.size() << " fields\n";
         abort();
     }
 };

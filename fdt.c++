@@ -135,7 +135,10 @@ std::string node::name(void) const
     auto node_name = fdt_get_name(_dts_blob, _offset, NULL);
     if (node_name == nullptr)
         return std::string();
-    return node_name;
+    std::string n(node_name);
+    std::transform(n.begin(), n.end(), n.begin(),
+                   [](unsigned char c) { return (c == '-') ? '_' : c; });
+    return n;
 }
 
 std::string node::handle(void) const
@@ -144,6 +147,21 @@ std::string node::handle(void) const
     std::transform(n.begin(), n.end(), n.begin(),
                    [](unsigned char c) { return (c == '@') ? '_' : c; });
     return n;
+}
+
+std::string node::handle_cap(void) const
+{
+    auto n = name();
+    std::transform(n.begin(), n.end(), n.begin(),
+                   [](unsigned char c) { return (c == '@') ? '_' : toupper(c); });
+    return n;
+}
+
+std::string node::instance(void) const
+{
+    auto n = name();
+    std::size_t p = n.find('@');
+    return (p != std::string::npos) ? n.substr(p+1) : "";
 }
 
 bool node::field_exists(std::string name) const

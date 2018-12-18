@@ -20,13 +20,32 @@ static void show_usage(string name)
 	    << "Options:\n"
 	    << "\t-h,--help\t\t\tShow this help message\n"
 	    << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
-	    << "\t-o,--output <eg. openocd.cfg>\t\tGenerate openocd config file\n"
+	    << "\t-o,--output <eg. ${machine}.h>\tGenerate machine header file\n"
 	    << endl;
 }
 
-static void write_config_file(const fdt &dtb, fstream &os)
+void search_replace_all(std::string& str, const std::string& from, const std::string& to) {
+    if (from.empty() || (from.compare(to) == 0))
+        return;
+    size_t pos = 0;
+    while((pos = str.find(from, pos)) != std::string::npos) {
+        str.replace(pos, from.length(), to);
+        pos += to.length();
+    }
+}
+
+static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 {
-  os << "#ifndef ASSEMBLY\n";
+  int cpus;
+  std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
+                   [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
+  std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
+                   [](unsigned char c) { return (c == '.') ? '_' : c; });
+
+  search_replace_all(cfg_file, "/", "__");
+  os << "#ifndef ASSEMBLY\n\n";
+  os << "#ifndef " << cfg_file << "\n";
+  os << "#define " << cfg_file << "\n\n";
 
   auto emit_comment = [&](const node &n) {
     os << "/* From " << n.name() << " */\n";
@@ -39,11 +58,22 @@ static void write_config_file(const fdt &dtb, fstream &os)
 
   auto emit_def_handle = [&](std::string handle, const node &n, std::string field) {
     emit_comment(n);
-    os << "#define " << handle << " (&__mee_dt_" << n.handle() << field << ")\n";
+    os << "#define " << handle << " (&__mee_dt_" << n.handle() << field << ")\n\n";
+    os << "#define " << "__MEE_DT_" << n.handle_cap() << "_HANDLE (&__mee_dt_"
+       << n.handle() << field << ")\n\n";
   };
 
   auto emit_def = [&](std::string handle, std::string field) {
-    os << "#define " << handle << " " << field << "\n";
+    os << "#define " << handle << " " << field << "\n\n";
+  };
+
+  auto emit_def_value = [&](std::string name, const node &n, std::string field) {
+    os << "#define __MEE_" << n.handle_cap() << "_INTERRUPTS \t\t";
+    if (name.compare("interrupts") == 0)
+      os << n.get_fields_count<uint32_t>(name) << "\n";
+    else
+      os << n.get_fields_count<std::tuple<node, uint32_t>>(name) << "\n";
+    os << "#define MEE_MAX_" << field << "\t __MEE_" << n.handle_cap() << "_INTERRUPTS\n\n";
   };
 
   std::set<std::string> included;
@@ -52,6 +82,15 @@ static void write_config_file(const fdt &dtb, fstream &os)
       return;
     os << "#include <mee/drivers/" << d << ".h>\n";
     included.insert(d);
+  };
+
+  auto emit_struct_pointer_begin = [&](std::string type, std::string name) {
+    os << "asm (\".weak " << name << "\");\n";
+    os << "struct __mee_driver_" << type << " *" << name << " = {\n";
+  };
+  auto emit_struct_pointer_element = [&](std::string type, uint32_t id,
+					 std::string field, std::string delimiter) {
+    os << "\t\t\t\t\t&__mee_dt_" << type << "_" << id << field << delimiter;
   };
 
   /* Emits the header for a structure.  This is particularly tricky: here we're
@@ -66,7 +105,6 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << "asm (\".weak __mee_dt_" << n.handle() << "\");\n";
     os << "struct __mee_driver_" << type << " __mee_dt_" << n.handle() << ";\n\n";
   };
-
 
   auto emit_struct_begin = [&](std::string type, const node &n) {
     emit_comment(n);
@@ -93,6 +131,24 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << "    ." << field << " = " << std::to_string(value) << "UL,\n";
   };
 
+  auto emit_struct_container_node_and_array = [&](int size, std::string field1,
+						  const node& c, std::string subfield1,
+						  std::string field2, uint32_t elem) {
+    static int cna = 0;
+    if (cna == 0) {
+        os << "    ." << field1 << " = &" << "__mee_dt_" << c.handle() << subfield1 << ",\n";
+    }
+    os << "    ." << field2 << "[" << cna << "] = " << elem << ",\n";
+    cna++;
+    if (cna == size) {
+	cna = 0;
+    }
+  };
+
+  auto emit_struct_field_array_elem = [&](int idx, std::string field, uint32_t elem) {
+    os << "    ." << field << "[" << idx << "] = " << elem << ",\n";
+  };
+
   auto emit_struct_field_node = [&](std::string field, const node& n, std::string subfield) {
     emit_comment(n);
     os << "    ." << field << " = &" << "__mee_dt_" << n.handle() << subfield << ",\n";
@@ -102,9 +158,35 @@ static void write_config_file(const fdt &dtb, fstream &os)
     os << "};\n\n";
   };
 
+  auto emit_struct_array_def_begin = [&](std::string type, std::string name, std::string size) {
+    os << "/* Custom array definition */\n";
+    os << "asm (\".weak __mee_dt_" << name << "\");\n";
+    os << "struct __mee_driver_" << type << " __mee_dt_" << name << "[ ] = {\n";
+  };
+
+  auto emit_struct_array_elem_node = [&](const node& n) {
+    os << "                    &__mee_dt_" << n.handle() << ",\n";
+  };
+
+  /* Let defines some constants, lie number of interrupt lines required in headers. */
+  dtb.match(
+    std::regex("riscv,clint0"),             [&](node n) { emit_def_value("interrupts-extended", n, "CLINT_INTERRUPTS"); },
+    std::regex("riscv,plic0"),              [&](node n) { emit_def_value("interrupts-extended", n, "PLIC_INTERRUPTS"); },
+    std::regex("sifive,local-external-interrupts0"),
+                                            [&](node n) { emit_def_value("interrupts", n, "LOCAL_EXT_INTERRUPTS"); },
+    std::regex("sifive,global-external-interrupts0"),
+                                            [&](node n) { emit_def_value("interrupts", n, "GLOBAL_EXT_INTERRUPTS"); },
+    std::regex("sifive,pwm"),               [&](node n) { emit_def_value("interrupts", n, "PWM_INTERRUPTS"); },
+    std::regex("sifive,gpio0"),             [&](node n) { emit_def_value("interrupts", n, "GPIO_INTERRUPTS"); },
+    std::regex("sifive,uart0"),             [&](node n) { emit_def_value("interrupts", n, "UART_INTERRUPTS"); }
+  );
+
   /* First, find the required headers that must be included in order to make
    * this a sane MEE instance. */
   dtb.match(
+    std::regex("cpu"),                      [&](node n) { emit_include("riscv,cpu");                },
+    std::regex("riscv,clint0"),             [&](node n) { emit_include("riscv,clint0");             },
+    std::regex("riscv,plic0"),              [&](node n) { emit_include("riscv,plic0");              },
     std::regex("fixed-clock"),              [&](node n) { emit_include("fixed-clock");              },
     std::regex("sifive,fe310-g000,pll"),    [&](node n) { emit_include("sifive,fe310-g000,pll");    },
     std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_include("sifive,fe310-g000,prci");   },
@@ -112,12 +194,22 @@ static void write_config_file(const fdt &dtb, fstream &os)
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_include("sifive,fe310-g000,hfrosc"); },
     std::regex("sifive,gpio0"),             [&](node n) { emit_include("sifive,gpio0");             },
     std::regex("sifive,uart0"),             [&](node n) { emit_include("sifive,uart0");             },
+    std::regex("sifive,local-external-interrupts0"), [&](node n) { emit_include("sifive,local-external-interrupts0"); },
+    std::regex("sifive,global-external-interrupts0"), [&](node n) { emit_include("sifive,global-external-interrupts0"); },
     std::regex("sifive,test0"),             [&](node n) { emit_include("sifive,test0");             }
   );
 
   /* Now emit the various nodes's header definitons. */
   dtb.match(
+    std::regex("cpu"),                      [&](node n) { emit_struct_decl("cpu",                      n); },
+    std::regex("riscv,clint0"),             [&](node n) { emit_struct_decl("riscv_clint0",             n); },
+    std::regex("riscv,plic0"),              [&](node n) { emit_struct_decl("riscv_plic0",              n); },
+    std::regex("riscv,cpu-intc"),           [&](node n) { emit_struct_decl("riscv_cpu_intc",           n); },
     std::regex("fixed-clock"),              [&](node n) { emit_struct_decl("fixed_clock",              n); },
+    std::regex("sifive,local-external-interrupts0"),
+                                            [&](node n) { emit_struct_decl("sifive_local_external_interrupts0", n); },
+    std::regex("sifive,global-external-interrupts0"),
+					    [&](node n) { emit_struct_decl("sifive_global_external_interrupts0", n); },
     std::regex("sifive,fe310-g000,pll"),    [&](node n) { emit_struct_decl("sifive_fe310_g000_pll",    n); },
     std::regex("sifive,fe310-g000,prci"),   [&](node n) { emit_struct_decl("sifive_fe310_g000_prci",   n); },
     std::regex("sifive,fe310-g000,hfxosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfxosc", n); },
@@ -129,13 +221,114 @@ static void write_config_file(const fdt &dtb, fstream &os)
 
   /* Walk through the device tree, emitting various nodes as we know about
    * them. */
+  cpus = 0;
   dtb.match(
-    std::regex("fixed-clock"), [&](node n) {
+    std::regex("cpu"), [&](node n) {
+      emit_struct_begin("cpu", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_cpu");
+      emit_struct_field("cpu.vtable", "&__mee_driver_vtable_cpu.cpu_vtable");
+      emit_struct_field_u32("timebase", n.get_field<uint32_t>("timebase-frequency"));
+      emit_struct_field("interrupt_controller", "&__mee_dt_interrupt_controller.controller");
+      emit_struct_end();
+      emit_def_handle("__MEE_DT_RISCV_CPU_HANDLE", n, ".cpu");
+      cpus++;
+    }, std::regex("fixed-clock"), [&](node n) {
       emit_struct_begin("fixed_clock", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_fixed_clock");
       emit_struct_field("clock.vtable", "&__mee_driver_vtable_fixed_clock.clock");
       emit_struct_field_u32("rate", n.get_field<uint32_t>("clock-frequency"));
       emit_struct_end();
+    }, std::regex("riscv,cpu-intc"), [&](node n) {
+      emit_struct_begin("riscv_cpu_intc", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_riscv_cpu_intc");
+      emit_struct_field("controller.vtable", "&__mee_driver_vtable_riscv_cpu_intc.controller_vtable");
+      emit_struct_field("init_done", "0");
+      if (n.field_exists("interrupt-controller")) {
+          emit_struct_field("interrupt_controller", "1");
+      }
+      emit_struct_end();
+      emit_def_handle("__MEE_DT_RISCV_CPU_INTC_HANDLE", n, ".controller");
+    }, std::regex("riscv,clint0"), [&](node n) {
+      emit_struct_begin("riscv_clint0", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_riscv_clint0");
+      emit_struct_field("clint.vtable", "&__mee_driver_vtable_riscv_clint0.clint_vtable");
+      n.named_tuples(
+        "reg-names", "reg",
+        "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+          emit_struct_field_ta("control_base", base);
+          emit_struct_field_ts("control_size", size);
+        });
+      emit_struct_field("next_time_irq", "0");
+      emit_struct_field("init_done", "0");
+      n.maybe_tuple_size(
+        "interrupts-extended", tuple_t<node, uint32_t>(),
+        [&](){
+	    emit_struct_field_null("interrupt_parent");
+	    emit_struct_field("interrupt_lines[0]", "0");
+	},
+        [&](int s, node c, uint32_t line) {
+            emit_struct_container_node_and_array(s, "interrupt_parent", c, ".controller",
+						 "interrupt_lines", line);
+        });
+      emit_struct_end();
+      emit_def_handle("__MEE_DT_RISCV_CLINT0_HANDLE", n, ".clint");
+    }, std::regex("sifive,local-external-interrupts0"), [&](node n) {
+      emit_struct_begin("sifive_local_external_interrupts0", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0");
+      emit_struct_field("local0.vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0.local0_vtable");
+      n.maybe_tuple(
+        "interrupt-parent", tuple_t<node>(),
+        [&](){ emit_struct_field_null("interrupt_parent"); },
+        [&](node n) { emit_struct_field_node("interrupt_parent", n, ".controller"); });
+      n.maybe_tuple_index(
+        "interrupts", tuple_t<uint32_t>(),
+        [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
+        [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
+      emit_struct_end();
+      emit_def_handle("__MEE_DT_SIFIVE_LOCAL_EXINTR0_HANDLE", n, ".local0");
+    }, std::regex("riscv,plic0"), [&](node n) {
+      emit_struct_begin("riscv_plic0", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_riscv_plic0");
+      emit_struct_field("plic0.vtable", "&__mee_driver_vtable_riscv_plic0.controller_vtable");
+      emit_struct_field("init_done", "0");
+      n.maybe_tuple(
+        "interrupts-extended", tuple_t<node, uint32_t>(),
+        [&](){
+            emit_struct_field_null("interrupt_parent");
+            emit_struct_field("interrupt_line", "");
+        },
+        [&](node n, uint32_t line) {
+            emit_struct_field_node("interrupt_parent", n, ".controller");
+            emit_struct_field_u32("interrupt_line", line);
+        });
+      n.named_tuples(
+        "reg-names", "reg",
+        "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+          emit_struct_field_ta("control_base", base);
+          emit_struct_field_ts("control_size", size);
+        });
+      emit_struct_field_u32("max_priority", n.get_field<uint32_t>("riscv,max-priority"));
+      emit_struct_field_u32("num_interrupts", n.get_field<uint32_t>("riscv,ndev"));
+      if (n.field_exists("interrupt-controller")) { 
+          emit_struct_field("interrupt_controller", "1");
+      }
+      emit_struct_end();
+      emit_def("__MEE_DT_RISCV_PLIC0_NUM_INTRS", std::to_string(n.get_field<uint32_t>("riscv,ndev")));
+      emit_def_handle("__MEE_DT_RISCV_PLIC0_HANDLE", n, ".plic0");
+    }, std::regex("sifive,global-external-interrupts0"), [&](node n) {
+      emit_struct_begin("sifive_global_external_interrupts0", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0");
+      emit_struct_field("global0.vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
+      n.maybe_tuple(
+        "interrupt-parent", tuple_t<node>(),
+        [&](){ emit_struct_field_null("interrupt_parent"); },
+        [&](node n) { emit_struct_field_node("interrupt_parent", n, ".plic0"); });
+      n.maybe_tuple_index(
+        "interrupts", tuple_t<uint32_t>(),
+        [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
+        [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
+      emit_struct_end();
+      emit_def_handle("__MEE_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, "");
     }, std::regex("sifive,fe310-g000,pll"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_pll", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_pll");
@@ -160,7 +353,7 @@ static void write_config_file(const fdt &dtb, fstream &os)
         });
       emit_struct_field_u32("init_rate", n.get_field<uint32_t>("clock-frequency"));
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_FE310_G000_PLL_HANDLE", n, "");
+      emit_def_handle("__MEE_DT_SIFIVE_FE310_G000_PLL_HANDLE", n, ".global0");
     }, std::regex("sifive,fe310-g000,prci"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_prci", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_prci");
@@ -204,6 +397,14 @@ static void write_config_file(const fdt &dtb, fstream &os)
           emit_struct_field_ta("base", base);
           emit_struct_field_ts("size", size);
         });
+      n.maybe_tuple(
+        "interrupt-parent", tuple_t<node>(),
+        [&](){ emit_struct_field_null("interrupt_parent"); },
+        [&](node n) { emit_struct_field_node("interrupt_parent", n, ".plic0"); });
+      n.maybe_tuple_index(
+        "interrupts", tuple_t<uint32_t>(),
+        [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
+        [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
       emit_struct_end();
     }, std::regex("sifive,uart0"), [&](node n) {
       emit_struct_begin("sifive_uart0", n);
@@ -227,6 +428,14 @@ static void write_config_file(const fdt &dtb, fstream &os)
             emit_struct_field_u32("pinmux_output_selector", dest);
             emit_struct_field_u32("pinmux_source_selector", source);
         });
+      n.maybe_tuple(
+        "interrupt-parent", tuple_t<node>(),
+        [&](){ emit_struct_field_null("interrupt_parent"); },
+        [&](node n) { emit_struct_field_node("interrupt_parent", n, ".plic0"); });
+      n.maybe_tuple(
+        "interrupts", tuple_t<uint32_t>(),
+        [&](){ },
+        [&](uint32_t line){ emit_struct_field_u32("interrupt_line", line); });
       emit_struct_end();
     }, std::regex("sifive,test0"), [&](node n) {
       emit_struct_begin("sifive_test0", n);
@@ -257,6 +466,15 @@ static void write_config_file(const fdt &dtb, fstream &os)
     }
   );
 
+  /* Create a list of cpus */
+  emit_def("__MEE_DT_MAX_HARTS", std::to_string(cpus));
+  emit_struct_pointer_begin("cpu", "__mee_cpu_table");
+  for (int i=0; i < cpus; i++) {
+    emit_struct_pointer_element("cpu", i, "",
+				((i + 1) == cpus) ? "};\n\n" : ", ");
+  }
+
+  os << "#endif /*MEE__MACHINE__" << cfg_file << "*/\n\n";
   os << "#endif/*ASSEMBLY*/\n";
 }
 
@@ -311,7 +529,7 @@ int main (int argc, char* argv[])
       return 1;
     }
 
-    write_config_file(f, cfg);
+    write_config_file(f, cfg, config_file);
   }
 
   return 0;
