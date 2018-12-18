@@ -46,7 +46,7 @@ static std::vector<memory> dts_memory_list;
 static inline bool has_memory (std::string mem)
 {
   for (auto entry : dts_memory_list) {
-    if (entry.mem_name.find("spi") != std::string::npos) {
+    if (entry.mem_name.find(mem) != std::string::npos) {
       std::cout << "found " << mem << std::endl;
       return true;
     }
