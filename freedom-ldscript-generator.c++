@@ -354,7 +354,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t\tPROVIDE( mee_segment_itim_source_start = . );" << std::endl;
     if (itim) {
       if (scratchpad) {
-        os << "\t} >itim AT>itim :itim" << std::endl;
+        os << "\t} >ram AT>ram :ram" << std::endl;
       } else {
         os << "\t} >flash AT>flash :flash" << std::endl;
       }
@@ -374,7 +374,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t\tPROVIDE( mee_segment_itim_target_start = . );" << std::endl;
     if (itim) {
       if (scratchpad) {
-        os << "\t} >itim AT>itim :itim_init" << std::endl;
+        os << "\t} >itim AT>ram :itim_init" << std::endl;
       } else {
         os << "\t} >itim AT>flash :itim_init" << std::endl;
       }
@@ -393,7 +393,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t\t*(.text.itim .text.itim.*)" << std::endl;
     if (itim) {
       if (scratchpad) {
-        os << "\t} >itim AT>itim :itim_init" << std::endl;
+        os << "\t} >itim AT>ram :itim_init" << std::endl;
       } else {
         os << "\t} >itim AT>flash :itim_init" << std::endl;
       }
