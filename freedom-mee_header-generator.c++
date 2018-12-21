@@ -202,6 +202,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_include("sifive,fe310-g000,hfrosc"); },
     std::regex("sifive,gpio0"),             [&](node n) { emit_include("sifive,gpio0");             },
     std::regex("sifive,uart0"),             [&](node n) { emit_include("sifive,uart0");             },
+    std::regex("riscv,pmp"),                [&](node n) { os << "#include <mee/pmp.h>\n";           },
     std::regex("sifive,local-external-interrupts0"), [&](node n) { emit_include("sifive,local-external-interrupts0"); },
     std::regex("sifive,global-external-interrupts0"), [&](node n) { emit_include("sifive,global-external-interrupts0"); },
     std::regex("sifive,gpio-leds"),         [&](node n) { emit_include("sifive,gpio-leds"); },
@@ -228,6 +229,9 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfrosc", n); },
     std::regex("sifive,gpio0"),             [&](node n) { emit_struct_decl("sifive_gpio0",             n); },
     std::regex("sifive,uart0"),             [&](node n) { emit_struct_decl("sifive_uart0",             n); },
+    std::regex("riscv,pmp"),                [&](node n) { os << "asm (\".weak __mee_dt_" << n.handle() << "\");\n";
+                                                          os << "struct mee_pmp __mee_dt_" << n.handle() << ";\n\n";
+                                                        },
     std::regex("sifive,gpio-leds"),         [&](node n) { emit_struct_decl("sifive_gpio_led",          n); },
     std::regex("sifive,gpio-buttons"),      [&](node n) { emit_struct_decl("sifive_gpio_button",       n); },
     std::regex("sifive,gpio-switches"),     [&](node n) { emit_struct_decl("sifive_gpio_switch",       n); },
@@ -550,6 +554,12 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       emit_struct_field("label", "\"" + n.get_field<string>("label") + "\"");
       emit_struct_end();
       switches++;
+    }, std::regex("riscv,pmp"), [&](node n) {
+      emit_comment(n);
+      os << "struct mee_pmp __mee_dt_" << n.handle() << " = {\n";
+      emit_struct_field_u32("num_regions", n.get_field<uint32_t>("regions"));
+      emit_struct_end();
+      os << "#define __MEE_DT_PMP_HANDLE" << " (&__mee_dt_" << n.handle() << ")\n\n";
     }, std::regex("sifive,test0"), [&](node n) {
       emit_struct_begin("sifive_test0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_test0");
