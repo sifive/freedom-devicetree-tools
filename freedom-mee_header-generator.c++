@@ -258,8 +258,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
           emit_struct_field_ta("control_base", base);
           emit_struct_field_ts("control_size", size);
         });
-      emit_struct_field("next_time_irq", "0");
       emit_struct_field("init_done", "0");
+      emit_struct_field("num_interrupts", "MEE_MAX_CLINT_INTERRUPTS");
       n.maybe_tuple_size(
         "interrupts-extended", tuple_t<node, uint32_t>(),
         [&](){
@@ -280,6 +280,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
         [&](node n) { emit_struct_field_node("interrupt_parent", n, ".controller"); });
+      emit_struct_field("num_interrupts", "MEE_MAX_LOCAL_EXT_INTERRUPTS");
       n.maybe_tuple_index(
         "interrupts", tuple_t<uint32_t>(),
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
@@ -313,7 +314,6 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
           emit_struct_field("interrupt_controller", "1");
       }
       emit_struct_end();
-      emit_def("__MEE_DT_RISCV_PLIC0_NUM_INTRS", std::to_string(n.get_field<uint32_t>("riscv,ndev")));
       emit_def_handle("__MEE_DT_RISCV_PLIC0_HANDLE", n, ".plic0");
     }, std::regex("sifive,global-external-interrupts0"), [&](node n) {
       emit_struct_begin("sifive_global_external_interrupts0", n);
@@ -323,12 +323,13 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
         [&](node n) { emit_struct_field_node("interrupt_parent", n, ".plic0"); });
+      emit_struct_field("num_interrupts", "MEE_MAX_GLOBAL_EXT_INTERRUPTS");
       n.maybe_tuple_index(
         "interrupts", tuple_t<uint32_t>(),
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
         [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, "");
+      emit_def_handle("__MEE_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, ".global0");
     }, std::regex("sifive,fe310-g000,pll"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_pll", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_pll");
@@ -353,7 +354,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         });
       emit_struct_field_u32("init_rate", n.get_field<uint32_t>("clock-frequency"));
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_FE310_G000_PLL_HANDLE", n, ".global0");
+      emit_def_handle("__MEE_DT_SIFIVE_FE310_G000_PLL_HANDLE", n, "");
     }, std::regex("sifive,fe310-g000,prci"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_prci", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_prci");
@@ -401,6 +402,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
         [&](node n) { emit_struct_field_node("interrupt_parent", n, ".plic0"); });
+      emit_struct_field("num_interrupts", "MEE_MAX_GPIO_INTERRUPTS");
       n.maybe_tuple_index(
         "interrupts", tuple_t<uint32_t>(),
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
@@ -432,6 +434,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
         [&](node n) { emit_struct_field_node("interrupt_parent", n, ".plic0"); });
+      emit_struct_field("num_interrupts", "MEE_MAX_UART_INTERRUPTS");
       n.maybe_tuple(
         "interrupts", tuple_t<uint32_t>(),
         [&](){ },
