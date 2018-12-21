@@ -181,6 +181,18 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,uart0"),             [&](node n) { emit_def_value("interrupts", n, "UART_INTERRUPTS"); }
   );
 
+  /* Detect if this is a 32-bit or 64-bit machine */
+  int bitness = 0;
+
+  auto cpu_node = dtb.node_by_path("/cpus/cpu@0");
+  std::string isa = cpu_node.get_field<std::string>("riscv,isa");
+
+  if(std::regex_match(isa, std::regex(".*rv32.*"))) {
+    bitness = 32;
+  } else if(std::regex_match(isa, std::regex(".*rv64.*"))) {
+    bitness = 64;
+  }
+
   /* First, find the required headers that must be included in order to make
    * this a sane MEE instance. */
   dtb.match(
@@ -197,6 +209,23 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,local-external-interrupts0"), [&](node n) { emit_include("sifive,local-external-interrupts0"); },
     std::regex("sifive,global-external-interrupts0"), [&](node n) { emit_include("sifive,global-external-interrupts0"); },
     std::regex("sifive,test0"),             [&](node n) { emit_include("sifive,test0");             }
+  );
+
+  /* Emit include and struct declaration for PMP based on bitness */
+  dtb.match(
+    std::regex("riscv,pmp"),
+      [&](node n) {
+        switch(bitness) {
+        case 32:
+          emit_include("riscv,rv32,pmp");
+          emit_struct_decl("riscv_rv32_pmp", n);
+          break;
+        case 64:
+          emit_include("riscv,rv64,pmp");
+          emit_struct_decl("riscv_rv64_pmp", n);
+          break;
+        }
+      }
   );
 
   /* Now emit the various nodes's header definitons. */
@@ -440,6 +469,25 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         [&](){ },
         [&](uint32_t line){ emit_struct_field_u32("interrupt_line", line); });
       emit_struct_end();
+    }, std::regex("riscv,pmp"), [&](node n) {
+      switch(bitness) {
+      case 32:
+        emit_struct_begin("riscv_rv32_pmp", n);
+        emit_struct_field("vtable", "&__mee_driver_vtable_riscv_rv32_pmp");
+        emit_struct_field("pmp.vtable", "&__mee_driver_vtable_riscv_rv32_pmp.pmp");
+        emit_struct_field_u32("num_regions", n.get_field<uint32_t>("regions"));
+        emit_struct_end();
+        emit_def_handle("__MEE_DT_PMP_HANDLE", n, ".pmp");
+        break;
+      case 64:
+        emit_struct_begin("riscv_rv64_pmp", n);
+        emit_struct_field("vtable", "&__mee_driver_vtable_riscv_rv64_pmp");
+        emit_struct_field("pmp.vtable", "&__mee_driver_vtable_riscv_rv64_pmp.pmp");
+        emit_struct_field_u32("num_regions", n.get_field<uint32_t>("regions"));
+        emit_struct_end();
+        emit_def_handle("__MEE_DT_PMP_HANDLE", n, ".pmp");
+        break;
+      }
     }, std::regex("sifive,test0"), [&](node n) {
       emit_struct_begin("sifive_test0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_test0");
