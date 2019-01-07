@@ -347,72 +347,6 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     }
 
     os << std::endl << std::endl;
-    /* Define litimalign section */
-    os << "\t.litimalign \t\t:" << std::endl;
-    os << "\t{" << std::endl;
-    os << "\t\t. = ALIGN(4);" << std::endl;
-    os << "\t\tPROVIDE( mee_segment_itim_source_start = . );" << std::endl;
-    if (itim) {
-      if (scratchpad) {
-        os << "\t} >ram AT>ram :ram" << std::endl;
-      } else {
-        os << "\t} >flash AT>flash :flash" << std::endl;
-      }
-    } else {
-      if (scratchpad) {
-        os << "\t} >ram AT>ram :ram" << std::endl;
-      } else {
-        os << "\t} >flash AT>flash :flash" << std::endl;
-      }
-    }
-
-    os << std::endl << std::endl;
-    /* Define ditimalign section */
-    os << "\t.ditimalign \t\t:" << std::endl;
-    os << "\t{" << std::endl;
-    os << "\t\t. = ALIGN(4);" << std::endl;
-    os << "\t\tPROVIDE( mee_segment_itim_target_start = . );" << std::endl;
-    if (itim) {
-      if (scratchpad) {
-        os << "\t} >itim AT>ram :itim_init" << std::endl;
-      } else {
-        os << "\t} >itim AT>flash :itim_init" << std::endl;
-      }
-    } else {
-      if (scratchpad) {
-        os << "\t} >ram AT>ram :ram_init" << std::endl;
-      } else {
-        os << "\t} >ram AT>flash :ram_init" << std::endl;
-      }
-    }
-
-    os << std::endl << std::endl;
-    /* Define itim section */
-    os << "\t.itim \t\t:" << std::endl;
-    os << "\t{" << std::endl;
-    os << "\t\t*(.text.itim .text.itim.*)" << std::endl;
-    if (itim) {
-      if (scratchpad) {
-        os << "\t} >itim AT>ram :itim_init" << std::endl;
-      } else {
-        os << "\t} >itim AT>flash :itim_init" << std::endl;
-      }
-    } else {
-      if (scratchpad) {
-        os << "\t} >ram AT>ram :ram_init" << std::endl;
-      } else {
-        os << "\t} >flash AT>flash :flash" << std::endl;
-      }
-    }
-
-
-    os << std::endl << std::endl;
-    /* Define end labels */
-    os << "\t. = ALIGN(8);" << std::endl;
-    os << "\tPROVIDE( mee_segment_itim_target_end = . );" << std::endl;
-
-
-    os << std::endl << std::endl;
     /* Define text section */
     os << "\t.text \t\t:" << std::endl;
     os << "\t{" << std::endl;
@@ -544,6 +478,71 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     } else {
       os << "\t} >flash AT>flash :flash" << std::endl;
     }
+
+    os << std::endl << std::endl;
+    /* Define litimalign section */
+    os << "\t.litimalign \t\t:" << std::endl;
+    os << "\t{" << std::endl;
+    os << "\t\t. = ALIGN(4);" << std::endl;
+    os << "\t\tPROVIDE( mee_segment_itim_source_start = . );" << std::endl;
+    if (itim) {
+      if (scratchpad) {
+        os << "\t} >ram AT>ram :ram" << std::endl;
+      } else {
+        os << "\t} >flash AT>flash :flash" << std::endl;
+      }
+    } else {
+      if (scratchpad) {
+        os << "\t} >ram AT>ram :ram" << std::endl;
+      } else {
+        os << "\t} >flash AT>flash :flash" << std::endl;
+      }
+    }
+
+    os << std::endl << std::endl;
+    /* Define ditimalign section */
+    os << "\t.ditimalign \t\t:" << std::endl;
+    os << "\t{" << std::endl;
+    os << "\t\t. = ALIGN(4);" << std::endl;
+    os << "\t\tPROVIDE( mee_segment_itim_target_start = . );" << std::endl;
+    if (itim) {
+      if (scratchpad) {
+        os << "\t} >itim AT>ram :itim_init" << std::endl;
+      } else {
+        os << "\t} >itim AT>flash :itim_init" << std::endl;
+      }
+    } else {
+      if (scratchpad) {
+        os << "\t} >ram AT>ram :ram_init" << std::endl;
+      } else {
+        os << "\t} >ram AT>flash :ram_init" << std::endl;
+      }
+    }
+
+    os << std::endl << std::endl;
+    /* Define itim section */
+    os << "\t.itim \t\t:" << std::endl;
+    os << "\t{" << std::endl;
+    os << "\t\t*(.itim .itim.*)" << std::endl;
+    if (itim) {
+      if (scratchpad) {
+        os << "\t} >itim AT>ram :itim_init" << std::endl;
+      } else {
+        os << "\t} >itim AT>flash :itim_init" << std::endl;
+      }
+    } else {
+      if (scratchpad) {
+        os << "\t} >ram AT>ram :ram_init" << std::endl;
+      } else {
+        os << "\t} >flash AT>flash :flash" << std::endl;
+      }
+    }
+
+    os << std::endl << std::endl;
+    /* Define end labels */
+    os << "\t. = ALIGN(8);" << std::endl;
+    os << "\tPROVIDE( mee_segment_itim_target_end = . );" << std::endl;
+
 
     os << std::endl << std::endl;
     /* Define lalign section */
