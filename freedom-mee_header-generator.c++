@@ -87,9 +87,9 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     included.insert(d);
   };
 
-  auto emit_struct_pointer_begin = [&](std::string type, std::string name) {
+  auto emit_struct_pointer_begin = [&](std::string type, std::string name, std::string ext) {
     os << "asm (\".weak " << name << "\");\n";
-    os << "struct __mee_driver_" << type << " *" << name << " = {\n";
+    os << "struct __mee_driver_" << type << " *" << name << ext << " = {\n";
   };
   auto emit_struct_pointer_element = [&](std::string type, uint32_t id,
 					 std::string field, std::string delimiter) {
@@ -544,13 +544,13 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 
   /* Create a list of cpus */
   emit_def("__MEE_DT_MAX_HARTS", std::to_string(cpus));
-  emit_struct_pointer_begin("cpu", "__mee_cpu_table[]");
+  emit_struct_pointer_begin("cpu", "__mee_cpu_table", "[]");
   for (int i=0; i < cpus; i++) {
     emit_struct_pointer_element("cpu", i, "",
 				((i + 1) == cpus) ? "};\n\n" : ",\n");
   }
   emit_def("__MEE_DT_MAX_LEDS", std::to_string(leds));
-  emit_struct_pointer_begin("sifive_gpio_led", "__mee_led_table[]");
+  emit_struct_pointer_begin("sifive_gpio_led", "__mee_led_table", "[]");
   if (leds) {
     for (int i=0; i < leds; i++) {
       emit_struct_pointer_element("led", i/3,
@@ -561,7 +561,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     emit_struct_pointer_end("NULL");
   }
   emit_def("__MEE_DT_MAX_BUTTONS", std::to_string(buttons));
-  emit_struct_pointer_begin("sifive_gpio_button", "__mee_button_table[]");
+  emit_struct_pointer_begin("sifive_gpio_button", "__mee_button_table", "[]");
   if (buttons) {
     for (int i=0; i < buttons; i++) {
       emit_struct_pointer_element("button", i, "",
@@ -571,7 +571,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     emit_struct_pointer_end("NULL");
   }
   emit_def("__MEE_DT_MAX_SWITCHES", std::to_string(switches));
-  emit_struct_pointer_begin("sifive_gpio_switch", "__mee_switch_table[]");
+  emit_struct_pointer_begin("sifive_gpio_switch", "__mee_switch_table", "[]");
   if (switches) {
     for (int i=0; i < switches; i++) {
       emit_struct_pointer_element("switch", i, "",
