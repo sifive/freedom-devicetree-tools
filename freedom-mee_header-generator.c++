@@ -37,6 +37,9 @@ void search_replace_all(std::string& str, const std::string& from, const std::st
 static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 {
   int cpus;
+  int leds;
+  int buttons;
+  int switches;
   std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
                    [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
   std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
@@ -84,13 +87,16 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     included.insert(d);
   };
 
-  auto emit_struct_pointer_begin = [&](std::string type, std::string name) {
+  auto emit_struct_pointer_begin = [&](std::string type, std::string name, std::string ext) {
     os << "asm (\".weak " << name << "\");\n";
-    os << "struct __mee_driver_" << type << " *" << name << " = {\n";
+    os << "struct __mee_driver_" << type << " *" << name << ext << " = {\n";
   };
   auto emit_struct_pointer_element = [&](std::string type, uint32_t id,
 					 std::string field, std::string delimiter) {
     os << "\t\t\t\t\t&__mee_dt_" << type << "_" << id << field << delimiter;
+  };
+  auto emit_struct_pointer_end = [&](std::string empty) {
+    os << "\t\t\t\t\t" << empty << " };\n";
   };
 
   /* Emits the header for a structure.  This is particularly tricky: here we're
@@ -196,6 +202,9 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,uart0"),             [&](node n) { emit_include("sifive,uart0");             },
     std::regex("sifive,local-external-interrupts0"), [&](node n) { emit_include("sifive,local-external-interrupts0"); },
     std::regex("sifive,global-external-interrupts0"), [&](node n) { emit_include("sifive,global-external-interrupts0"); },
+    std::regex("sifive,gpio-leds"),         [&](node n) { emit_include("sifive,gpio-leds"); },
+    std::regex("sifive,gpio-buttons"),      [&](node n) { emit_include("sifive,gpio-buttons"); },
+    std::regex("sifive,gpio-switches"),     [&](node n) { emit_include("sifive,gpio-switches"); },
     std::regex("sifive,test0"),             [&](node n) { emit_include("sifive,test0");             }
   );
 
@@ -216,12 +225,18 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfrosc", n); },
     std::regex("sifive,gpio0"),             [&](node n) { emit_struct_decl("sifive_gpio0",             n); },
     std::regex("sifive,uart0"),             [&](node n) { emit_struct_decl("sifive_uart0",             n); },
+    std::regex("sifive,gpio-leds"),         [&](node n) { emit_struct_decl("sifive_gpio_led",          n); },
+    std::regex("sifive,gpio-buttons"),      [&](node n) { emit_struct_decl("sifive_gpio_button",       n); },
+    std::regex("sifive,gpio-switches"),     [&](node n) { emit_struct_decl("sifive_gpio_switch",       n); },
     std::regex("sifive,test0"),             [&](node n) { emit_struct_decl("sifive_test0",             n); }
   );
 
   /* Walk through the device tree, emitting various nodes as we know about
    * them. */
   cpus = 0;
+  leds = 0;
+  buttons = 0;
+  switches = 0;
   dtb.match(
     std::regex("cpu"), [&](node n) {
       emit_struct_begin("cpu", n);
@@ -275,7 +290,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     }, std::regex("sifive,local-external-interrupts0"), [&](node n) {
       emit_struct_begin("sifive_local_external_interrupts0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0");
-      emit_struct_field("local0.vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0.local0_vtable");
+      emit_struct_field("irc.vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0.local0_vtable");
       n.maybe_tuple(
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
@@ -286,7 +301,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
         [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_LOCAL_EXINTR0_HANDLE", n, ".local0");
+      emit_def_handle("__MEE_DT_SIFIVE_LOCAL_EXINTR0_HANDLE", n, ".irc");
     }, std::regex("riscv,plic0"), [&](node n) {
       emit_struct_begin("riscv_plic0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_riscv_plic0");
@@ -318,7 +333,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     }, std::regex("sifive,global-external-interrupts0"), [&](node n) {
       emit_struct_begin("sifive_global_external_interrupts0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0");
-      emit_struct_field("global0.vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
+      emit_struct_field("irc.vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
       n.maybe_tuple(
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
@@ -329,7 +344,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
         [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, ".global0");
+      emit_def_handle("__MEE_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, ".irc");
     }, std::regex("sifive,fe310-g000,pll"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_pll", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_pll");
@@ -440,6 +455,64 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         [&](){ },
         [&](uint32_t line){ emit_struct_field_u32("interrupt_line", line); });
       emit_struct_end();
+    }, std::regex("sifive,gpio-leds"), [&](node n) {
+      emit_struct_begin("sifive_gpio_led", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_led");
+      n.maybe_tuple(
+        "gpios", tuple_t<node, uint32_t>(),
+        [&](){
+            emit_struct_field_null("gpio");
+            emit_struct_field("pin", "0");
+        },
+        [&](node n, uint32_t line) {
+            emit_struct_field_node("gpio", n, "");
+            emit_struct_field_u32("pin", line);
+        });
+      emit_struct_field("label", "\"" + n.get_field<string>("label") + "\"");
+      emit_struct_end();
+      leds++;
+    }, std::regex("sifive,gpio-buttons"), [&](node n) {
+      emit_struct_begin("sifive_gpio_button", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_button");
+      n.maybe_tuple(
+        "gpios", tuple_t<node, uint32_t>(),
+        [&](){
+            emit_struct_field_null("gpio");
+            emit_struct_field("pin", "0");
+        },
+        [&](node n, uint32_t line) {
+            emit_struct_field_node("gpio", n, "");
+            emit_struct_field_u32("pin", line);
+        });
+      n.maybe_tuple(
+        "interrupts-extended", tuple_t<node, uint32_t>(),
+        [&](){
+            emit_struct_field_null("interrupt_parent");
+            emit_struct_field("interrupt_line", "0");
+        },
+        [&](node n, uint32_t line) {
+            emit_struct_field_node("interrupt_parent", n, ".irc");
+            emit_struct_field_u32("interrupt_line", line);
+        });
+      emit_struct_field("label", "\"" + n.get_field<string>("label") + "\"");
+      emit_struct_end();
+      buttons++;
+    }, std::regex("sifive,gpio-switches"), [&](node n) {
+      emit_struct_begin("sifive_gpio_switch", n);
+      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_switch");
+      n.maybe_tuple(
+        "interrupts-extended", tuple_t<node, uint32_t>(),
+        [&](){
+            emit_struct_field_null("interrupt_parent");
+            emit_struct_field("interrupt_line", "0");
+        },
+        [&](node n, uint32_t line) {
+            emit_struct_field_node("interrupt_parent", n, ".irc");
+            emit_struct_field_u32("interrupt_line", line);
+        });
+      emit_struct_field("label", "\"" + n.get_field<string>("label") + "\"");
+      emit_struct_end();
+      switches++;
     }, std::regex("sifive,test0"), [&](node n) {
       emit_struct_begin("sifive_test0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_test0");
@@ -471,10 +544,41 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 
   /* Create a list of cpus */
   emit_def("__MEE_DT_MAX_HARTS", std::to_string(cpus));
-  emit_struct_pointer_begin("cpu", "__mee_cpu_table");
+  emit_struct_pointer_begin("cpu", "__mee_cpu_table", "[]");
   for (int i=0; i < cpus; i++) {
     emit_struct_pointer_element("cpu", i, "",
-				((i + 1) == cpus) ? "};\n\n" : ", ");
+				((i + 1) == cpus) ? "};\n\n" : ",\n");
+  }
+  emit_def("__MEE_DT_MAX_LEDS", std::to_string(leds));
+  emit_struct_pointer_begin("sifive_gpio_led", "__mee_led_table", "[]");
+  if (leds) {
+    for (int i=0; i < leds; i++) {
+      emit_struct_pointer_element("led", i/3,
+				((i % 3) == 0) ? "red" : ((i % 3) == 1) ? "green" : "blue",
+                                ((i + 1) == leds) ? "};\n\n" : ",\n");
+    }
+  } else {
+    emit_struct_pointer_end("NULL");
+  }
+  emit_def("__MEE_DT_MAX_BUTTONS", std::to_string(buttons));
+  emit_struct_pointer_begin("sifive_gpio_button", "__mee_button_table", "[]");
+  if (buttons) {
+    for (int i=0; i < buttons; i++) {
+      emit_struct_pointer_element("button", i, "",
+                                ((i + 1) == buttons) ? "};\n\n" : ",\n");
+    }
+  } else {
+    emit_struct_pointer_end("NULL");
+  }
+  emit_def("__MEE_DT_MAX_SWITCHES", std::to_string(switches));
+  emit_struct_pointer_begin("sifive_gpio_switch", "__mee_switch_table", "[]");
+  if (switches) {
+    for (int i=0; i < switches; i++) {
+      emit_struct_pointer_element("switch", i, "",
+                                ((i + 1) == switches) ? "};\n\n" : ",\n");
+    }
+  } else {
+    emit_struct_pointer_end("NULL");
   }
 
   os << "#endif /*MEE__MACHINE__" << cfg_file << "*/\n\n";
