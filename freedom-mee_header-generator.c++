@@ -290,7 +290,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     }, std::regex("sifive,local-external-interrupts0"), [&](node n) {
       emit_struct_begin("sifive_local_external_interrupts0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0");
-      emit_struct_field("local0.vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0.local0_vtable");
+      emit_struct_field("irc.vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0.local0_vtable");
       n.maybe_tuple(
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
@@ -301,7 +301,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
         [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_LOCAL_EXINTR0_HANDLE", n, ".local0");
+      emit_def_handle("__MEE_DT_SIFIVE_LOCAL_EXINTR0_HANDLE", n, ".irc");
     }, std::regex("riscv,plic0"), [&](node n) {
       emit_struct_begin("riscv_plic0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_riscv_plic0");
@@ -333,7 +333,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     }, std::regex("sifive,global-external-interrupts0"), [&](node n) {
       emit_struct_begin("sifive_global_external_interrupts0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0");
-      emit_struct_field("global0.vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
+      emit_struct_field("irc.vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
       n.maybe_tuple(
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
@@ -344,7 +344,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
         [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, ".global0");
+      emit_def_handle("__MEE_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, ".irc");
     }, std::regex("sifive,fe310-g000,pll"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_pll", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_pll");
@@ -491,7 +491,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
             emit_struct_field("interrupt_line", "0");
         },
         [&](node n, uint32_t line) {
-            emit_struct_field_node("interrupt_parent", n, ".local0");
+            emit_struct_field_node("interrupt_parent", n, ".irc");
             emit_struct_field_u32("interrupt_line", line);
         });
       emit_struct_field("label", "\"" + n.get_field<string>("label") + "\"");
@@ -507,7 +507,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
             emit_struct_field("interrupt_line", "0");
         },
         [&](node n, uint32_t line) {
-            emit_struct_field_node("interrupt_parent", n, ".global0");
+            emit_struct_field_node("interrupt_parent", n, ".irc");
             emit_struct_field_u32("interrupt_line", line);
         });
       emit_struct_field("label", "\"" + n.get_field<string>("label") + "\"");
