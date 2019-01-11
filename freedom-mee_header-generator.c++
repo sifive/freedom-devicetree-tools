@@ -291,6 +291,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       emit_struct_begin("sifive_local_external_interrupts0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0");
       emit_struct_field("irc.vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0.local0_vtable");
+      emit_struct_field("init_done", "0");
       n.maybe_tuple(
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
@@ -334,6 +335,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       emit_struct_begin("sifive_global_external_interrupts0", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0");
       emit_struct_field("irc.vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
+      emit_struct_field("init_done", "0");
       n.maybe_tuple(
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
@@ -458,6 +460,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     }, std::regex("sifive,gpio-leds"), [&](node n) {
       emit_struct_begin("sifive_gpio_led", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_led");
+      emit_struct_field("led.vtable", "&__mee_driver_vtable_sifive_led.led_vtable");
       n.maybe_tuple(
         "gpios", tuple_t<node, uint32_t>(),
         [&](){
@@ -474,6 +477,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     }, std::regex("sifive,gpio-buttons"), [&](node n) {
       emit_struct_begin("sifive_gpio_button", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_button");
+      emit_struct_field("button.vtable", "&__mee_driver_vtable_sifive_button.button_vtable");
       n.maybe_tuple(
         "gpios", tuple_t<node, uint32_t>(),
         [&](){
@@ -500,6 +504,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     }, std::regex("sifive,gpio-switches"), [&](node n) {
       emit_struct_begin("sifive_gpio_switch", n);
       emit_struct_field("vtable", "&__mee_driver_vtable_sifive_switch");
+      emit_struct_field("flip.vtable", "&__mee_driver_vtable_sifive_switch.switch_vtable");
       n.maybe_tuple(
         "interrupts-extended", tuple_t<node, uint32_t>(),
         [&](){
