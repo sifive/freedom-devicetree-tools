@@ -153,6 +153,7 @@ static void dts_memory (void)
      * design.  For example, multi-core designs will have multiple DTIMs. */
     int dtim_count = 0;
     int itim_count = 0;
+    int sram_count = 0;
     int testram_count = 0;
     int spi_count = 0;
     int memory_count = 0;
@@ -226,6 +227,16 @@ static void dts_memory (void)
                     sys_count++;
                 });
         },
+        std::regex("sifive,sram0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    if (sram_count == 0)
+                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,sram0", base, size));
+                    sram_count++;
+                });
+        },
         std::regex("sifive,spi0"), [&](node n) {
             auto name = n.name();
             n.named_tuples(
@@ -246,7 +257,10 @@ static void dts_memory (void)
         alias_memory("periph_ram", "ram");
     else if (sys_count > 0)
         alias_memory("sys_ram", "ram");
-    else {
+    else if (sram_count > 0) {
+        alias_memory("sys_ram", "ram");
+        alias_memory("spi", "flash");
+    } else {
         alias_memory("dtim", "ram");
         alias_memory("spi", "flash");
     }
