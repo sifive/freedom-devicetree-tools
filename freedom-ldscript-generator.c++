@@ -339,7 +339,7 @@ static void write_linker_phdrs (fstream &os, bool scratchpad)
 
 static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata, bool itim)
 {
-    std::string stack_cfg = scratchpad ? "0x400" : "0x800";
+    std::string stack_cfg = "0x800";
 
   //os << "#" << __FUNCTION__ << std::endl;
     os << "SECTIONS" << std::endl << "{" << std::endl;
