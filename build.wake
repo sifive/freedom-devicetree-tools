@@ -1,0 +1,134 @@
+def ./file = simplify "{here}/{file}"
+
+def configure_file     = ./ "configure"
+def configure_ac_file  = "{configure_file}.ac"
+def makefile_file      = ./ "Makefile"
+def makefile_in_file   = "{makefile_file}.in"
+def makefile_am_file   = "{makefile_file}.am"
+def git_version_script = ./ "scripts/git-version"
+def m4_dir             = ./ "m4"
+
+def doJob cmdline inputs =
+  def job =
+    makeJob cmdline inputs
+    | setJobDirectory here
+    | runJob
+  map first job.outputs
+
+def makeTool tool =
+  def autoreconfOutputs =
+    def cmdline = which "autoreconf", "-i", Nil
+    def inputs =  sources here '.*'
+    doJob cmdline inputs
+
+  # manual job because make modifies ".deps/*" outputs
+  def configureOutputs =
+    def cmdline = filter (configure_file ==~ _) autoreconfOutputs
+    def inputs = autoreconfOutputs ++ sources here '.*'
+    def foutputs _ = ./"config.status", ./"config.log", ./"Makefile", Nil
+
+    def job =
+      makeManualJob cmdline inputs foutputs
+      | setJobDirectory here
+      | runJob
+    map first job.outputs
+
+  def makeOutputs =
+    def cmdline = which "make", Nil
+    def inputs = configureOutputs ++ autoreconfOutputs ++ sources here '.*' ++ files (./".deps") '.*'
+    doJob cmdline inputs
+
+  makeOutputs | filter (./tool ==~ _) | head
+
+def freedom_ldscript_generator       _ = makeTool "freedom-ldscript-generator"
+def freedom_makeattributes_generator _ = makeTool "freedom-makeattributes-generator"
+def freedom_mee_header_generator     _ = makeTool "freedom-mee_header-generator"
+def freedom_mee_specs_generator      _ = makeTool "freedom-mee_specs-generator"
+def freedom_openocdcfg_generator     _ = makeTool "freedom-openocdcfg-generator"
+def freedom_zephyrdtsfixup_generator _ = makeTool "freedom-zephyrdtsfixup-generator"
+
+
+### Linker Script Generator ###
+global data FreedomLdScriptGeneratorShow =
+  FreedomLdScriptGeneratorShowMem
+  FreedomLdScriptGeneratorShowControl
+  FreedomLdScriptGeneratorShowBoth
+
+tuple FreedomLdScriptGeneratorOptions =
+  global DTBFile     String
+  global OutputFile  String
+  global Scratchpad  Boolean
+  global Show        Option FreedomLdScriptGeneratorShow
+
+global def makeFreedomLdScriptGeneratorOptions dtbFile outputFile =
+  FreedomLdScriptGeneratorOptions dtbFile outputFile False None
+
+global def freedomLdScriptGenerator options =
+  def tool = freedom_ldscript_generator 0
+  def dtbFile = options.getFreedomLdScriptGeneratorOptionsDTBFile
+  def cmdline =
+    def base =
+      tool,
+      "-d", dtbFile,
+      "-l", options.getFreedomLdScriptGeneratorOptionsOutputFile,
+      Nil
+
+    def scratchpad =
+      if options.getFreedomLdScriptGeneratorOptionsScratchpad
+      then "--scratchpad", Nil
+      else Nil
+
+    def show = match options.getFreedomLdScriptGeneratorOptionsShow
+      None = Nil
+      Some FreedomLdScriptGeneratorShowMem     = "-s", "mem", Nil
+      Some FreedomLdScriptGeneratorShowControl = "-s", "control", Nil
+      Some FreedomLdScriptGeneratorShowBoth    = "-s", "both", Nil
+
+    base ++ scratchpad ++ show
+
+  def inputs = tool, dtbFile, Nil
+  job cmdline inputs | output
+
+
+### Linker MEE header Generator ###
+tuple FreedomMEEHeaderGeneratorOptions =
+  global DTBFile    String
+  global OutputFile String
+
+global def makeFreedomMEEHeaderGeneratorOptions dtbFile outputFile =
+  FreedomMEEHeaderGeneratorOptions dtbFile outputFile
+
+global def freedomMEEHeaderGenerator options =
+  def tool = freedom_mee_header_generator 0
+  def dtbFile = options.getFreedomMEEHeaderGeneratorOptionsDTBFile
+  def cmdline =
+    tool,
+    "-d", dtbFile,
+    "-o", options.getFreedomMEEHeaderGeneratorOptionsOutputFile,
+    Nil
+  def inputs = tool, dtbFile, Nil
+  job cmdline inputs | output
+
+
+### Linker MEE specs Generator ###
+tuple FreedomMEESpecsGeneratorOptions =
+  global MachineName String
+  global DTBFile     String
+  global SpecsFile   String
+  global PrefixDir   String
+
+global def makeFreedomMEESpecsGeneratorOptions name dtbFile specsFile prefixDir =
+  FreedomMEESpecsGeneratorOptions name dtbFile specsFile prefixDir
+
+global def freedomMEESpecsGenerator options =
+  def tool = freedom_mee_specs_generator 0
+  def dtbFile = options.getFreedomMEESpecsGeneratorOptionsDTBFile
+  def cmdline =
+    tool,
+    "-m", options.getFreedomMEESpecsGeneratorOptionsMachineName,
+    "-d", dtbFile,
+    "-s", options.getFreedomMEESpecsGeneratorOptionsSpecsFile,
+    "-p", options.getFreedomMEESpecsGeneratorOptionsPrefixDir,
+    Nil
+  def inputs = tool, dtbFile, Nil
+  job cmdline inputs | output
