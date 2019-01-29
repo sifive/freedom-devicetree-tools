@@ -339,14 +339,17 @@ static void write_linker_phdrs (fstream &os, bool scratchpad)
 
 static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata, bool itim)
 {
-    std::string stack_cfg = "0x800";
+    std::string stack_cfg = "0x400";
+    std::string heap_cfg = "0x400";
 
-  //os << "#" << __FUNCTION__ << std::endl;
     os << "SECTIONS" << std::endl << "{" << std::endl;
 
     /* Define stack size */
     os << "\t__stack_size = DEFINED(__stack_size) ? __stack_size : "
 	      << stack_cfg << ";" << std::endl;
+    /* Define heap size */
+    os << "\t__heap_size = DEFINED(__heap_size) ? __heap_size : "
+	      << heap_cfg << ";" << std::endl;
 
     os << std::endl << std::endl;
     /* Define init section */
@@ -644,27 +647,41 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\tPROVIDE( _end = . );" << std::endl;
     os << "\tPROVIDE( end = . );" << std::endl;
     os << "\tPROVIDE( mee_segment_bss_target_end = . );" << std::endl;
-    os << "\tPROVIDE( mee_segment_heap_target_start = . );" << std::endl;
+    os << std::endl << std::endl;
+
+    /* Define stack section */
+    os << "\t.stack :" << std::endl;
+    os << "\t{" << std::endl;
+    os << "\t\tPROVIDE(mee_segment_stack_begin = .);" << std::endl;
+    os << "\t\t. = __stack_size;" << std::endl;
+    os << "\t\tPROVIDE( _sp = . );" << std::endl;
+    os << "\t\tPROVIDE(mee_segment_stack_end = .);" << std::endl;
+    os << "\t} >ram AT>ram :ram" << std::endl;
 
     os << std::endl << std::endl;
-    /* Define stack section */
-    if (scratchpad) {
-      os << "\t.stack :" << std::endl;
-      os << "\t{" << std::endl;
-      os << "\t\t. = ALIGN(8);" << std::endl;
-      os << "\t\t. += __stack_size;" << std::endl;
-      os << "\t\tPROVIDE( _sp = . );" << std::endl;
-      os << "\t\tPROVIDE( _heap_end = . );" << std::endl;
-      os << "\t\tPROVIDE(mee_segment_stack_end = .);" << std::endl;
-    } else {
-      os << "\t.stack ORIGIN(ram) + LENGTH(ram) - __stack_size :" << std::endl;
-      os << "\t{" << std::endl;
-      os << "\t\tPROVIDE( mee_segment_heap_target_end = . );" << std::endl;;
-      os << "\t\tPROVIDE( _heap_end = . );" << std::endl;;
-      os << "\t\t. = __stack_size;" << std::endl;
-      os << "\t\tPROVIDE( _sp = . );" << std::endl;
-      os << "\t\tPROVIDE(mee_segment_stack_end = .);" << std::endl;
+
+    /* Define heap section
+     *
+     * For scratchpad mode:
+     *   Customer implementations might not map all of the addressable RAM,
+     *   so we want to put the heap immediately after the rest of memory and
+     *   size it to exactly __heap_size.
+     * For non-scratchpad mode:
+     *   We expect all addresses in RAM to be mapped, so start the heap after
+     *   the rest of the memory contents and extend to the top of RAM.
+     */
+    os << "\t.heap :" << std::endl;
+    os << "\t{" << std::endl;
+    os << "\t\tPROVIDE( mee_segment_heap_target_start = . );" << std::endl;
+
+    os << "\t\t. = __heap_size;" << std::endl;
+    if (!scratchpad) {
+      /* If the __heap_size == 0, don't let the heap grow to fill the rest of RAM. */
+      os << "\t\t. = __heap_size == 0 ? 0 : ORIGIN(ram) + LENGTH(ram);" << std::endl;
     }
+
+    os << "\t\tPROVIDE( mee_segment_heap_target_end = . );" << std::endl;;
+    os << "\t\tPROVIDE( _heap_end = . );" << std::endl;
     os << "\t} >ram AT>ram :ram" << std::endl;
 
     os << std::endl << std::endl;
