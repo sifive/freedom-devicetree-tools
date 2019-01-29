@@ -341,7 +341,7 @@ public:
                 return apply(zero_func);
             if (s == 1)
                 return apply_size(one_func, out[i], out.size());
-            apply_size(one_func, out[i], s);
+            apply_size(one_func, out[i], out.size());
         }
         std::cerr << "requested field \"" << key << "\" in node \"" << name()
                   << "\", found " << out.size() << " fields\n";

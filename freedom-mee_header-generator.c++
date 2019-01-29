@@ -36,6 +36,7 @@ void search_replace_all(std::string& str, const std::string& from, const std::st
 
 static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 {
+  int uarts, uart_irqs;
   int cpus;
   int leds;
   int buttons;
@@ -71,12 +72,20 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   };
 
   auto emit_def_value = [&](std::string name, const node &n, std::string field) {
+    uint32_t irqs;
     os << "#define __MEE_" << n.handle_cap() << "_INTERRUPTS \t\t";
-    if (name.compare("interrupts") == 0)
-      os << n.get_fields_count<uint32_t>(name) << "\n";
-    else
-      os << n.get_fields_count<std::tuple<node, uint32_t>>(name) << "\n";
-    os << "#define MEE_MAX_" << field << "\t __MEE_" << n.handle_cap() << "_INTERRUPTS\n\n";
+    if (name.compare("interrupts") == 0) {
+      irqs = n.get_fields_count<uint32_t>(name);
+    } else {
+      irqs = n.get_fields_count<std::tuple<node, uint32_t>>(name);
+    }
+    os << irqs << "\n";
+    if (field.compare("UART_INTERRUPTS") == 0) {
+      uart_irqs += irqs;
+      uarts++;
+    } else {
+      os << "#define MEE_MAX_" << field << "\t __MEE_" << n.handle_cap() << "_INTERRUPTS\n\n";
+    }
   };
 
   std::set<std::string> included;
@@ -174,9 +183,25 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     os << "                    &__mee_dt_" << n.handle() << ",\n";
   };
 
+  /*
+   * Dont have a better way of using macros generated here in structure defintion.
+   * A chicken and egg issue, so for now, simply use compile flag to limit the scope
+   * for inclusion.
+  */
+  os << "#ifdef __MEE_MACHINE_MACROS\n";
+  /* Let defines some constants for array defintion in structure. */
+  dtb.match(
+    std::regex("sifive,clic0"),             [&](node n)
+	{ emit_def("__MEE_CLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("sifive,numints"))); }
+  );
+  os << "#endif\n\n";
+
+  os << "#ifndef __MEE_MACHINE_MACROS\n";
+  uarts = uart_irqs = 0;
   /* Let defines some constants, like number of interrupt lines required in headers. */
   dtb.match(
     std::regex("sifive,clic0"),             [&](node n) { emit_def_value("interrupts-extended", n, "CLIC_INTERRUPTS"); },
+    std::regex("sifive,clic0"),             [&](node n) { emit_def("__MEE_CLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("sifive,numints"))); },
     std::regex("riscv,clint0"),             [&](node n) { emit_def_value("interrupts-extended", n, "CLINT_INTERRUPTS"); },
     std::regex("riscv,plic0"),              [&](node n) { emit_def_value("interrupts-extended", n, "PLIC_INTERRUPTS"); },
     std::regex("sifive,local-external-interrupts0"),
@@ -187,6 +212,10 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,gpio0"),             [&](node n) { emit_def_value("interrupts", n, "GPIO_INTERRUPTS"); },
     std::regex("sifive,uart0"),             [&](node n) { emit_def_value("interrupts", n, "UART_INTERRUPTS"); }
   );
+
+  if (uarts) {
+    emit_def("MEE_MAX_UART_INTERRUPTS \t\t", std::to_string(uart_irqs));
+  }
 
   /* First, find the required headers that must be included in order to make
    * this a sane MEE instance. */
@@ -293,6 +322,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 						 "interrupt_lines", line);
         });
       emit_struct_field_u32("num_subinterrupts", n.get_field<uint32_t>("sifive,numints"));
+      emit_struct_field_u32("num_intbits", n.get_field<uint32_t>("sifive,numintbits"));
       emit_struct_field_u32("max_levels", n.get_field<uint32_t>("sifive,numlevels"));
       if (n.field_exists("interrupt-controller")) {
           emit_struct_field("interrupt_controller", "1");
@@ -628,6 +658,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     emit_struct_pointer_end("NULL");
   }
 
+  os << "#endif\n\n";
   os << "#endif /*MEE__MACHINE__" << cfg_file << "*/\n\n";
   os << "#endif/*ASSEMBLY*/\n";
 }
