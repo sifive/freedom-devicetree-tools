@@ -6,7 +6,7 @@ trap "rm -rf $tempdir" EXIT
 cd "$tempdir"
 
 dtc $SOURCE_DIR/tests/e34-eval.dts -o e34-eval.dtb -O dtb
-$WORK_DIR/freedom-mee_specs-generator -d e34-eval.dtb -s e34-eval-build.env --prefix $(pwd)/p
+$WORK_DIR/freedom-metal_specs-generator -d e34-eval.dtb -s e34-eval-build.env --prefix $(pwd)/p
 
 cat e34-eval-build.env
 

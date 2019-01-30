@@ -57,13 +57,13 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 
   auto emit_handle = [&](std::string d, const node &n, std::string v) {
     emit_comment(n);
-    os << "#define __MEE_DTB_HANDLE_" << d << "_" << n.handle() << " " << v << "\n";
+    os << "#define __METAL_DTB_HANDLE_" << d << "_" << n.handle() << " " << v << "\n";
   };
 
   auto emit_def_handle = [&](std::string handle, const node &n, std::string field) {
     emit_comment(n);
-    os << "#define " << handle << " (&__mee_dt_" << n.handle() << field << ")\n\n";
-    os << "#define " << "__MEE_DT_" << n.handle_cap() << "_HANDLE (&__mee_dt_"
+    os << "#define " << handle << " (&__metal_dt_" << n.handle() << field << ")\n\n";
+    os << "#define " << "__METAL_DT_" << n.handle_cap() << "_HANDLE (&__metal_dt_"
        << n.handle() << field << ")\n\n";
   };
 
@@ -73,7 +73,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 
   auto emit_def_value = [&](std::string name, const node &n, std::string field) {
     uint32_t irqs;
-    os << "#define __MEE_" << n.handle_cap() << "_INTERRUPTS \t\t";
+    os << "#define __METAL_" << n.handle_cap() << "_INTERRUPTS \t\t";
     if (name.compare("interrupts") == 0) {
       irqs = n.get_fields_count<uint32_t>(name);
     } else {
@@ -84,7 +84,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       uart_irqs += irqs;
       uarts++;
     } else {
-      os << "#define MEE_MAX_" << field << "\t __MEE_" << n.handle_cap() << "_INTERRUPTS\n\n";
+      os << "#define METAL_MAX_" << field << "\t __METAL_" << n.handle_cap() << "_INTERRUPTS\n\n";
     }
   };
 
@@ -92,17 +92,17 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   auto emit_include = [&](std::string d) {
     if (included.find(d) != included.end())
       return;
-    os << "#include <mee/drivers/" << d << ".h>\n";
+    os << "#include <metal/drivers/" << d << ".h>\n";
     included.insert(d);
   };
 
   auto emit_struct_pointer_begin = [&](std::string type, std::string name, std::string ext) {
     os << "asm (\".weak " << name << "\");\n";
-    os << "struct __mee_driver_" << type << " *" << name << ext << " = {\n";
+    os << "struct __metal_driver_" << type << " *" << name << ext << " = {\n";
   };
   auto emit_struct_pointer_element = [&](std::string type, uint32_t id,
 					 std::string field, std::string delimiter) {
-    os << "\t\t\t\t\t&__mee_dt_" << type << "_" << id << field << delimiter;
+    os << "\t\t\t\t\t&__metal_dt_" << type << "_" << id << field << delimiter;
   };
   auto emit_struct_pointer_end = [&](std::string empty) {
     os << "\t\t\t\t\t" << empty << " };\n";
@@ -114,16 +114,16 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
    * constants when that helps code generation, but still allows the linker to
    * merge together multiple copies of the structure so we don't use too much
    * memory.  This isn't technically kosher, but since we own the entire
-   * "__mee_" namespace */
+   * "__metal_" namespace */
   auto emit_struct_decl = [&](std::string type, const node &n) {
     emit_comment(n);
-    os << "asm (\".weak __mee_dt_" << n.handle() << "\");\n";
-    os << "struct __mee_driver_" << type << " __mee_dt_" << n.handle() << ";\n\n";
+    os << "asm (\".weak __metal_dt_" << n.handle() << "\");\n";
+    os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << ";\n\n";
   };
 
   auto emit_struct_begin = [&](std::string type, const node &n) {
     emit_comment(n);
-    os << "struct __mee_driver_" << type << " __mee_dt_" << n.handle() << " = {\n";
+    os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << " = {\n";
   };
 
   auto emit_struct_field = [&](std::string field, std::string value) {
@@ -151,7 +151,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 						  std::string field2, uint32_t elem) {
     static int cna = 0;
     if (cna == 0) {
-        os << "    ." << field1 << " = &" << "__mee_dt_" << c.handle() << subfield1 << ",\n";
+        os << "    ." << field1 << " = &" << "__metal_dt_" << c.handle() << subfield1 << ",\n";
     }
     os << "    ." << field2 << "[" << cna << "] = " << elem << ",\n";
     cna++;
@@ -166,7 +166,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 
   auto emit_struct_field_node = [&](std::string field, const node& n, std::string subfield) {
     emit_comment(n);
-    os << "    ." << field << " = &" << "__mee_dt_" << n.handle() << subfield << ",\n";
+    os << "    ." << field << " = &" << "__metal_dt_" << n.handle() << subfield << ",\n";
   };
 
   auto emit_struct_end = [&](void) {
@@ -175,12 +175,12 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 
   auto emit_struct_array_def_begin = [&](std::string type, std::string name, std::string size) {
     os << "/* Custom array definition */\n";
-    os << "asm (\".weak __mee_dt_" << name << "\");\n";
-    os << "struct __mee_driver_" << type << " __mee_dt_" << name << "[ ] = {\n";
+    os << "asm (\".weak __metal_dt_" << name << "\");\n";
+    os << "struct __metal_driver_" << type << " __metal_dt_" << name << "[ ] = {\n";
   };
 
   auto emit_struct_array_elem_node = [&](const node& n) {
-    os << "                    &__mee_dt_" << n.handle() << ",\n";
+    os << "                    &__metal_dt_" << n.handle() << ",\n";
   };
 
   /*
@@ -188,24 +188,24 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
    * A chicken and egg issue, so for now, simply use compile flag to limit the scope
    * for inclusion.
   */
-  os << "#ifdef __MEE_MACHINE_MACROS\n";
+  os << "#ifdef __METAL_MACHINE_MACROS\n";
   /* Let defines some constants for array defintion in structure. */
   dtb.match(
     std::regex("sifive,clic0"),             [&](node n)
-	{ emit_def("__MEE_CLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("sifive,numints"))); }
+	{ emit_def("__METAL_CLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("sifive,numints"))); }
   );
   os << "/* To Satisfy libmetal build */\n";
-  os << "#ifndef __MEE_CLIC_SUBINTERRUPTS\n";
-  os << "#define __MEE_CLIC_SUBINTERRUPTS 0\n";
+  os << "#ifndef __METAL_CLIC_SUBINTERRUPTS\n";
+  os << "#define __METAL_CLIC_SUBINTERRUPTS 0\n";
   os << "#endif\n";
   os << "#endif\n\n";
 
-  os << "#ifndef __MEE_MACHINE_MACROS\n";
+  os << "#ifndef __METAL_MACHINE_MACROS\n";
   uarts = uart_irqs = 0;
   /* Let defines some constants, like number of interrupt lines required in headers. */
   dtb.match(
     std::regex("sifive,clic0"),             [&](node n) { emit_def_value("interrupts-extended", n, "CLIC_INTERRUPTS"); },
-    std::regex("sifive,clic0"),             [&](node n) { emit_def("__MEE_CLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("sifive,numints"))); },
+    std::regex("sifive,clic0"),             [&](node n) { emit_def("__METAL_CLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("sifive,numints"))); },
     std::regex("riscv,clint0"),             [&](node n) { emit_def_value("interrupts-extended", n, "CLINT_INTERRUPTS"); },
     std::regex("riscv,plic0"),              [&](node n) { emit_def_value("interrupts-extended", n, "PLIC_INTERRUPTS"); },
     std::regex("sifive,local-external-interrupts0"),
@@ -218,11 +218,11 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   );
 
   if (uarts) {
-    emit_def("MEE_MAX_UART_INTERRUPTS \t\t", std::to_string(uart_irqs));
+    emit_def("METAL_MAX_UART_INTERRUPTS \t\t", std::to_string(uart_irqs));
   }
 
   /* First, find the required headers that must be included in order to make
-   * this a sane MEE instance. */
+   * this a sane METAL instance. */
   dtb.match(
     std::regex("cpu"),                      [&](node n) { emit_include("riscv,cpu");                },
     std::regex("sifive,clic0"),             [&](node n) { emit_include("sifive,clic0");             },
@@ -235,7 +235,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_include("sifive,fe310-g000,hfrosc"); },
     std::regex("sifive,gpio0"),             [&](node n) { emit_include("sifive,gpio0");             },
     std::regex("sifive,uart0"),             [&](node n) { emit_include("sifive,uart0");             },
-    std::regex("riscv,pmp"),                [&](node n) { os << "#include <mee/pmp.h>\n";           },
+    std::regex("riscv,pmp"),                [&](node n) { os << "#include <metal/pmp.h>\n";           },
     std::regex("sifive,local-external-interrupts0"), [&](node n) { emit_include("sifive,local-external-interrupts0"); },
     std::regex("sifive,global-external-interrupts0"), [&](node n) { emit_include("sifive,global-external-interrupts0"); },
     std::regex("sifive,gpio-leds"),         [&](node n) { emit_include("sifive,gpio-leds"); },
@@ -262,8 +262,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,fe310-g000,hfrosc"), [&](node n) { emit_struct_decl("sifive_fe310_g000_hfrosc", n); },
     std::regex("sifive,gpio0"),             [&](node n) { emit_struct_decl("sifive_gpio0",             n); },
     std::regex("sifive,uart0"),             [&](node n) { emit_struct_decl("sifive_uart0",             n); },
-    std::regex("riscv,pmp"),                [&](node n) { os << "asm (\".weak __mee_dt_" << n.handle() << "\");\n";
-                                                          os << "struct mee_pmp __mee_dt_" << n.handle() << ";\n\n";
+    std::regex("riscv,pmp"),                [&](node n) { os << "asm (\".weak __metal_dt_" << n.handle() << "\");\n";
+                                                          os << "struct metal_pmp __metal_dt_" << n.handle() << ";\n\n";
                                                         },
     std::regex("sifive,gpio-leds"),         [&](node n) { emit_struct_decl("sifive_gpio_led",          n); },
     std::regex("sifive,gpio-buttons"),      [&](node n) { emit_struct_decl("sifive_gpio_button",       n); },
@@ -280,33 +280,33 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   dtb.match(
     std::regex("cpu"), [&](node n) {
       emit_struct_begin("cpu", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_cpu");
-      emit_struct_field("cpu.vtable", "&__mee_driver_vtable_cpu.cpu_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_cpu");
+      emit_struct_field("cpu.vtable", "&__metal_driver_vtable_cpu.cpu_vtable");
       emit_struct_field_u32("timebase", n.get_field<uint32_t>("timebase-frequency"));
-      emit_struct_field("interrupt_controller", "&__mee_dt_interrupt_controller.controller");
+      emit_struct_field("interrupt_controller", "&__metal_dt_interrupt_controller.controller");
       emit_struct_end();
-      emit_def_handle("__MEE_DT_RISCV_CPU_HANDLE", n, ".cpu");
+      emit_def_handle("__METAL_DT_RISCV_CPU_HANDLE", n, ".cpu");
       cpus++;
     }, std::regex("fixed-clock"), [&](node n) {
       emit_struct_begin("fixed_clock", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_fixed_clock");
-      emit_struct_field("clock.vtable", "&__mee_driver_vtable_fixed_clock.clock");
+      emit_struct_field("vtable", "&__metal_driver_vtable_fixed_clock");
+      emit_struct_field("clock.vtable", "&__metal_driver_vtable_fixed_clock.clock");
       emit_struct_field_u32("rate", n.get_field<uint32_t>("clock-frequency"));
       emit_struct_end();
     }, std::regex("riscv,cpu-intc"), [&](node n) {
       emit_struct_begin("riscv_cpu_intc", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_riscv_cpu_intc");
-      emit_struct_field("controller.vtable", "&__mee_driver_vtable_riscv_cpu_intc.controller_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_riscv_cpu_intc");
+      emit_struct_field("controller.vtable", "&__metal_driver_vtable_riscv_cpu_intc.controller_vtable");
       emit_struct_field("init_done", "0");
       if (n.field_exists("interrupt-controller")) {
           emit_struct_field("interrupt_controller", "1");
       }
       emit_struct_end();
-      emit_def_handle("__MEE_DT_RISCV_CPU_INTC_HANDLE", n, ".controller");
+      emit_def_handle("__METAL_DT_RISCV_CPU_INTC_HANDLE", n, ".controller");
     }, std::regex("sifive,clic0"), [&](node n) {
       emit_struct_begin("sifive_clic0", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_clic0");
-      emit_struct_field("controller.vtable", "&__mee_driver_vtable_sifive_clic0.clic_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_clic0");
+      emit_struct_field("controller.vtable", "&__metal_driver_vtable_sifive_clic0.clic_vtable");
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
@@ -314,7 +314,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
           emit_struct_field_ts("control_size", size);
         });
       emit_struct_field("init_done", "0");
-      emit_struct_field("num_interrupts", "MEE_MAX_CLIC_INTERRUPTS");
+      emit_struct_field("num_interrupts", "METAL_MAX_CLIC_INTERRUPTS");
       n.maybe_tuple_size(
         "interrupts-extended", tuple_t<node, uint32_t>(),
         [&](){
@@ -332,11 +332,11 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
           emit_struct_field("interrupt_controller", "1");
       }
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_CLIC0_HANDLE", n, ".controller");
+      emit_def_handle("__METAL_DT_SIFIVE_CLIC0_HANDLE", n, ".controller");
     }, std::regex("riscv,clint0"), [&](node n) {
       emit_struct_begin("riscv_clint0", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_riscv_clint0");
-      emit_struct_field("controller.vtable", "&__mee_driver_vtable_riscv_clint0.clint_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_riscv_clint0");
+      emit_struct_field("controller.vtable", "&__metal_driver_vtable_riscv_clint0.clint_vtable");
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
@@ -344,7 +344,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
           emit_struct_field_ts("control_size", size);
         });
       emit_struct_field("init_done", "0");
-      emit_struct_field("num_interrupts", "MEE_MAX_CLINT_INTERRUPTS");
+      emit_struct_field("num_interrupts", "METAL_MAX_CLINT_INTERRUPTS");
       n.maybe_tuple_size(
         "interrupts-extended", tuple_t<node, uint32_t>(),
         [&](){
@@ -356,27 +356,27 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
                                                  "interrupt_lines", line);
         });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_RISCV_CLINT0_HANDLE", n, ".controller");
+      emit_def_handle("__METAL_DT_RISCV_CLINT0_HANDLE", n, ".controller");
     }, std::regex("sifive,local-external-interrupts0"), [&](node n) {
       emit_struct_begin("sifive_local_external_interrupts0", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0");
-      emit_struct_field("irc.vtable", "&__mee_driver_vtable_sifive_local_external_interrupts0.local0_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_local_external_interrupts0");
+      emit_struct_field("irc.vtable", "&__metal_driver_vtable_sifive_local_external_interrupts0.local0_vtable");
       emit_struct_field("init_done", "0");
       n.maybe_tuple(
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
         [&](node n) { emit_struct_field_node("interrupt_parent", n, ".controller"); });
-      emit_struct_field("num_interrupts", "MEE_MAX_LOCAL_EXT_INTERRUPTS");
+      emit_struct_field("num_interrupts", "METAL_MAX_LOCAL_EXT_INTERRUPTS");
       n.maybe_tuple_index(
         "interrupts", tuple_t<uint32_t>(),
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
         [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_LOCAL_EXINTR0_HANDLE", n, ".irc");
+      emit_def_handle("__METAL_DT_SIFIVE_LOCAL_EXINTR0_HANDLE", n, ".irc");
     }, std::regex("riscv,plic0"), [&](node n) {
       emit_struct_begin("riscv_plic0", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_riscv_plic0");
-      emit_struct_field("controller.vtable", "&__mee_driver_vtable_riscv_plic0.plic_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_riscv_plic0");
+      emit_struct_field("controller.vtable", "&__metal_driver_vtable_riscv_plic0.plic_vtable");
       emit_struct_field("init_done", "0");
       n.maybe_tuple(
         "interrupts-extended", tuple_t<node, uint32_t>(),
@@ -400,27 +400,27 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
           emit_struct_field("interrupt_controller", "1");
       }
       emit_struct_end();
-      emit_def_handle("__MEE_DT_RISCV_PLIC0_HANDLE", n, ".controller");
+      emit_def_handle("__METAL_DT_RISCV_PLIC0_HANDLE", n, ".controller");
     }, std::regex("sifive,global-external-interrupts0"), [&](node n) {
       emit_struct_begin("sifive_global_external_interrupts0", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0");
-      emit_struct_field("irc.vtable", "&__mee_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_global_external_interrupts0");
+      emit_struct_field("irc.vtable", "&__metal_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
       emit_struct_field("init_done", "0");
       n.maybe_tuple(
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
         [&](node n) { emit_struct_field_node("interrupt_parent", n, ".controller"); });
-      emit_struct_field("num_interrupts", "MEE_MAX_GLOBAL_EXT_INTERRUPTS");
+      emit_struct_field("num_interrupts", "METAL_MAX_GLOBAL_EXT_INTERRUPTS");
       n.maybe_tuple_index(
         "interrupts", tuple_t<uint32_t>(),
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
         [&](int i, uint32_t irline){ emit_struct_field_array_elem(i, "interrupt_lines", irline); });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, ".irc");
+      emit_def_handle("__METAL_DT_SIFIVE_GLOBAL_EXINTR0_HANDLE", n, ".irc");
     }, std::regex("sifive,fe310-g000,pll"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_pll", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_pll");
-      emit_struct_field("clock.vtable", "&__mee_driver_vtable_sifive_fe310_g000_pll.clock");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_pll");
+      emit_struct_field("clock.vtable", "&__metal_driver_vtable_sifive_fe310_g000_pll.clock");
       n.named_tuples(
         "clock-names", "clocks",
         "pllref", tuple_t<node>(), [&](node base) {
@@ -441,10 +441,10 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         });
       emit_struct_field_u32("init_rate", n.get_field<uint32_t>("clock-frequency"));
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SIFIVE_FE310_G000_PLL_HANDLE", n, "");
+      emit_def_handle("__METAL_DT_SIFIVE_FE310_G000_PLL_HANDLE", n, "");
     }, std::regex("sifive,fe310-g000,prci"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_prci", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_prci");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_prci");
       n.named_tuples(
         "reg-names", "reg",
         "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
@@ -454,8 +454,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       emit_struct_end();
     }, std::regex("sifive,fe310-g000,hfxosc"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_hfxosc", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_hfxosc");
-      emit_struct_field("clock.vtable", "&__mee_driver_vtable_sifive_fe310_g000_hfxosc.clock");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_hfxosc");
+      emit_struct_field("clock.vtable", "&__metal_driver_vtable_sifive_fe310_g000_hfxosc.clock");
       emit_struct_field_node("ref", n.get_field<node>("clocks"), ".clock");
       n.named_tuples(
         "reg-names", "reg",
@@ -466,8 +466,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       emit_struct_end();
     }, std::regex("sifive,fe310-g000,hfrosc"), [&](node n) {
       emit_struct_begin("sifive_fe310_g000_hfrosc", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_fe310_g000_hfrosc");
-      emit_struct_field("clock.vtable", "&__mee_driver_vtable_sifive_fe310_g000_hfrosc.clock");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_hfrosc");
+      emit_struct_field("clock.vtable", "&__metal_driver_vtable_sifive_fe310_g000_hfrosc.clock");
       emit_struct_field_node("ref", n.get_field<node>("clocks"), ".clock");
       n.named_tuples(
         "reg-names", "reg",
@@ -478,7 +478,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       emit_struct_end();
     }, std::regex("sifive,gpio0"), [&](node n) {
       emit_struct_begin("sifive_gpio0", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_gpio0");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_gpio0");
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
@@ -489,7 +489,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
         [&](node n) { emit_struct_field_node("interrupt_parent", n, ".controller"); });
-      emit_struct_field("num_interrupts", "MEE_MAX_GPIO_INTERRUPTS");
+      emit_struct_field("num_interrupts", "METAL_MAX_GPIO_INTERRUPTS");
       n.maybe_tuple_index(
         "interrupts", tuple_t<uint32_t>(),
         [&](){ emit_struct_field("interrupt_lines[0]", "0"); },
@@ -497,8 +497,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       emit_struct_end();
     }, std::regex("sifive,uart0"), [&](node n) {
       emit_struct_begin("sifive_uart0", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_uart0");
-      emit_struct_field("uart.vtable", "&__mee_driver_vtable_sifive_uart0.uart");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_uart0");
+      emit_struct_field("uart.vtable", "&__metal_driver_vtable_sifive_uart0.uart");
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
@@ -521,7 +521,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         "interrupt-parent", tuple_t<node>(),
         [&](){ emit_struct_field_null("interrupt_parent"); },
         [&](node n) { emit_struct_field_node("interrupt_parent", n, ".controller"); });
-      emit_struct_field("num_interrupts", "MEE_MAX_UART_INTERRUPTS");
+      emit_struct_field("num_interrupts", "METAL_MAX_UART_INTERRUPTS");
       n.maybe_tuple(
         "interrupts", tuple_t<uint32_t>(),
         [&](){ },
@@ -529,8 +529,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       emit_struct_end();
     }, std::regex("sifive,gpio-leds"), [&](node n) {
       emit_struct_begin("sifive_gpio_led", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_led");
-      emit_struct_field("led.vtable", "&__mee_driver_vtable_sifive_led.led_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_led");
+      emit_struct_field("led.vtable", "&__metal_driver_vtable_sifive_led.led_vtable");
       n.maybe_tuple(
         "gpios", tuple_t<node, uint32_t>(),
         [&](){
@@ -546,8 +546,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       leds++;
     }, std::regex("sifive,gpio-buttons"), [&](node n) {
       emit_struct_begin("sifive_gpio_button", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_button");
-      emit_struct_field("button.vtable", "&__mee_driver_vtable_sifive_button.button_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_button");
+      emit_struct_field("button.vtable", "&__metal_driver_vtable_sifive_button.button_vtable");
       n.maybe_tuple(
         "gpios", tuple_t<node, uint32_t>(),
         [&](){
@@ -573,8 +573,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       buttons++;
     }, std::regex("sifive,gpio-switches"), [&](node n) {
       emit_struct_begin("sifive_gpio_switch", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_switch");
-      emit_struct_field("flip.vtable", "&__mee_driver_vtable_sifive_switch.switch_vtable");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_switch");
+      emit_struct_field("flip.vtable", "&__metal_driver_vtable_sifive_switch.switch_vtable");
       n.maybe_tuple(
         "interrupts-extended", tuple_t<node, uint32_t>(),
         [&](){
@@ -590,14 +590,14 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
       switches++;
     }, std::regex("riscv,pmp"), [&](node n) {
       emit_comment(n);
-      os << "struct mee_pmp __mee_dt_" << n.handle() << " = {\n";
+      os << "struct metal_pmp __metal_dt_" << n.handle() << " = {\n";
       emit_struct_field_u32("num_regions", n.get_field<uint32_t>("regions"));
       emit_struct_end();
-      os << "#define __MEE_DT_PMP_HANDLE" << " (&__mee_dt_" << n.handle() << ")\n\n";
+      os << "#define __METAL_DT_PMP_HANDLE" << " (&__metal_dt_" << n.handle() << ")\n\n";
     }, std::regex("sifive,test0"), [&](node n) {
       emit_struct_begin("sifive_test0", n);
-      emit_struct_field("vtable", "&__mee_driver_vtable_sifive_test0");
-      emit_struct_field("shutdown.vtable", "&__mee_driver_vtable_sifive_test0.shutdown");
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_test0");
+      emit_struct_field("shutdown.vtable", "&__metal_driver_vtable_sifive_test0.shutdown");
       n.named_tuples(
         "reg-names", "reg",
         "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
@@ -605,11 +605,11 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
           emit_struct_field_ts("size", size);
         });
       emit_struct_end();
-      emit_def_handle("__MEE_DT_SHUTDOWN_HANDLE", n, ".shutdown");
+      emit_def_handle("__METAL_DT_SHUTDOWN_HANDLE", n, ".shutdown");
     }
   );
 
-  /* Create links from the internal MEE environment into the user-visible
+  /* Create links from the internal METAL environment into the user-visible
    * environment. */
   dtb.chosen(
     "stdout-path", tuple_t<std::string>(), [&](std::string info) {
@@ -617,21 +617,21 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
         return;
       auto path = info.substr(0, info.find(":"));
       auto target = dtb.node_by_path(path);
-      emit_def_handle("__MEE_DT_STDOUT_UART_HANDLE", target, ".uart");
+      emit_def_handle("__METAL_DT_STDOUT_UART_HANDLE", target, ".uart");
       auto baud = info.substr(info.find(":")+1);
-      emit_def("__MEE_DT_STDOUT_UART_BAUD", baud);
+      emit_def("__METAL_DT_STDOUT_UART_BAUD", baud);
     }
   );
 
   /* Create a list of cpus */
-  emit_def("__MEE_DT_MAX_HARTS", std::to_string(cpus));
-  emit_struct_pointer_begin("cpu", "__mee_cpu_table", "[]");
+  emit_def("__METAL_DT_MAX_HARTS", std::to_string(cpus));
+  emit_struct_pointer_begin("cpu", "__metal_cpu_table", "[]");
   for (int i=0; i < cpus; i++) {
     emit_struct_pointer_element("cpu", i, "",
 				((i + 1) == cpus) ? "};\n\n" : ",\n");
   }
-  emit_def("__MEE_DT_MAX_LEDS", std::to_string(leds));
-  emit_struct_pointer_begin("sifive_gpio_led", "__mee_led_table", "[]");
+  emit_def("__METAL_DT_MAX_LEDS", std::to_string(leds));
+  emit_struct_pointer_begin("sifive_gpio_led", "__metal_led_table", "[]");
   if (leds) {
     for (int i=0; i < leds; i++) {
       emit_struct_pointer_element("led", i/3,
@@ -641,8 +641,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   } else {
     emit_struct_pointer_end("NULL");
   }
-  emit_def("__MEE_DT_MAX_BUTTONS", std::to_string(buttons));
-  emit_struct_pointer_begin("sifive_gpio_button", "__mee_button_table", "[]");
+  emit_def("__METAL_DT_MAX_BUTTONS", std::to_string(buttons));
+  emit_struct_pointer_begin("sifive_gpio_button", "__metal_button_table", "[]");
   if (buttons) {
     for (int i=0; i < buttons; i++) {
       emit_struct_pointer_element("button", i, "",
@@ -651,8 +651,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   } else {
     emit_struct_pointer_end("NULL");
   }
-  emit_def("__MEE_DT_MAX_SWITCHES", std::to_string(switches));
-  emit_struct_pointer_begin("sifive_gpio_switch", "__mee_switch_table", "[]");
+  emit_def("__METAL_DT_MAX_SWITCHES", std::to_string(switches));
+  emit_struct_pointer_begin("sifive_gpio_switch", "__metal_switch_table", "[]");
   if (switches) {
     for (int i=0; i < switches; i++) {
       emit_struct_pointer_element("switch", i, "",
@@ -663,7 +663,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   }
 
   os << "#endif\n\n";
-  os << "#endif /*MEE__MACHINE__" << cfg_file << "*/\n\n";
+  os << "#endif /*METAL__MACHINE__" << cfg_file << "*/\n\n";
   os << "#endif/*ASSEMBLY*/\n";
 }
 

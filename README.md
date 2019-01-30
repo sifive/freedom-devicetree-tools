@@ -8,17 +8,17 @@ built.
 
 If you're interested in using the tools then it's probably best to check
 out the Freedom SDK, which uses these tools to parameterize the Freedom
-MEE for the various targets that it can support.
+METAL for the various targets that it can support.
 
 As a quick overview, here are the tools that are installed as part of
 this project:
 
 * `freedom-ldscript-generator`: Generates linker scripts that are
-  compatible with the Freedom MEE from a device tree.
+  compatible with the Freedom METAL from a device tree.
 * `freedom-makeattributes-generator`: Generates Makefile attributes
   (CFLAGS, LDFLAGS, etc) from a device tree.
-* `freedom-mee_header-generator`: Generates a MEE header
-  parameterization file, which allows the MEE to target the device
+* `freedom-mee_header-generator`: Generates a METAL header
+  parameterization file, which allows the METAL to target the device
   described by the given device tree.
 * `freedom-openocdcfg-generator`: Generates an OpenOCD configuration
   file from a device tree.

@@ -361,7 +361,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     /* Define init section */
     os << "\t.init \t\t:" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\tKEEP (*(.text.mee.init.enter))" << std::endl;
+    os << "\t\tKEEP (*(.text.metal.init.enter))" << std::endl;
     os << "\t\tKEEP (*(SORT_NONE(.init)))" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram" << std::endl;
@@ -510,7 +510,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t.litimalign \t\t:" << std::endl;
     os << "\t{" << std::endl;
     os << "\t\t. = ALIGN(4);" << std::endl;
-    os << "\t\tPROVIDE( mee_segment_itim_source_start = . );" << std::endl;
+    os << "\t\tPROVIDE( metal_segment_itim_source_start = . );" << std::endl;
     if (itim) {
       if (scratchpad) {
         os << "\t} >ram AT>ram :ram" << std::endl;
@@ -530,7 +530,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t.ditimalign \t\t:" << std::endl;
     os << "\t{" << std::endl;
     os << "\t\t. = ALIGN(4);" << std::endl;
-    os << "\t\tPROVIDE( mee_segment_itim_target_start = . );" << std::endl;
+    os << "\t\tPROVIDE( metal_segment_itim_target_start = . );" << std::endl;
     if (itim) {
       if (scratchpad) {
         os << "\t} >itim AT>ram :itim_init" << std::endl;
@@ -569,7 +569,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << std::endl << std::endl;
     /* Define end labels */
     os << "\t. = ALIGN(8);" << std::endl;
-    os << "\tPROVIDE( mee_segment_itim_target_end = . );" << std::endl;
+    os << "\tPROVIDE( metal_segment_itim_target_end = . );" << std::endl;
 
 
     os << std::endl << std::endl;
@@ -578,7 +578,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t{" << std::endl;
     os << "\t\t. = ALIGN(4);" << std::endl;
     os << "\t\tPROVIDE( _data_lma = . );" << std::endl;
-    os << "\t\tPROVIDE( mee_segment_data_source_start = . );" << std::endl;
+    os << "\t\tPROVIDE( metal_segment_data_source_start = . );" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram" << std::endl;
     } else {
@@ -590,7 +590,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t.dalign \t\t:" << std::endl;
     os << "\t{" << std::endl;
     os << "\t\t. = ALIGN(4);" << std::endl;
-    os << "\t\tPROVIDE( mee_segment_data_target_start = . );" << std::endl;
+    os << "\t\tPROVIDE( metal_segment_data_target_start = . );" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram_init" << std::endl;
     } else {
@@ -629,11 +629,11 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t. = ALIGN(4);" << std::endl;
     os << "\tPROVIDE( _edata = . );" << std::endl;
     os << "\tPROVIDE( edata = . );" << std::endl;
-    os << "\tPROVIDE( mee_segment_data_target_end = . );" << std::endl;
+    os << "\tPROVIDE( metal_segment_data_target_end = . );" << std::endl;
 
     os << "\tPROVIDE( _fbss = . );" << std::endl;
     os << "\tPROVIDE( __bss_start = . );" << std::endl;
-    os << "\tPROVIDE( mee_segment_bss_target_start = . );" << std::endl;
+    os << "\tPROVIDE( metal_segment_bss_target_start = . );" << std::endl;
 
     os << std::endl << std::endl;
     /* Define bss section */
@@ -652,16 +652,16 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t. = ALIGN(8);" << std::endl;
     os << "\tPROVIDE( _end = . );" << std::endl;
     os << "\tPROVIDE( end = . );" << std::endl;
-    os << "\tPROVIDE( mee_segment_bss_target_end = . );" << std::endl;
+    os << "\tPROVIDE( metal_segment_bss_target_end = . );" << std::endl;
     os << std::endl << std::endl;
 
     /* Define stack section */
     os << "\t.stack :" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\tPROVIDE(mee_segment_stack_begin = .);" << std::endl;
+    os << "\t\tPROVIDE(metal_segment_stack_begin = .);" << std::endl;
     os << "\t\t. = __stack_size;" << std::endl;
     os << "\t\tPROVIDE( _sp = . );" << std::endl;
-    os << "\t\tPROVIDE(mee_segment_stack_end = .);" << std::endl;
+    os << "\t\tPROVIDE(metal_segment_stack_end = .);" << std::endl;
     os << "\t} >ram AT>ram :ram" << std::endl;
 
     os << std::endl << std::endl;
@@ -678,7 +678,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
      */
     os << "\t.heap :" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\tPROVIDE( mee_segment_heap_target_start = . );" << std::endl;
+    os << "\t\tPROVIDE( metal_segment_heap_target_start = . );" << std::endl;
 
     os << "\t\t. = __heap_size;" << std::endl;
     if (!scratchpad) {
@@ -686,7 +686,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
       os << "\t\t. = __heap_size == 0 ? 0 : ORIGIN(ram) + LENGTH(ram);" << std::endl;
     }
 
-    os << "\t\tPROVIDE( mee_segment_heap_target_end = . );" << std::endl;;
+    os << "\t\tPROVIDE( metal_segment_heap_target_end = . );" << std::endl;;
     os << "\t\tPROVIDE( _heap_end = . );" << std::endl;
     os << "\t} >ram AT>ram :ram" << std::endl;
 
