@@ -194,6 +194,10 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     std::regex("sifive,clic0"),             [&](node n)
 	{ emit_def("__MEE_CLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("sifive,numints"))); }
   );
+  os << "/* To Satisfy libmetal build */\n";
+  os << "#ifndef __MEE_CLIC_SUBINTERRUPTS\n";
+  os << "#define __MEE_CLIC_SUBINTERRUPTS 0\n";
+  os << "#endif\n";
   os << "#endif\n\n";
 
   os << "#ifndef __MEE_MACHINE_MACROS\n";
