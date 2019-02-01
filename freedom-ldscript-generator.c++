@@ -232,8 +232,14 @@ static void dts_memory (void)
             n.named_tuples(
                 "reg-names", "reg",
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-                    if (sram_count == 0)
+                    if (sram_count == 0) {
                         dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,sram0", base, size));
+		    } else {
+                        auto entry = dts_memory_list.back();
+                        dts_memory_list.pop_back();
+                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,sram0",
+							 entry.mem_start, (size + entry.mem_length)));
+		    }
                     sram_count++;
                 });
         },
