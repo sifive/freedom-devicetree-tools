@@ -225,28 +225,28 @@ static void write_specs_file (fstream &os, std::string machine, std::string pref
     string abi = arch2abi(isa);
     string emul = arch2elf(isa);
 
-    os << "%rename asm  mee_machine__asm\n";
+    os << "%rename asm  metal_machine__asm\n";
     os << "*asm:\n";
-    os << "-march=" << isa << " -mabi=" << abi << " %(mee_machine__asm)\n";
+    os << "-march=" << isa << " -mabi=" << abi << " %(metal_machine__asm)\n";
     os << "\n";
 
-    os << "%rename cpp  mee_machine__cpp\n";
+    os << "%rename cpp  metal_machine__cpp\n";
     os << "*cpp:\n";
-    os << "-D__MEE_MACHINE_HEADER=\"mee/machine/" << machine << ".h\" %(mee_machine__cpp)\n";
+    os << "-D__METAL_MACHINE_HEADER=\"metal/machine/" << machine << ".h\" %(metal_machine__cpp)\n";
     os << "\n";
 
-    os << "%rename cc1  mee_machine__cc1\n";
+    os << "%rename cc1  metal_machine__cc1\n";
     os << "*cc1:\n";
-    os << "-ffunction-sections -fdata-sections -march=" << isa << " -mabi=" << abi << " %(mee_machine__cc1)\n";
+    os << "-ffunction-sections -fdata-sections -march=" << isa << " -mabi=" << abi << " %(metal_machine__cc1)\n";
     os << "\n";
 
-    os << "%rename cc1plus  mee_machine__cc1plus\n";
+    os << "%rename cc1plus  metal_machine__cc1plus\n";
     os << "*cc1plus:\n";
-    os << "-ffunction-sections -fdata-sections -march=" << isa << " -mabi=" << abi << " %(mee_machine__cc1plus)\n";
+    os << "-ffunction-sections -fdata-sections -march=" << isa << " -mabi=" << abi << " %(metal_machine__cc1plus)\n";
     os << "\n";
 
     os << "*startfile:\n";
-    os << "%{!nostartfiles:"  << prefix << "/" << tuple << "/lib/" << isa << "/" << abi << "/crt0__mee.o"
+    os << "%{!nostartfiles:"  << prefix << "/" << tuple << "/lib/" << isa << "/" << abi << "/crt0__metal.o"
        << " " << prefix << "/lib/gcc/" << tuple << "/" << gcc_version << "/" << isa << "/" << abi << "/crtbegin.o}\n";
     os << "\n";
 
@@ -254,7 +254,7 @@ static void write_specs_file (fstream &os, std::string machine, std::string pref
     os << "%{!nostartfiles:"  << prefix << "/lib/gcc/" << tuple << "/" << gcc_version << "/" << isa << "/" << abi << "/crtend.o}\n";
     os << "\n";
 
-    os << "%rename link   mee_machine__link\n";
+    os << "%rename link   metal_machine__link\n";
     os << "*link:\n";
     os << "%{!T*:-Triscv__mmachine__" << machine << ".lds}"
        << " --gc-sections"
@@ -264,7 +264,7 @@ static void write_specs_file (fstream &os, std::string machine, std::string pref
        << " -L" << prefix << "/" << tuple << "/lib/" << isa << "/" << abi << "/"
        << " -L" << prefix << "/lib/gcc/" << tuple << "/" << gcc_version << "/" << isa << "/" << abi << "/"
        << " %{!nostdlib:-lgcc}"
-       << " %(mee_machine__link)\n";
+       << " %(metal_machine__link)\n";
     os << "\n";
 }
 
