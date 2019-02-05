@@ -20,7 +20,8 @@ freedom_makeattributes_generator_SOURCES = \
 	freedom-makeattributes-generator.c++
 
 freedom_metal_header_generator_SOURCES = \
-	freedom-metal_header-generator.c++ \
+	metal_header/freedom-metal_header-generator.c++ \
+	metal_header/device.c++ \
 	fdt.c++
 
 freedom_zephyrdtsfixup_generator_SOURCES = \
