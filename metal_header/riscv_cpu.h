@@ -34,7 +34,7 @@ class riscv_cpu : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_include(compat_string);
+	  emit_include("riscv,cpu");
 	});
     }
 
