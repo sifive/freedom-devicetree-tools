@@ -40,10 +40,7 @@ void Device::emit_def_value(std::string name, const node &n, std::string field) 
     irqs = n.get_fields_count<std::tuple<node, uint32_t>>(name);
   }
   os << irqs << "\n";
-  if (field.compare("UART_INTERRUPTS") == 0) {
-  } else {
-    os << "#define METAL_MAX_" << field << "\t __METAL_" << n.handle_cap() << "_INTERRUPTS\n\n";
-  }
+  os << "#define METAL_MAX_" << field << "\t __METAL_" << n.handle_cap() << "_INTERRUPTS\n\n";
 }
 
 void Device::emit_include(std::string d) {
