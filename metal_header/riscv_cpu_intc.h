@@ -14,6 +14,8 @@ class riscv_cpu_intc : public Device {
       : Device(os, dtb, "riscv,cpu-intc")
     {}
 
+    void create_machine_macros() {}
+
     void create_defines()
     {
     }

@@ -14,8 +14,16 @@ class sifive_gpio0 : public Device {
       : Device(os, dtb, "sifive,gpio0")
     {}
 
+    void create_machine_macros() {}
+
     void create_defines()
     {
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  emit_def_value("interrupts", n, "GPIO_INTERRUPTS");
+	
+	});
     }
 
     void include_headers()

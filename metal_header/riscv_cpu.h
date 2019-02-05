@@ -25,6 +25,8 @@ class riscv_cpu : public Device {
 	  });
     }
 
+    void create_machine_macros() {}
+
     void create_defines()
     {
     }

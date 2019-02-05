@@ -14,6 +14,8 @@ class sifive_uart0 : public Device {
       : Device(os, dtb, "sifive,uart0")
     {}
 
+    void create_machine_macros() {}
+
     void create_defines()
     {}
 

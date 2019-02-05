@@ -22,6 +22,7 @@ class Device {
 
     Device(std::ostream &os, const fdt &dtb, std::string compat_string);
 
+    virtual void create_machine_macros() = 0;
     virtual void create_defines() = 0;
     virtual void include_headers() = 0;
     virtual void declare_structs() = 0;

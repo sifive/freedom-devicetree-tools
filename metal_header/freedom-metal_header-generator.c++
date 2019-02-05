@@ -56,9 +56,11 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
                    [](unsigned char c) { return (c == '.') ? '_' : c; });
 
   search_replace_all(cfg_file, "/", "__");
-  os << "#ifndef ASSEMBLY\n\n";
-  os << "#ifndef " << cfg_file << "\n";
-  os << "#define " << cfg_file << "\n\n";
+
+  os << "#ifndef ASSEMBLY" << std::endl << std::endl;
+
+  os << "#ifndef " << cfg_file << std::endl;
+  os << "#define " << cfg_file << std::endl;
 
   std::list<Device *> devices;
 
@@ -74,6 +76,13 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_hfxosc(os, dtb));
 
+  os << "#ifdef __METAL_MACHINE_MACROS" << std::endl;
+  for(auto it = devices.begin(); it != devices.end(); it++) {
+    (*it)->create_machine_macros();
+  }
+  os << "#endif" << std::endl << std::endl;
+
+  os << "#ifndef __METAL_MACHINE_MACROS" << std::endl;
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->create_defines();
   }
@@ -94,8 +103,9 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
     (*it)->create_handles();
   }
 
-  os << "#endif\n\n";
-  os << "#endif/*ASSEMBLY*/\n";
+  os << "#endif /* ! __METAL_MACHINE_MACROS */" << std::endl;
+  os << "#endif /* METAL__MACHINE__" << cfg_file << "*/" << std::endl;
+  os << "#endif/*ASSEMBLY*/" << std::endl;
 }
 
 int main (int argc, char* argv[])

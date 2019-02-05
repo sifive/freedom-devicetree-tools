@@ -14,6 +14,8 @@ class sifive_fe310_g000_prci : public Device {
       : Device(os, dtb, "sifive,fe310-g000,prci")
     {}
 
+    void create_machine_macros() {}
+
     void create_defines()
     {
     }

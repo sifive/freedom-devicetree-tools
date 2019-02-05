@@ -14,6 +14,8 @@ class sifive_fe310_g000_hfrosc : public Device {
       : Device(os, dtb, "sifive,fe310-g000,hfrosc")
     {}
 
+    void create_machine_macros() {}
+
     void create_defines()
     {
     }

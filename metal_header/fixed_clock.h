@@ -14,6 +14,8 @@ class fixed_clock : public Device {
       : Device(os, dtb, "fixed-clock")
     {}
 
+    void create_machine_macros() {}
+
     void create_defines()
     {
     }

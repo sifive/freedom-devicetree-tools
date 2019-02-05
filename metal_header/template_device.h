@@ -14,6 +14,8 @@ class template_device : public Device {
       : Device(os, dtb, "compat,example")
     {}
 
+    void create_machine_macros() {}
+
     void create_defines()
     {
       /* Certain devices need to create #defines at the top of the header.
