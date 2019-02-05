@@ -6,6 +6,7 @@
 
 #include "metal_header/device.h"
 #include "metal_header/fixed_clock.h"
+#include "metal_header/riscv_pmp.h"
 #include "metal_header/sifive_uart0.h"
 #include "metal_header/sifive_gpio0.h"
 
@@ -55,6 +56,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   std::list<Device *> devices;
 
   devices.push_back(new fixed_clock(os, dtb));
+  devices.push_back(new riscv_pmp(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
   devices.push_back(new sifive_gpio0(os, dtb));
 
