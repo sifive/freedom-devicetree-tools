@@ -10,6 +10,7 @@
 #include "metal_header/fixed_clock.h"
 
 /* RISC-V Devices */
+#include "metal_header/riscv_clint0.h"
 #include "metal_header/riscv_cpu.h"
 #include "metal_header/riscv_cpu_intc.h"
 #include "metal_header/riscv_pmp.h"
@@ -78,6 +79,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   devices.push_back(new fixed_clock(os, dtb));
 
   /* RISC-V Devices */
+  devices.push_back(new riscv_clint0(os, dtb));
   devices.push_back(new riscv_cpu(os, dtb));
   devices.push_back(new riscv_cpu_intc(os, dtb));
   devices.push_back(new riscv_pmp(os, dtb));
