@@ -1,22 +1,31 @@
 /* Copyright 2018 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
+/* DeviceTree Library */
 #include "fdt.h++"
 #include "libfdt.h++"
 
+/* Generic Devices */
 #include "metal_header/device.h"
+#include "metal_header/fixed_clock.h"
+
+/* RISC-V Devices */
 #include "metal_header/riscv_cpu.h"
 #include "metal_header/riscv_cpu_intc.h"
-#include "metal_header/fixed_clock.h"
 #include "metal_header/riscv_pmp.h"
-#include "metal_header/sifive_uart0.h"
+
+/* SiFive Blocks */
 #include "metal_header/sifive_gpio0.h"
 #include "metal_header/sifive_test0.h"
-#include "metal_header/sifive_fe310_g000_pll.h"
-#include "metal_header/sifive_fe310_g000_prci.h"
+#include "metal_header/sifive_uart0.h"
+
+/* FE310-G000 Devices */
 #include "metal_header/sifive_fe310_g000_hfrosc.h"
 #include "metal_header/sifive_fe310_g000_hfxosc.h"
+#include "metal_header/sifive_fe310_g000_pll.h"
+#include "metal_header/sifive_fe310_g000_prci.h"
 
+/* STL */
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -60,52 +69,64 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   os << "#ifndef ASSEMBLY" << std::endl << std::endl;
 
   os << "#ifndef " << cfg_file << std::endl;
-  os << "#define " << cfg_file << std::endl;
+  os << "#define " << cfg_file << std::endl << std::endl;
 
   std::list<Device *> devices;
 
+  /* Generic Devices */
+  devices.push_back(new fixed_clock(os, dtb));
+
+  /* RISC-V Devices */
   devices.push_back(new riscv_cpu(os, dtb));
   devices.push_back(new riscv_cpu_intc(os, dtb));
-  devices.push_back(new fixed_clock(os, dtb));
   devices.push_back(new riscv_pmp(os, dtb));
-  devices.push_back(new sifive_uart0(os, dtb));
+
+  /* SiFive Blocks */
   devices.push_back(new sifive_gpio0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
-  devices.push_back(new sifive_fe310_g000_pll(os, dtb));
-  devices.push_back(new sifive_fe310_g000_prci(os, dtb));
+  devices.push_back(new sifive_uart0(os, dtb));
+
+  /* FE310-G000 Devices */
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_hfxosc(os, dtb));
+  devices.push_back(new sifive_fe310_g000_pll(os, dtb));
+  devices.push_back(new sifive_fe310_g000_prci(os, dtb));
 
-  os << "#ifdef __METAL_MACHINE_MACROS" << std::endl;
+  os << "#ifdef __METAL_MACHINE_MACROS" << std::endl << std::endl;
+
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->create_machine_macros();
   }
-  os << "#endif" << std::endl << std::endl;
+  os << std::endl << "#else /* ! __METAL_MACHINE_MACROS */" << std::endl << std::endl;
 
-  os << "#ifndef __METAL_MACHINE_MACROS" << std::endl;
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->create_defines();
   }
+  os << std::endl;
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->include_headers();
   }
+  os << std::endl;
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->declare_structs();
   }
+  os << std::endl;
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->define_structs();
   }
+  os << std::endl;
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->create_handles();
   }
+  os << std::endl;
 
   os << "#endif /* ! __METAL_MACHINE_MACROS */" << std::endl;
-  os << "#endif /* METAL__MACHINE__" << cfg_file << "*/" << std::endl;
-  os << "#endif/*ASSEMBLY*/" << std::endl;
+  os << "#endif /* " << cfg_file << "*/" << std::endl;
+  os << "#endif /* ! ASSEMBLY */" << std::endl;
 }
 
 int main (int argc, char* argv[])

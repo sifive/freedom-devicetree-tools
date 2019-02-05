@@ -17,7 +17,13 @@ class sifive_uart0 : public Device {
     void create_machine_macros() {}
 
     void create_defines()
-    {}
+    {
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  emit_def_value("interrupts", n, "UART_INTERRUPTS");
+	});
+    }
 
     void include_headers()
     {
