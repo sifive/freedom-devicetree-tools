@@ -8,6 +8,7 @@
 /* Generic Devices */
 #include "metal_header/device.h"
 #include "metal_header/fixed_clock.h"
+#include "metal_header/stdout_path.h"
 
 /* RISC-V Devices */
 #include "metal_header/riscv_clint0.h"
@@ -83,6 +84,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 
   /* Generic Devices */
   devices.push_back(new fixed_clock(os, dtb));
+  devices.push_back(new stdout_path(os, dtb));
 
   /* RISC-V Devices */
   devices.push_back(new riscv_clint0(os, dtb));
