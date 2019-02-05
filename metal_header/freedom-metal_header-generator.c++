@@ -9,6 +9,7 @@
 #include "metal_header/riscv_pmp.h"
 #include "metal_header/sifive_uart0.h"
 #include "metal_header/sifive_gpio0.h"
+#include "metal_header/sifive_test0.h"
 #include "metal_header/sifive_fe310_g000_pll.h"
 #include "metal_header/sifive_fe310_g000_prci.h"
 #include "metal_header/sifive_fe310_g000_hfrosc.h"
@@ -63,6 +64,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   devices.push_back(new riscv_pmp(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
   devices.push_back(new sifive_gpio0(os, dtb));
+  devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
