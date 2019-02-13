@@ -14,7 +14,8 @@
 /install-sh
 /missing
 *.swp
-/.deps
+.deps
+.dirstamp
 /Makefile.in
 /freedom-ldscript-generator-*.tar.gz
 /test-driver
