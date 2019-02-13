@@ -14,12 +14,6 @@ class sifive_fe310_g000_hfrosc : public Device {
       : Device(os, dtb, "sifive,fe310-g000,hfrosc")
     {}
 
-    void create_machine_macros() {}
-
-    void create_defines()
-    {
-    }
-
     void include_headers()
     {
       dtb.match(
@@ -60,10 +54,6 @@ class sifive_fe310_g000_hfrosc : public Device {
 
 	  emit_struct_end();
 	});
-    }
-
-    void create_handles()
-    {
     }
 };
 

@@ -22,12 +22,12 @@ class Device {
 
     Device(std::ostream &os, const fdt &dtb, std::string compat_string);
 
-    virtual void create_machine_macros() = 0;
-    virtual void create_defines() = 0;
-    virtual void include_headers() = 0;
-    virtual void declare_structs() = 0;
-    virtual void define_structs() = 0;
-    virtual void create_handles() = 0;
+    virtual void create_machine_macros() {}
+    virtual void create_defines() {}
+    virtual void include_headers() {}
+    virtual void declare_structs() {}
+    virtual void define_structs() {}
+    virtual void create_handles() {}
 
     void emit_comment(const node &n);
     void emit_handle(std::string d, const node &n, std::string v);

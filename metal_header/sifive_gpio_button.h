@@ -25,8 +25,6 @@ class sifive_gpio_button : public Device {
 	});
     }
 
-    void create_machine_macros() {}
-
     void create_defines()
     {
       dtb.match(

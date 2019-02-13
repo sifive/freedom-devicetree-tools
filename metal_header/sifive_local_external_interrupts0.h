@@ -14,8 +14,6 @@ class sifive_local_external_interrupts0 : public Device {
       : Device(os, dtb, "sifive,local-external-interrupts0")
     {}
 
-    void create_machine_macros() {}
-
     void create_defines()
     {
       dtb.match(

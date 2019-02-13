@@ -14,16 +14,6 @@ class stdout_path : public Device {
       : Device(os, dtb, "")
     {}
 
-    void create_machine_macros() {}
-
-    void create_defines() {}
-
-    void include_headers() {}
-
-    void declare_structs() {}
-
-    void define_structs() {}
-
     void create_handles()
     {
       dtb.chosen(

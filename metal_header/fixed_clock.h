@@ -14,12 +14,6 @@ class fixed_clock : public Device {
       : Device(os, dtb, "fixed-clock")
     {}
 
-    void create_machine_macros() {}
-
-    void create_defines()
-    {
-    }
-
     void include_headers()
     {
       emit_include(compat_string);
@@ -46,10 +40,6 @@ class fixed_clock : public Device {
 	  emit_struct_field_u32("rate", n.get_field<uint32_t>("clock-frequency"));
 	  emit_struct_end();
 	});
-    }
-
-    void create_handles()
-    {
     }
 };
 

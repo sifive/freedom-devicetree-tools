@@ -14,12 +14,6 @@ class sifive_fe310_g000_pll : public Device {
       : Device(os, dtb, "sifive,fe310-g000,pll")
     {}
 
-    void create_machine_macros() {}
-
-    void create_defines()
-    {
-    }
-
     void include_headers()
     {
       dtb.match(

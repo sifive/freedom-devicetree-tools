@@ -14,12 +14,6 @@ class riscv_pmp : public Device {
       : Device(os, dtb, "riscv,pmp")
     {}
 
-    void create_machine_macros() {}
-
-    void create_defines()
-    {
-    }
-
     void include_headers()
     {
       os << "#include <metal/pmp.h>\n";

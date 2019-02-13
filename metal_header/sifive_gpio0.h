@@ -14,8 +14,6 @@ class sifive_gpio0 : public Device {
       : Device(os, dtb, "sifive,gpio0")
     {}
 
-    void create_machine_macros() {}
-
     void create_defines()
     {
       dtb.match(
@@ -75,10 +73,6 @@ class sifive_gpio0 : public Device {
 
 	  emit_struct_end();
 	});
-    }
-
-    void create_handles()
-    {
     }
 };
 

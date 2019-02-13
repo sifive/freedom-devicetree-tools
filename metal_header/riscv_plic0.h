@@ -14,10 +14,6 @@ class riscv_plic0 : public Device {
       : Device(os, dtb, "riscv,plic0")
     {}
 
-    void create_machine_macros()
-    {
-    }
-
     void create_defines()
     {
       dtb.match(
