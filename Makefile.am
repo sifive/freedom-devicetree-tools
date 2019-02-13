@@ -20,9 +20,31 @@ freedom_makeattributes_generator_SOURCES = \
 	freedom-makeattributes-generator.c++
 
 freedom_metal_header_generator_SOURCES = \
+	fdt.c++ \
 	metal_header/freedom-metal_header-generator.c++ \
 	metal_header/device.c++ \
-	fdt.c++
+	metal_header/device.h \
+	metal_header/fixed_clock.h \
+	metal_header/riscv_clint0.h \
+	metal_header/riscv_cpu.h \
+	metal_header/riscv_cpu_intc.h \
+	metal_header/riscv_plic0.h \
+	metal_header/riscv_pmp.h \
+	metal_header/sifive_clic0.h \
+	metal_header/sifive_fe310_g000_hfrosc.h \
+	metal_header/sifive_fe310_g000_hfxosc.h \
+	metal_header/sifive_fe310_g000_pll.h \
+	metal_header/sifive_fe310_g000_prci.h \
+	metal_header/sifive_global_external_interrupts0.h \
+	metal_header/sifive_gpio0.h \
+	metal_header/sifive_gpio_button.h \
+	metal_header/sifive_gpio_led.h \
+	metal_header/sifive_gpio_switch.h \
+	metal_header/sifive_local_external_interrupts0.h \
+	metal_header/sifive_test0.h \
+	metal_header/sifive_uart0.h \
+	metal_header/stdout_path.h \
+	metal_header/template_device.h
 
 freedom_zephyrdtsfixup_generator_SOURCES = \
 	freedom-zephyrdtsfixup-generator.c++ \
