@@ -16,11 +16,21 @@ class riscv_clint0 : public Device {
 
     void create_defines()
     {
+      uint32_t max_interrupts = 0;
+
       dtb.match(
-	std::regex("riscv,clint0"),
+	std::regex(compat_string),
 	[&](node n) {
-	  emit_def_value("interrupts-extended", n, "CLINT_INTERRUPTS");
+	  uint32_t num_interrupts = n.get_fields_count<std::tuple<node, uint32_t>>("interrupts-extended");
+
+	  emit_def("__METAL_" + n.handle_cap() + "_INTERRUPTS", std::to_string(num_interrupts));
+
+	  if(num_interrupts > max_interrupts) {
+	    max_interrupts = num_interrupts;
+	  }
 	});
+ 
+      emit_def("METAL_MAX_CLINT_INTERRUPTS", std::to_string(max_interrupts));
     }
 
     void include_headers()

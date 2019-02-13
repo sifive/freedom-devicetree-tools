@@ -35,7 +35,6 @@ class Device {
     void emit_def_handle(std::string handle, const node &n, std::string field);
 
     void emit_def(std::string handle, std::string field);
-    void emit_def_value(std::string name, const node &n, std::string field);
 
     void emit_include(std::string d);
 

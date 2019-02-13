@@ -31,18 +31,6 @@ void Device::emit_def(std::string handle, std::string field) {
   os << "#define " << handle << " " << field << "\n\n";
 }
 
-void Device::emit_def_value(std::string name, const node &n, std::string field) {
-  uint32_t irqs;
-  os << "#define __METAL_" << n.handle_cap() << "_INTERRUPTS \t\t";
-  if (name.compare("interrupts") == 0) {
-    irqs = n.get_fields_count<uint32_t>(name);
-  } else {
-    irqs = n.get_fields_count<std::tuple<node, uint32_t>>(name);
-  }
-  os << irqs << "\n";
-  os << "#define METAL_MAX_" << field << "\t __METAL_" << n.handle_cap() << "_INTERRUPTS\n\n";
-}
-
 void Device::emit_include(std::string d) {
   static std::set<std::string> included;
   if (included.find(d) != included.end())

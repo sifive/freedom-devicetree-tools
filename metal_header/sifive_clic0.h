@@ -30,12 +30,20 @@ class sifive_clic0 : public Device {
 
     void create_defines()
     {
+      uint32_t max_interrupts = 0;
+
       dtb.match(
-        std::regex("sifive,clic0"),
-        [&](node n) {
-          emit_def_value("interrupts-extended", n, "CLIC_INTERRUPTS");
-	  emit_def("__METAL_CLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("sifive,numints")));
+	std::regex(compat_string),
+	[&](node n) {
+	  uint32_t num_interrupts = n.get_fields_count<std::tuple<node, uint32_t>>("interrupts-extended");
+	  emit_def("__METAL_" + n.handle_cap() + "_INTERRUPTS", std::to_string(num_interrupts));
+
+	  if(num_interrupts > max_interrupts) {
+	    max_interrupts = num_interrupts;
+	  }
 	});
+ 
+      emit_def("METAL_MAX_CLIC_INTERRUPTS", std::to_string(max_interrupts));
     }
 
     void include_headers()
