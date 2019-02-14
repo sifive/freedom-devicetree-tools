@@ -25,6 +25,7 @@
 #include "metal_header/sifive_gpio_button.h"
 #include "metal_header/sifive_gpio_led.h"
 #include "metal_header/sifive_gpio_switch.h"
+#include "metal_header/sifive_spi0.h"
 #include "metal_header/sifive_test0.h"
 #include "metal_header/sifive_uart0.h"
 
@@ -101,6 +102,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   devices.push_back(new sifive_gpio_button(os, dtb));
   devices.push_back(new sifive_gpio_led(os, dtb));
   devices.push_back(new sifive_gpio_switch(os, dtb));
+  devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
 

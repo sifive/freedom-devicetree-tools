@@ -41,6 +41,7 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_gpio_led.h \
 	metal_header/sifive_gpio_switch.h \
 	metal_header/sifive_local_external_interrupts0.h \
+	metal_header/sifive_spi0.h \
 	metal_header/sifive_test0.h \
 	metal_header/sifive_uart0.h \
 	metal_header/stdout_path.h \
