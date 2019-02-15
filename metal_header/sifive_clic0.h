@@ -62,7 +62,8 @@ class sifive_clic0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_clic0", n);
+	  emit_struct_decl("sifive_clic0_data", n, "_data");
+	  emit_const_struct_decl("sifive_clic0", n);
 	}
       );
     }
@@ -72,10 +73,16 @@ class sifive_clic0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_clic0", n);
+	  emit_struct_begin("sifive_clic0_data", n, "_data");
+	  emit_struct_field("init_done", "0");
+	  emit_struct_end();
+
+	  emit_const_struct_begin("sifive_clic0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_clic0");
 	  emit_struct_field("controller.vtable", "&__metal_driver_vtable_sifive_clic0.clic_vtable");
+
+	  emit_struct_field("data", "&__metal_dt_" + n.handle() + "_data");
 
 	  n.named_tuples(
 	    "reg-names", "reg",
@@ -83,9 +90,6 @@ class sifive_clic0 : public Device {
 	      emit_struct_field_ta("control_base", base);
 	      emit_struct_field_ts("control_size", size);
 	    });
-
-	  emit_struct_field("init_done", "0");
-	  emit_struct_field("num_interrupts", "METAL_MAX_CLIC_INTERRUPTS");
 
 	  n.maybe_tuple_size(
 	    "interrupts-extended", tuple_t<node, uint32_t>(),

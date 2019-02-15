@@ -47,7 +47,8 @@ class sifive_global_external_interrupts0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_global_external_interrupts0", n);
+	  emit_struct_decl("sifive_global_external_interrupts0_data", n, "_data");
+	  emit_const_struct_decl("sifive_global_external_interrupts0", n);
 	}
       );
     }
@@ -57,12 +58,16 @@ class sifive_global_external_interrupts0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_global_external_interrupts0", n);
+	  emit_struct_begin("sifive_global_external_interrupts0_data", n, "_data");
+	  emit_struct_field("init_done", "0");
+	  emit_struct_end();
+
+	  emit_const_struct_begin("sifive_global_external_interrupts0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_global_external_interrupts0");
 	  emit_struct_field("irc.vtable", "&__metal_driver_vtable_sifive_global_external_interrupts0.global0_vtable");
 
-	  emit_struct_field("init_done", "0");
+	  emit_struct_field("data", "&__metal_dt_" + n.handle() + "_data");
 
 	  n.maybe_tuple(
 	    "interrupt-parent", tuple_t<node>(),

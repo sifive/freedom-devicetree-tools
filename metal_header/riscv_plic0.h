@@ -47,7 +47,8 @@ class riscv_plic0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("riscv_plic0", n);
+	  emit_struct_decl("riscv_plic0_data", n, "_data");
+	  emit_const_struct_decl("riscv_plic0", n);
 	}
       );
     }
@@ -57,12 +58,16 @@ class riscv_plic0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("riscv_plic0", n);
+	  emit_struct_begin("riscv_plic0_data", n, "_data");
+	  emit_struct_field("init_done", "0");
+	  emit_struct_end();
+
+	  emit_const_struct_begin("riscv_plic0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_riscv_plic0");
 	  emit_struct_field("controller.vtable", "&__metal_driver_vtable_riscv_plic0.plic_vtable");
 
-	  emit_struct_field("init_done", "0");
+	  emit_struct_field("data", "&__metal_dt_" + n.handle() + "_data");
 
 	  n.maybe_tuple(
 	    "interrupts-extended", tuple_t<node, uint32_t>(),

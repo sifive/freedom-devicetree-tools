@@ -47,7 +47,8 @@ class riscv_clint0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("riscv_clint0", n);
+	  emit_struct_decl("riscv_clint0_data", n, "_data");
+	  emit_const_struct_decl("riscv_clint0", n);
 	}
       );
     }
@@ -57,7 +58,11 @@ class riscv_clint0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("riscv_clint0", n);
+	  emit_struct_begin("riscv_clint0_data", n, "_data");
+	  emit_struct_field("init_done", "0");
+	  emit_struct_end();
+
+	  emit_const_struct_begin("riscv_clint0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_riscv_clint0");
 	  emit_struct_field("controller.vtable", "&__metal_driver_vtable_riscv_clint0.clint_vtable");
@@ -69,7 +74,6 @@ class riscv_clint0 : public Device {
 	      emit_struct_field_ts("control_size", size);
 	    });
 
-	  emit_struct_field("init_done", "0");
 	  emit_struct_field("num_interrupts", "METAL_MAX_CLINT_INTERRUPTS");
 
 	  n.maybe_tuple_size(
@@ -82,6 +86,8 @@ class riscv_clint0 : public Device {
 		emit_struct_container_node_and_array(s, "interrupt_parent", c, ".controller",
 						     "interrupt_lines", line);
 	    });
+
+	  emit_struct_field("data", "&__metal_dt_" + n.handle() + "_data");
 
 	  emit_struct_end();
 	});
