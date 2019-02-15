@@ -28,7 +28,7 @@ class sifive_test0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_test0", n);
+	  emit_const_struct_decl("sifive_test0", n);
 	}
       );
     }
@@ -38,7 +38,7 @@ class sifive_test0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_test0", n);
+	  emit_const_struct_begin("sifive_test0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_test0");
 	  emit_struct_field("shutdown.vtable", "&__metal_driver_vtable_sifive_test0.shutdown");
