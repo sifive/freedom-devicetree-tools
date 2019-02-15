@@ -28,7 +28,8 @@ class sifive_fe310_g000_hfxosc : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_fe310_g000_hfxosc", n);
+	  emit_const_struct_decl("sifive_fe310_g000_hfxosc", n);
+	  os << "struct __metal_clock_data __metal_dt_" << n.handle() << "_data;" << std::endl << std::endl;
 	}
       );
     }
@@ -38,10 +39,11 @@ class sifive_fe310_g000_hfxosc : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_fe310_g000_hfxosc", n);
+	  emit_const_struct_begin("sifive_fe310_g000_hfxosc", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_hfxosc");
 	  emit_struct_field("clock.vtable", "&__metal_driver_vtable_sifive_fe310_g000_hfxosc.clock");
+	  emit_struct_field("clock.data", "&__metal_dt_" + n.handle() + "_data");
 
 	  emit_struct_field_node("ref", n.get_field<node>("clocks"), ".clock");
 

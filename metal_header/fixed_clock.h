@@ -24,7 +24,7 @@ class fixed_clock : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("fixed_clock", n);
+	  emit_const_struct_decl("fixed_clock", n);
 	}
       );
     }
@@ -34,7 +34,7 @@ class fixed_clock : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("fixed_clock", n);
+	  emit_const_struct_begin("fixed_clock", n);
 	  emit_struct_field("vtable", "&__metal_driver_vtable_fixed_clock");
 	  emit_struct_field("clock.vtable", "&__metal_driver_vtable_fixed_clock.clock");
 	  emit_struct_field_u32("rate", n.get_field<uint32_t>("clock-frequency"));
