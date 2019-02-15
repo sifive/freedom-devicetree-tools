@@ -47,7 +47,7 @@ class sifive_gpio_switch : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_gpio_switch", n);
+	  emit_const_struct_decl("sifive_gpio_switch", n);
 	}
       );
     }
@@ -57,7 +57,7 @@ class sifive_gpio_switch : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_gpio_switch", n);
+	  emit_const_struct_begin("sifive_gpio_switch", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_switch");
 	  emit_struct_field("flip.vtable", "&__metal_driver_vtable_sifive_switch.switch_vtable");
@@ -94,7 +94,7 @@ class sifive_gpio_switch : public Device {
     {
       emit_def("__METAL_DT_MAX_SWITCHES", std::to_string(num_switches));
 
-      emit_struct_pointer_begin("sifive_gpio_switch", "__metal_switch_table", "[]");
+      emit_const_struct_pointer_begin("sifive_gpio_switch", "__metal_switch_table", "[]");
       if (num_switches) {
 	for (int i=0; i < num_switches; i++) {
 	  emit_struct_pointer_element("switch", i, "",

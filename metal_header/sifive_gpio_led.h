@@ -47,7 +47,7 @@ class sifive_gpio_led : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_gpio_led", n);
+	  emit_const_struct_decl("sifive_gpio_led", n);
 	}
       );
     }
@@ -57,7 +57,7 @@ class sifive_gpio_led : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_gpio_led", n);
+	  emit_const_struct_begin("sifive_gpio_led", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_led");
 	  emit_struct_field("led.vtable", "&__metal_driver_vtable_sifive_led.led_vtable");
@@ -83,7 +83,7 @@ class sifive_gpio_led : public Device {
     {
       emit_def("__METAL_DT_MAX_LEDS", std::to_string(num_leds));
 
-      emit_struct_pointer_begin("sifive_gpio_led", "__metal_led_table", "[]");
+      emit_const_struct_pointer_begin("sifive_gpio_led", "__metal_led_table", "[]");
       if (num_leds) {
 	for (int i=0; i < num_leds; i++) {
 	  emit_struct_pointer_element("led", i/3,

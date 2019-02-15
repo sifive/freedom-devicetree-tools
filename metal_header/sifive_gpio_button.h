@@ -47,7 +47,7 @@ class sifive_gpio_button : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_gpio_button", n);
+	  emit_const_struct_decl("sifive_gpio_button", n);
 	}
       );
     }
@@ -57,7 +57,7 @@ class sifive_gpio_button : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_gpio_button", n);
+	  emit_const_struct_begin("sifive_gpio_button", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_button");
 	  emit_struct_field("button.vtable", "&__metal_driver_vtable_sifive_button.button_vtable");
@@ -94,7 +94,7 @@ class sifive_gpio_button : public Device {
     {
       emit_def("__METAL_DT_MAX_BUTTONS", std::to_string(num_buttons));
 
-      emit_struct_pointer_begin("sifive_gpio_button", "__metal_button_table", "[]");
+      emit_const_struct_pointer_begin("sifive_gpio_button", "__metal_button_table", "[]");
       if (num_buttons) {
 	for (int i=0; i < num_buttons; i++) {
 	  emit_struct_pointer_element("button", i, "",
