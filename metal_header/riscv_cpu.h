@@ -39,7 +39,7 @@ class riscv_cpu : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("cpu", n);
+	  emit_const_struct_decl("cpu", n);
 	}
       );
     }
@@ -49,7 +49,7 @@ class riscv_cpu : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("cpu", n);
+	  emit_const_struct_begin("cpu", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_cpu");
 	  emit_struct_field("cpu.vtable", "&__metal_driver_vtable_cpu.cpu_vtable");
@@ -72,7 +72,7 @@ class riscv_cpu : public Device {
 
       emit_def("__METAL_DT_MAX_HARTS", std::to_string(num_cpus));
 
-      emit_struct_pointer_begin("cpu", "__metal_cpu_table", "[]");
+      emit_const_struct_pointer_begin("cpu", "__metal_cpu_table", "[]");
       for(int i = 0; i < num_cpus; i++) {
 	emit_struct_pointer_element("cpu", i, "",
 				    ((i + 1) == num_cpus) ? "};\n\n" : ",\n");
