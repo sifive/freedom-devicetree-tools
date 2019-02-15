@@ -39,13 +39,16 @@ class Device {
     void emit_include(std::string d);
 
     void emit_struct_pointer_begin(std::string type, std::string name, std::string ext);
+    void emit_const_struct_pointer_begin(std::string type, std::string name, std::string ext);
     void emit_struct_pointer_element(std::string type, uint32_t id,
 				     std::string field, std::string delimiter);
     void emit_struct_pointer_end(std::string empty);
 
-    void emit_struct_decl(std::string type, const node &n);
+    void emit_struct_decl(std::string type, const node &n, std::string suffix="");
+    void emit_const_struct_decl(std::string type, const node &n, std::string suffix="");
 
-    void emit_struct_begin(std::string type, const node &n);
+    void emit_struct_begin(std::string type, const node &n, std::string suffix="");
+    void emit_const_struct_begin(std::string type, const node &n, std::string suffix="");
 
     void emit_struct_field(std::string field, std::string value);
     void emit_struct_field_null(std::string field);

@@ -43,6 +43,10 @@ void Device::emit_struct_pointer_begin(std::string type, std::string name, std::
   os << "asm (\".weak " << name << "\");\n";
   os << "struct __metal_driver_" << type << " *" << name << ext << " = {\n";
 }
+void Device::emit_const_struct_pointer_begin(std::string type, std::string name, std::string ext) {
+  os << "asm (\".weak " << name << "\");\n";
+  os << "const struct __metal_driver_" << type << " *" << name << ext << " = {\n";
+}
 void Device::emit_struct_pointer_element(std::string type, uint32_t id,
 				       std::string field, std::string delimiter) {
   os << "\t\t\t\t\t&__metal_dt_" << type << "_" << id << field << delimiter;
@@ -58,15 +62,24 @@ void Device::emit_struct_pointer_end(std::string empty) {
  * merge together multiple copies of the structure so we don't use too much
  * memory.  This isn't technically kosher, but since we own the entire
  * "__metal_" namespace */
-void Device::emit_struct_decl(std::string type, const node &n) {
+void Device::emit_struct_decl(std::string type, const node &n, std::string suffix) {
   emit_comment(n);
-  os << "asm (\".weak __metal_dt_" << n.handle() << "\");\n";
-  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << ";\n\n";
+  os << "asm (\".weak __metal_dt_" << n.handle() << suffix << "\");\n";
+  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << suffix << ";\n\n";
+}
+void Device::emit_const_struct_decl(std::string type, const node &n, std::string suffix) {
+  emit_comment(n);
+  os << "asm (\".weak __metal_dt_" << n.handle() << suffix << "\");\n";
+  os << "const struct __metal_driver_" << type << " __metal_dt_" << n.handle() << suffix << ";\n\n";
 }
 
-void Device::emit_struct_begin(std::string type, const node &n) {
+void Device::emit_struct_begin(std::string type, const node &n, std::string suffix) {
   emit_comment(n);
-  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << " = {\n";
+  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << suffix << " = {\n";
+}
+void Device::emit_const_struct_begin(std::string type, const node &n, std::string suffix) {
+  emit_comment(n);
+  os << "const struct __metal_driver_" << type << " __metal_dt_" << n.handle() << suffix << " = {\n";
 }
 
 void Device::emit_struct_field(std::string field, std::string value) {
