@@ -25,7 +25,7 @@ class riscv_pmp : public Device {
 	std::regex(compat_string),
 	[&](node n) {
 	  os << "asm (\".weak __metal_dt_" << n.handle() << "\");\n";
-	  os << "struct metal_pmp __metal_dt_" << n.handle() << ";\n\n";
+	  os << "const struct metal_pmp __metal_dt_" << n.handle() << ";\n\n";
 	}
       );
     }
@@ -36,7 +36,7 @@ class riscv_pmp : public Device {
 	std::regex(compat_string),
 	[&](node n) {
 	  emit_comment(n);
-	  os << "struct metal_pmp __metal_dt_" << n.handle() << " = {\n";
+	  os << "const struct metal_pmp __metal_dt_" << n.handle() << " = {\n";
 	  emit_struct_field_u32("num_regions", n.get_field<uint32_t>("regions"));
 	  emit_struct_end();
 	});
