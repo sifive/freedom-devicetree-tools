@@ -28,7 +28,7 @@ class sifive_fe310_g000_prci : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_fe310_g000_prci", n);
+	  emit_const_struct_decl("sifive_fe310_g000_prci", n);
 	}
       );
     }
@@ -38,7 +38,7 @@ class sifive_fe310_g000_prci : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_fe310_g000_prci", n);
+	  emit_const_struct_begin("sifive_fe310_g000_prci", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_prci");
 
