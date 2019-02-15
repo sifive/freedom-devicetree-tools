@@ -47,7 +47,7 @@ class sifive_gpio0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_gpio0", n);
+	  emit_const_struct_decl("sifive_gpio0", n);
 	}
       );
     }
@@ -57,7 +57,7 @@ class sifive_gpio0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_gpio0", n);
+	  emit_const_struct_begin("sifive_gpio0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_gpio0");
 
