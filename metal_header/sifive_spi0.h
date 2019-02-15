@@ -38,7 +38,8 @@ class sifive_spi0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_decl("sifive_spi0", n);
+	  emit_struct_decl("sifive_spi0_data", n, "_data");
+	  emit_const_struct_decl("sifive_spi0", n);
 	}
       );
     }
@@ -48,10 +49,15 @@ class sifive_spi0 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_struct_begin("sifive_spi0", n);
+	  emit_struct_begin("sifive_spi0_data", n, "_data");
+	  emit_struct_end();
+
+	  emit_const_struct_begin("sifive_spi0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_spi0");
 	  emit_struct_field("spi.vtable", "&__metal_driver_vtable_sifive_spi0.spi");
+
+	  emit_struct_field("data", "&__metal_dt_" + n.handle() + "_data");
 
 	  n.named_tuples(
 	    "reg-names", "reg",
@@ -82,7 +88,7 @@ class sifive_spi0 : public Device {
     {
       emit_def("__METAL_DT_MAX_SPIS", std::to_string(num_spis));
 
-      emit_struct_pointer_begin("sifive_spi0", "__metal_spi_table", "[]");
+      emit_const_struct_pointer_begin("sifive_spi0", "__metal_spi_table", "[]");
       if (num_spis) {
 	int i = 0;
 	dtb.match(
