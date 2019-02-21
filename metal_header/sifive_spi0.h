@@ -95,6 +95,8 @@ class sifive_spi0 : public Device {
 	    } else {
 	      os << ",\n";
 	    }
+
+	    i++;
 	  });
       } else {
 	emit_struct_pointer_end("NULL");
