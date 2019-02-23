@@ -150,7 +150,9 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/stdout_path.c++ \
 	metal_header/stdout_path.h \
 	metal_header/template_device.c++ \
-	metal_header/template_device.h
+	metal_header/template_device.h \
+	metal_header/ucb_htif0.c++ \
+	metal_header/ucb_htif0.h
 
 freedom_bare_header_generator_CPPFLAGS = -I$(srcdir) -I$(srcdir)/bare_header
 
@@ -187,6 +189,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_trace.h \
 	bare_header/sifive_uart0.h \
 	bare_header/sifive_wdog0.h \
+	bare_header/ucb_htif0.h \
 	ranges.c++ \
 	ranges.h
 
