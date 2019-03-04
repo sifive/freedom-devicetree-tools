@@ -257,9 +257,12 @@ static void dts_memory (void)
 
     if (testram_count > 0)
         alias_memory("testram", "ram");
-    else if (memory_count > 0)
+    else if (memory_count > 0) {
         alias_memory("memory", "ram");
-    else if (periph_count > 0)
+    	if (spi_count > 0) {
+            alias_memory("spi", "flash");
+	}
+    } else if (periph_count > 0)
         alias_memory("periph_ram", "ram");
     else if (sys_count > 0)
         alias_memory("sys_ram", "ram");
