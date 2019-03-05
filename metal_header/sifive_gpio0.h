@@ -10,9 +10,19 @@
 
 class sifive_gpio0 : public Device {
   public:
+    int num_gpios = 0;
+
     sifive_gpio0(std::ostream &os, const fdt &dtb)
       : Device(os, dtb, "sifive,gpio0")
-    {}
+    {
+      /* Count the number of GPIOs */
+      num_gpios = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  num_gpios += 1;
+	});
+    }
 
     void create_defines()
     {
@@ -60,6 +70,7 @@ class sifive_gpio0 : public Device {
 	  emit_struct_begin("sifive_gpio0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_gpio0");
+	  emit_struct_field("gpio.vtable", "&__metal_driver_vtable_sifive_gpio0");
 
 	  n.named_tuples(
 	    "reg-names", "reg",
@@ -82,6 +93,29 @@ class sifive_gpio0 : public Device {
 
 	  emit_struct_end();
 	});
+    }
+
+    void create_handles()
+    {
+      emit_def("__MEE_DT_MAX_GPIOS", std::to_string(num_gpios));
+
+      emit_struct_pointer_begin("sifive_gpio0", "__metal_gpio_table", "[]");
+      if (num_gpios) {
+	int i = 0;
+	dtb.match(
+	  std::regex(compat_string),
+	  [&](node n) {
+	    os << "\t\t\t\t\t&__metal_dt_" << n.handle();
+
+	    if ((i + 1) == num_gpios) {
+	      os << "};\n\n";
+	    } else {
+	      os << ",\n";
+	    }
+	  });
+      } else {
+	emit_struct_pointer_end("NULL");
+}
     }
 };
 
