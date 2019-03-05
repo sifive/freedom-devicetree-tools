@@ -35,6 +35,7 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_fe310_g000_hfxosc.h \
 	metal_header/sifive_fe310_g000_pll.h \
 	metal_header/sifive_fe310_g000_prci.h \
+	metal_header/sifive_fu540_c000_l2.h \
 	metal_header/sifive_global_external_interrupts0.h \
 	metal_header/sifive_gpio0.h \
 	metal_header/sifive_gpio_button.h \

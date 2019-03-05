@@ -35,6 +35,9 @@
 #include "metal_header/sifive_fe310_g000_pll.h"
 #include "metal_header/sifive_fe310_g000_prci.h"
 
+/* FU540-C000 Devices */
+#include "metal_header/sifive_fu540_c000_l2.h"
+
 /* STL */
 #include <fstream>
 #include <iostream>
@@ -111,6 +114,9 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   devices.push_back(new sifive_fe310_g000_hfxosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
+
+  /* FU540-C000 Devices */
+  devices.push_back(new sifive_fu540_c000_l2(os, dtb));
 
   os << "#ifdef __METAL_MACHINE_MACROS" << std::endl << std::endl;
 
