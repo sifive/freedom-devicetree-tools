@@ -299,7 +299,7 @@ static void write_linker_file (fstream &os)
     os << "ENTRY(_enter)" << std::endl << std::endl;
 }
 
-static void write_linker_memory (fstream &os, bool scratchpad)
+static void write_linker_memory (fstream &os, bool scratchpad, uint32_t metal_entry)
 {
   //os << "#" << __FUNCTION__ << std::endl;
   int flash_offset = 0;
@@ -309,7 +309,8 @@ static void write_linker_memory (fstream &os, bool scratchpad)
 	  (entry.mem_type.compare("mem") == 0) &&
 	  (entry.mem_alias.compare("flash") == 0)) {
         if (entry.mem_name.find("spi") != std::string::npos) {
-	  flash_offset = 0x400000;
+          flash_offset = metal_entry;
+          entry.mem_length -= metal_entry;
 	}
 	os << "\t" << entry.mem_alias <<  " (rxai!w)";
       } else if (entry.mem_alias.compare("ram") == 0) {
@@ -813,8 +814,18 @@ int main (int argc, char* argv[])
       return 1;
     }
 
+    /* Get the value of the metal,entry chosen node */
+    uint32_t metal_entry = 0;
+    auto dtb = fdt((const uint8_t *)dts_blob);
+    dtb.chosen(
+      "metal,entry",
+      tuple_t<node, uint32_t>(),
+      [&](node n, uint32_t offset) {
+        metal_entry = offset;
+      });
+
     write_linker_file(lds);
-    write_linker_memory(lds, scratchpad);
+    write_linker_memory(lds, scratchpad, metal_entry);
     write_linker_phdrs(lds, scratchpad);
     write_linker_sections(lds, scratchpad, ramrodata, itim);
   }
