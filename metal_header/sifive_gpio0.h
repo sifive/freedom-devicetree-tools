@@ -70,7 +70,7 @@ class sifive_gpio0 : public Device {
 	  emit_struct_begin("sifive_gpio0", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_gpio0");
-	  emit_struct_field("gpio.vtable", "&__metal_driver_vtable_sifive_gpio0");
+	  emit_struct_field("gpio.vtable", "&__metal_driver_vtable_sifive_gpio0.gpio");
 
 	  n.named_tuples(
 	    "reg-names", "reg",
