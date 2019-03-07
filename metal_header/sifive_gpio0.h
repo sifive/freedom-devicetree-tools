@@ -112,6 +112,8 @@ class sifive_gpio0 : public Device {
 	    } else {
 	      os << ",\n";
 	    }
+
+	    i += 1;
 	  });
       } else {
 	emit_struct_pointer_end("NULL");
