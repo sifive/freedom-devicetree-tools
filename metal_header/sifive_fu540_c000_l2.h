@@ -19,7 +19,7 @@ class sifive_fu540_c000_l2 : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  emit_include(compat_string);
+	  emit_include("sifive,fu540-c000,l2");
 	});
     }
 
