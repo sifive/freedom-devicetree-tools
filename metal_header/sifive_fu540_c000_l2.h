@@ -52,6 +52,15 @@ class sifive_fu540_c000_l2 : public Device {
 	  emit_struct_end();
 	});
     }
+
+    void create_handles()
+    {
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  emit_def_handle("__METAL_DT_SIFIVE_FU540_C000_L2_HANDLE", n, "");
+	});
+    }
 };
 
 #endif
