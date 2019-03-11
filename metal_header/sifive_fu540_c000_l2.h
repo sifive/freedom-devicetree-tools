@@ -41,7 +41,7 @@ class sifive_fu540_c000_l2 : public Device {
 	  emit_struct_begin("sifive_fu540_c000_l2", n);
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fu540_c000_l2");
-	  emit_struct_field("cache.vtable", "&__metal_driver_vtable_sifive_fu540_c000_l2");
+	  emit_struct_field("cache.vtable", "&__metal_driver_vtable_sifive_fu540_c000_l2.cache");
 
 	  n.named_tuples(
 	    "reg-names", "reg",
