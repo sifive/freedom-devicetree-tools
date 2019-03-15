@@ -9,11 +9,10 @@ def git_version_script = ./ "scripts/git-version"
 def m4_dir             = ./ "m4"
 
 def doJob cmdline inputs =
-  def job =
-    makeJob cmdline inputs
-    | setJobDirectory here
-    | runJob
-  map first job.outputs
+  makePlan cmdline inputs
+  | setPlanDirectory here
+  | runJob
+  | getJobOutputs
 
 def makeTool tool =
   def autoreconfOutputs =
@@ -23,22 +22,21 @@ def makeTool tool =
 
   # manual job because make modifies ".deps/*" outputs
   def configureOutputs =
-    def cmdline = filter (configure_file ==~ _) autoreconfOutputs
+    def cmdline = filter (configure_file ==~ _.getPathName) autoreconfOutputs | map getPathName
     def inputs = autoreconfOutputs ++ sources here '.*'
     def foutputs _ = ./"config.status", ./"config.log", ./"Makefile", Nil
 
-    def job =
-      makeManualJob cmdline inputs foutputs
-      | setJobDirectory here
-      | runJob
-    map first job.outputs
+    makeManualPlan cmdline inputs foutputs
+    | setPlanDirectory here
+    | runJob
+    | getJobOutputs
 
   def makeOutputs =
     def cmdline = which "make", Nil
-    def inputs = configureOutputs ++ autoreconfOutputs ++ sources here '.*' ++ files (./".deps") '.*'
+    def inputs = configureOutputs ++ autoreconfOutputs ++ sources here '.*'# ++ files (./".deps") '.*'
     doJob cmdline inputs
 
-  makeOutputs | filter (./tool ==~ _) | head
+  makeOutputs | filter (./tool ==~ _.getPathName) | head
 
 def freedom_ldscript_generator       _ = makeTool "freedom-ldscript-generator"
 def freedom_makeattributes_generator _ = makeTool "freedom-makeattributes-generator"
@@ -55,7 +53,7 @@ global data FreedomLdScriptGeneratorShow =
   FreedomLdScriptGeneratorShowBoth
 
 tuple FreedomLdScriptGeneratorOptions =
-  global DTBFile     String
+  global DTBFile     Path
   global OutputFile  String
   global Scratchpad  Boolean
   global Show        Option FreedomLdScriptGeneratorShow
@@ -68,8 +66,8 @@ global def freedomLdScriptGenerator options =
   def dtbFile = options.getFreedomLdScriptGeneratorOptionsDTBFile
   def cmdline =
     def base =
-      tool,
-      "-d", dtbFile,
+      tool.getPathName,
+      "-d", dtbFile.getPathName,
       "-l", options.getFreedomLdScriptGeneratorOptionsOutputFile,
       Nil
 
@@ -87,12 +85,12 @@ global def freedomLdScriptGenerator options =
     base ++ scratchpad ++ show
 
   def inputs = tool, dtbFile, Nil
-  job cmdline inputs | output
+  makePlan cmdline inputs | runJob | getJobOutput
 
 
 ### Linker MEE header Generator ###
 tuple FreedomMEEHeaderGeneratorOptions =
-  global DTBFile    String
+  global DTBFile    Path
   global OutputFile String
 
 global def makeFreedomMEEHeaderGeneratorOptions dtbFile outputFile =
@@ -102,33 +100,9 @@ global def freedomMEEHeaderGenerator options =
   def tool = freedom_mee_header_generator 0
   def dtbFile = options.getFreedomMEEHeaderGeneratorOptionsDTBFile
   def cmdline =
-    tool,
-    "-d", dtbFile,
+    tool.getPathName,
+    "-d", dtbFile.getPathName,
     "-o", options.getFreedomMEEHeaderGeneratorOptionsOutputFile,
     Nil
   def inputs = tool, dtbFile, Nil
-  job cmdline inputs | output
-
-
-### Linker MEE specs Generator ###
-tuple FreedomMEESpecsGeneratorOptions =
-  global MachineName String
-  global DTBFile     String
-  global SpecsFile   String
-  global PrefixDir   String
-
-global def makeFreedomMEESpecsGeneratorOptions name dtbFile specsFile prefixDir =
-  FreedomMEESpecsGeneratorOptions name dtbFile specsFile prefixDir
-
-global def freedomMEESpecsGenerator options =
-  def tool = freedom_mee_specs_generator 0
-  def dtbFile = options.getFreedomMEESpecsGeneratorOptionsDTBFile
-  def cmdline =
-    tool,
-    "-m", options.getFreedomMEESpecsGeneratorOptionsMachineName,
-    "-d", dtbFile,
-    "-s", options.getFreedomMEESpecsGeneratorOptionsSpecsFile,
-    "-p", options.getFreedomMEESpecsGeneratorOptionsPrefixDir,
-    Nil
-  def inputs = tool, dtbFile, Nil
-  job cmdline inputs | output
+  makePlan cmdline inputs | runJob | getJobOutput
