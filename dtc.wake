@@ -1,0 +1,29 @@
+tuple DTCOptions =
+  global InFormat   DTCFormat
+  global InputFile  Path
+  global OutFormat  DTCFormat
+  global OutputFile String
+
+global data DTCFormat =
+  DTC_Format_DTB
+  DTC_Format_DTS
+  DTC_Format_FS
+
+global def dtcFormatToString = match _
+  DTC_Format_DTB = "dtb"
+  DTC_Format_DTS = "dts"
+  DTC_Format_FS  = "fs"
+
+global def makeDTCOptions inFormat outFormat outputFile =
+  DTCOptions inFormat outFormat outputFile
+
+global def runDTC options =
+  def cmdline =
+    which "dtc",
+    "-i", options.getDTCOptionsInputFile.getPathName,
+    "-o", options.getDTCOptionsOutputFile,
+    "-I", options.getDTCOptionsInFormat.dtcFormatToString,
+    "-O", options.getDTCOptionsOutFormat.dtcFormatToString,
+    Nil
+  def inputs = options.getDTCOptionsInputFile, Nil
+  makePlan cmdline inputs | runJob | getJobOutput
