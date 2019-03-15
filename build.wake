@@ -19,10 +19,7 @@ def makeTool tool =
   def autoreconfOutputs =
     def cmdline = which "autoreconf", "-i", Nil
     def inputs =  sources here '.*'
-    makePlan cmdline inputs
-    | setPlanDirectory here
-    | runJob
-    | getJobOutputs
+    doJob cmdline inputs
 
   # manual job because make modifies ".deps/*" outputs
   def configureOutputs =
