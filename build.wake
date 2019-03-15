@@ -55,7 +55,7 @@ tuple FreedomLdScriptGeneratorOptions =
 global def makeFreedomLdScriptGeneratorOptions dtbFile outputFile =
   FreedomLdScriptGeneratorOptions dtbFile outputFile False False
 
-global def freedomLdScriptGenerator options =
+global def runFreedomLdScriptGenerator options =
   def tool = freedom_ldscript_generator 0
   def dtbFile = options.getFreedomLdScriptGeneratorOptionsDTBFile
   def cmdline =
@@ -79,21 +79,54 @@ global def freedomLdScriptGenerator options =
   makePlan cmdline inputs | runJob | getJobOutput
 
 
-### MEE header Generator ###
-tuple FreedomMEEHeaderGeneratorOptions =
+### Metal header Generator ###
+tuple FreedomMetalHeaderGeneratorOptions =
   global DTBFile    Path
   global OutputFile String
 
 global def makeFreedomMetalHeaderGeneratorOptions dtbFile outputFile =
-  FreedomMEEHeaderGeneratorOptions dtbFile outputFile
+  FreedomMetalHeaderGeneratorOptions dtbFile outputFile
 
-global def freedomMetalHeaderGenerator options =
+global def runFreedomMetalHeaderGenerator options =
   def tool = freedom_metal_header_generator 0
-  def dtbFile = options.getFreedomMEEHeaderGeneratorOptionsDTBFile
+  def dtbFile = options.getFreedomMetalHeaderGeneratorOptionsDTBFile
+  def outputFile = options.getFreedomMetalHeaderGeneratorOptionsOutputFile
   def cmdline =
     tool.getPathName,
     "-d", dtbFile.getPathName,
-    "-o", options.getFreedomMEEHeaderGeneratorOptionsOutputFile,
+    "-o", outputFile,
     Nil
-  def inputs = tool, dtbFile, Nil
+  def inputs = mkdir 0775 "{outputFile}/..".simplify, tool, dtbFile, Nil
   makePlan cmdline inputs | runJob | getJobOutput
+
+### Make Attributes Generator ###
+tuple FreedomMakeAttributesGeneratorOptions =
+  global DTBFile    Path
+  global OutputFile String
+
+global def makeFreedomMakeAttributesGeneratorOptions dtbFile outputFile =
+  FreedomMakeAttributesGeneratorOptions dtbFile outputFile
+
+tuple FreedomMakeAttributes =
+  File_ Path
+  MARCH_ String
+  MABI_  String
+global def getFreedomMakeAttributesFile  = getFreedomMakeAttributesFile_
+global def getFreedomMakeAttributesMARCH = getFreedomMakeAttributesMARCH_
+global def getFreedomMakeAttributesMABI  = getFreedomMakeAttributesMABI_
+
+global def runFreedomMakeAttributesGenerator options =
+  def tool = freedom_makeattributes_generator 0
+  def dtbFile = options.getFreedomMakeAttributesGeneratorOptionsDTBFile
+  def outputFile = options.getFreedomMakeAttributesGeneratorOptionsOutputFile
+  def cmdline =
+    tool.getPathName,
+    "-d", dtbFile.getPathName,
+    "-o", outputFile,
+    Nil
+  def inputs = mkdir 0775 "{outputFile}/..".simplify, tool, dtbFile, Nil
+  def file = makePlan cmdline inputs | runJob | getJobOutput
+  def contents = read file
+  def mabi  = extract '.*FRAMEWORK_BOARD_DTS_MABI=([a-zA-Z0-9_]+).*'  contents | head
+  def march = extract '.*FRAMEWORK_BOARD_DTS_MARCH=([a-zA-Z0-9_]+).*' contents | head
+  FreedomMakeAttributes file march mabi

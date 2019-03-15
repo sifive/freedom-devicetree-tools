@@ -5,25 +5,30 @@ tuple DTCOptions =
   global OutputFile String
 
 global data DTCFormat =
-  DTC_Format_DTB
-  DTC_Format_DTS
-  DTC_Format_FS
+  DTC_DTB
+  DTC_DTS
+  DTC_FS
 
 global def dtcFormatToString = match _
-  DTC_Format_DTB = "dtb"
-  DTC_Format_DTS = "dts"
-  DTC_Format_FS  = "fs"
+  DTC_DTB = "dtb"
+  DTC_DTS = "dts"
+  DTC_FS  = "fs"
 
-global def makeDTCOptions inFormat outFormat outputFile =
-  DTCOptions inFormat outFormat outputFile
+global def makeDTCOptions inFormat outFormat inFile outputFile =
+  DTCOptions inFormat inFile outFormat outputFile
+
+global def dtsTodtb = makeDTCOptions DTC_DTS DTC_DTB _ _ | runDTC
+global def dtbTodts = makeDTCOptions DTC_DTS DTC_DTB _ _ | runDTC
 
 global def runDTC options =
   def cmdline =
     which "dtc",
-    "-i", options.getDTCOptionsInputFile.getPathName,
+    options.getDTCOptionsInputFile.getPathName,
     "-o", options.getDTCOptionsOutputFile,
     "-I", options.getDTCOptionsInFormat.dtcFormatToString,
     "-O", options.getDTCOptionsOutFormat.dtcFormatToString,
     Nil
   def inputs = options.getDTCOptionsInputFile, Nil
-  makePlan cmdline inputs | runJob | getJobOutput
+  makePlan cmdline inputs
+  | runJob
+  | getJobOutput
