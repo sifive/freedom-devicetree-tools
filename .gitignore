@@ -14,12 +14,13 @@
 /install-sh
 /missing
 *.swp
-/.deps
+.deps
+.dirstamp
 /Makefile.in
 /freedom-ldscript-generator-*.tar.gz
 /test-driver
 *.log
 *.trs
-/freedom-mee_header-generator
+/freedom-metal_header-generator
 *.swo
-freedom-mee_specs-generator
+freedom-metal_specs-generator
