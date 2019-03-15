@@ -11,7 +11,6 @@ def m4_dir             = ./ "m4"
 def doJob cmdline inputs =
   makePlan cmdline inputs
   | setPlanDirectory here
-  | setPlanFnOutputs (filter (\f !(matches '.*\.Po' f)) _)
   | runJob
   | getJobOutputs
 
@@ -30,10 +29,13 @@ def makeTool tool =
 
   def makeOutputs =
     def cmdline = which "make", Nil
-    def poFiles = files here '.*\.Po' | map makeStatePath
     def allSources = sources here '.*'
-    def inputs = configureOutputs ++ autoreconfOutputs ++ allSources ++ poFiles
-    doJob cmdline inputs
+    def inputs = configureOutputs ++ autoreconfOutputs ++ allSources
+    makePlan cmdline inputs
+    | setPlanDirectory here
+    | setPlanFnOutputs (filter (\f !(matches '.*\.Po' f)) _)
+    | runJob
+    | getJobOutputs
 
   makeOutputs | filter (./tool ==~ _.getPathName) | head
 
