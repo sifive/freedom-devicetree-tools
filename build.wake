@@ -11,6 +11,7 @@ def m4_dir             = ./ "m4"
 def doJob cmdline inputs =
   makePlan cmdline inputs
   | setPlanDirectory here
+  | setPlanFnOutputs (filter (\f !(matches '.*\.Po' f)) _)
   | runJob
   | getJobOutputs
 
@@ -18,48 +19,44 @@ def makeTool tool =
   def autoreconfOutputs =
     def cmdline = which "autoreconf", "-i", Nil
     def inputs =  sources here '.*'
-    doJob cmdline inputs
-
-  # manual job because make modifies ".deps/*" outputs
-  def configureOutputs =
-    def cmdline = filter (configure_file ==~ _.getPathName) autoreconfOutputs | map getPathName
-    def inputs = autoreconfOutputs ++ sources here '.*'
-    def foutputs _ = ./"config.status", ./"config.log", ./"Makefile", Nil
-
-    makeManualPlan cmdline inputs foutputs
+    makePlan cmdline inputs
     | setPlanDirectory here
     | runJob
     | getJobOutputs
 
+  # manual job because make modifies ".deps/*" outputs
+  def configureOutputs =
+    def configure = filter (configure_file ==~ _.getPathName) autoreconfOutputs
+    def cmdline = map (relative here _.getPathName) configure
+    def inputs = configure ++ autoreconfOutputs ++ sources here '.*'
+    doJob cmdline inputs
+
   def makeOutputs =
     def cmdline = which "make", Nil
-    def inputs = configureOutputs ++ autoreconfOutputs ++ sources here '.*'# ++ files (./".deps") '.*'
+    def poFiles = files here '.*\.Po' | map makeStatePath
+    def allSources = sources here '.*'
+    def inputs = configureOutputs ++ autoreconfOutputs ++ allSources ++ poFiles
     doJob cmdline inputs
 
   makeOutputs | filter (./tool ==~ _.getPathName) | head
 
-def freedom_ldscript_generator       _ = makeTool "freedom-ldscript-generator"
-def freedom_makeattributes_generator _ = makeTool "freedom-makeattributes-generator"
-def freedom_mee_header_generator     _ = makeTool "freedom-mee_header-generator"
-def freedom_mee_specs_generator      _ = makeTool "freedom-mee_specs-generator"
-def freedom_openocdcfg_generator     _ = makeTool "freedom-openocdcfg-generator"
-def freedom_zephyrdtsfixup_generator _ = makeTool "freedom-zephyrdtsfixup-generator"
+global def freedom_ldscript_generator       _ = makeTool "freedom-ldscript-generator"
+global def freedom_makeattributes_generator _ = makeTool "freedom-makeattributes-generator"
+global def freedom_metal_header_generator   _ = makeTool "freedom-metal_header-generator"
+global def freedom_metal_specs_generator    _ = makeTool "freedom-metal_specs-generator"
+global def freedom_openocdcfg_generator     _ = makeTool "freedom-openocdcfg-generator"
+global def freedom_zephyrdtsfixup_generator _ = makeTool "freedom-zephyrdtsfixup-generator"
 
 
 ### Linker Script Generator ###
-global data FreedomLdScriptGeneratorShow =
-  FreedomLdScriptGeneratorShowMem
-  FreedomLdScriptGeneratorShowControl
-  FreedomLdScriptGeneratorShowBoth
-
 tuple FreedomLdScriptGeneratorOptions =
-  global DTBFile     Path
-  global OutputFile  String
-  global Scratchpad  Boolean
-  global Show        Option FreedomLdScriptGeneratorShow
+  global DTBFile    Path
+  global OutputFile String
+  global Scratchpad Boolean
+  global Ramrodata  Boolean
 
 global def makeFreedomLdScriptGeneratorOptions dtbFile outputFile =
-  FreedomLdScriptGeneratorOptions dtbFile outputFile False None
+  FreedomLdScriptGeneratorOptions dtbFile outputFile False False
 
 global def freedomLdScriptGenerator options =
   def tool = freedom_ldscript_generator 0
@@ -71,33 +68,30 @@ global def freedomLdScriptGenerator options =
       "-l", options.getFreedomLdScriptGeneratorOptionsOutputFile,
       Nil
 
-    def scratchpad =
-      if options.getFreedomLdScriptGeneratorOptionsScratchpad
-      then "--scratchpad", Nil
-      else Nil
+    def scratchpad = match options.getFreedomLdScriptGeneratorOptionsScratchpad
+      True  = "--scratchpad", Nil
+      False = Nil
 
-    def show = match options.getFreedomLdScriptGeneratorOptionsShow
-      None = Nil
-      Some FreedomLdScriptGeneratorShowMem     = "-s", "mem", Nil
-      Some FreedomLdScriptGeneratorShowControl = "-s", "control", Nil
-      Some FreedomLdScriptGeneratorShowBoth    = "-s", "both", Nil
+    def ramrodata = match options.getFreedomLdScriptGeneratorOptionsRamrodata
+      True  = "--ramrodata", Nil
+      False = Nil
 
-    base ++ scratchpad ++ show
+    base ++ scratchpad ++ ramrodata
 
   def inputs = tool, dtbFile, Nil
   makePlan cmdline inputs | runJob | getJobOutput
 
 
-### Linker MEE header Generator ###
+### MEE header Generator ###
 tuple FreedomMEEHeaderGeneratorOptions =
   global DTBFile    Path
   global OutputFile String
 
-global def makeFreedomMEEHeaderGeneratorOptions dtbFile outputFile =
+global def makeFreedomMetalHeaderGeneratorOptions dtbFile outputFile =
   FreedomMEEHeaderGeneratorOptions dtbFile outputFile
 
-global def freedomMEEHeaderGenerator options =
-  def tool = freedom_mee_header_generator 0
+global def freedomMetalHeaderGenerator options =
+  def tool = freedom_metal_header_generator 0
   def dtbFile = options.getFreedomMEEHeaderGeneratorOptionsDTBFile
   def cmdline =
     tool.getPathName,
