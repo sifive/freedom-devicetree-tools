@@ -47,7 +47,24 @@ static inline bool has_memory (std::string mem)
 {
   for (auto entry : dts_memory_list) {
     if (entry.mem_name.find(mem) != std::string::npos) {
-      std::cout << "found " << mem << std::endl;
+      std::cout << "has " << mem << std::endl;
+      return true;
+    }
+  }
+  return false;
+}
+
+static inline bool is_linker_memory (std::string mem)
+{
+  for (auto entry : dts_memory_list) {
+    if (entry.mem_alias.compare(mem) == 0) {
+      if (mem.compare("itim") == 0) {
+        /* ITIM is special, if .text dont fit in 16KB skip it */
+        if (entry.mem_length < 0x6000) {
+           return false;
+        }
+      }
+      std::cout << "is " << mem << std::endl;
       return true;
     }
   }
@@ -232,15 +249,9 @@ static void dts_memory (void)
             n.named_tuples(
                 "reg-names", "reg",
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-                    if (sram_count == 0) {
-                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,sram0", base, size));
-		    } else {
-                        auto entry = dts_memory_list.back();
-                        dts_memory_list.pop_back();
-                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,sram0",
-							 entry.mem_start, (size + entry.mem_length)));
-		    }
-                    sram_count++;
+		  dts_memory_list.push_back(memory("mem", "sram" + std::to_string(sram_count),
+						 "sifive,sram0", base, size));
+                  sram_count++;
                 });
         },
         std::regex("sifive,spi0"), [&](node n) {
@@ -255,9 +266,15 @@ static void dts_memory (void)
                 });
         });
 
-    if (testram_count > 0)
-        alias_memory("testram", "ram");
-    else if (memory_count > 0) {
+    if (testram_count > 0) {
+    	if (sram_count > 0) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+	    alias_memory("testram", "flash");
+	} else {
+	    alias_memory("testram", "ram");
+	}
+    } else if (memory_count > 0) {
         alias_memory("memory", "ram");
     	if (spi_count > 0) {
             alias_memory("spi", "flash");
@@ -267,7 +284,8 @@ static void dts_memory (void)
     else if (sys_count > 0)
         alias_memory("sys_ram", "ram");
     else if (sram_count > 0) {
-        alias_memory("sys_ram", "ram");
+        alias_memory("sram0", "ram");
+        alias_memory("sram1", "itim");
         alias_memory("spi", "flash");
     } else {
         alias_memory("dtim", "ram");
@@ -294,19 +312,16 @@ static void show_dts_memory (string mtype)
 
 static void write_linker_file (fstream &os)
 {
-  //os << "#" << __FUNCTION__ << std::endl;
     os << "OUTPUT_ARCH(\"riscv\")" << std::endl << std::endl;
     os << "ENTRY(_enter)" << std::endl << std::endl;
 }
 
 static void write_linker_memory (fstream &os, bool scratchpad, uint32_t metal_entry)
 {
-  //os << "#" << __FUNCTION__ << std::endl;
   int flash_offset = 0;
     os << "MEMORY" << std::endl << "{" << std::endl;
     for (auto entry : dts_memory_list) {
-      if (!scratchpad &&
-	  (entry.mem_type.compare("mem") == 0) &&
+      if ((entry.mem_type.compare("mem") == 0) &&
 	  (entry.mem_alias.compare("flash") == 0)) {
         if (entry.mem_name.find("spi") != std::string::npos) {
           flash_offset = metal_entry;
@@ -332,7 +347,6 @@ static void write_linker_memory (fstream &os, bool scratchpad, uint32_t metal_en
 
 static void write_linker_phdrs (fstream &os, bool scratchpad)
 {
-  //os << "#" << __FUNCTION__ << std::endl;
     os << "PHDRS" << std::endl << "{" << std::endl;
     os << "\tflash PT_LOAD;" << std::endl;
     os << "\tram_init PT_LOAD;" << std::endl;
@@ -367,6 +381,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t{" << std::endl;
     os << "\t\tKEEP (*(.text.metal.init.enter))" << std::endl;
     os << "\t\tKEEP (*(SORT_NONE(.init)))" << std::endl;
+    os << "\t\tKEEP (*(.text.libgloss.start))" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram" << std::endl;
     } else {
@@ -374,20 +389,22 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     }
 
     os << std::endl << std::endl;
-    /* Define text section */
-    os << "\t.text \t\t:" << std::endl;
-    os << "\t{" << std::endl;
-    os << "\t\t*(.text.unlikely .text.unlikely.*)" << std::endl;
-    os << "\t\t*(.text.startup .text.startup.*)" << std::endl;
-    os << "\t\t*(.text .text.*)" << std::endl;
-    if (!itim) {
-      os << "\t\t*(.itim .itim.*)" << std::endl;
-    }
-    os << "\t\t*(.gnu.linkonce.t.*)" << std::endl;
-    if (scratchpad) {
-      os << "\t} >ram AT>ram :ram" << std::endl;
-    } else {
-      os << "\t} >flash AT>flash :flash" << std::endl;
+    if (!ramrodata) {
+      /* Define text section */
+      os << "\t.text \t\t:" << std::endl;
+      os << "\t{" << std::endl;
+      os << "\t\t*(.text.unlikely .text.unlikely.*)" << std::endl;
+      os << "\t\t*(.text.startup .text.startup.*)" << std::endl;
+      os << "\t\t*(.text .text.*)" << std::endl;
+      if (!itim) {
+	os << "\t\t*(.itim .itim.*)" << std::endl;
+      }
+      os << "\t\t*(.gnu.linkonce.t.*)" << std::endl;
+      if (scratchpad) {
+	os << "\t} >ram AT>ram :ram" << std::endl;
+      } else {
+	os << "\t} >flash AT>flash :flash" << std::endl;
+      }
     }
 
     os << std::endl << std::endl;
@@ -515,18 +532,10 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t{" << std::endl;
     os << "\t\t. = ALIGN(4);" << std::endl;
     os << "\t\tPROVIDE( metal_segment_itim_source_start = . );" << std::endl;
-    if (itim) {
-      if (scratchpad) {
-        os << "\t} >ram AT>ram :ram" << std::endl;
-      } else {
-        os << "\t} >flash AT>flash :flash" << std::endl;
-      }
+    if (scratchpad) {
+      os << "\t} >ram AT>ram :ram" << std::endl;
     } else {
-      if (scratchpad) {
-        os << "\t} >ram AT>ram :ram" << std::endl;
-      } else {
-        os << "\t} >flash AT>flash :flash" << std::endl;
-      }
+      os << "\t} >flash AT>flash :flash" << std::endl;
     }
 
     os << std::endl << std::endl;
@@ -535,7 +544,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t{" << std::endl;
     os << "\t\t. = ALIGN(4);" << std::endl;
     os << "\t\tPROVIDE( metal_segment_itim_target_start = . );" << std::endl;
-    if (itim) {
+    if (itim || has_memory("itim")) {
       if (scratchpad) {
         os << "\t} >itim AT>ram :itim_init" << std::endl;
       } else {
@@ -553,10 +562,14 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     /* Define itim section */
     os << "\t.itim \t\t:" << std::endl;
     os << "\t{" << std::endl;
-    if (itim ) {
-      os << "\t\t*(.itim .itim.*)" << std::endl;
+    os << "\t\t*(.itim .itim.*)" << std::endl;
+    if (ramrodata && itim) {
+      os << "\t\t*(.text.unlikely .text.unlikely.*)" << std::endl;
+      os << "\t\t*(.text.startup .text.startup.*)" << std::endl;
+      os << "\t\t*(.text .text.*)" << std::endl;
+      os << "\t\t*(.gnu.linkonce.t.*)" << std::endl;
     }
-    if (itim) {
+    if (itim || has_memory("itim")) {
       if (scratchpad) {
         os << "\t} >itim AT>ram :itim_init" << std::endl;
       } else {
@@ -575,6 +588,25 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t. = ALIGN(8);" << std::endl;
     os << "\tPROVIDE( metal_segment_itim_target_end = . );" << std::endl;
 
+    if (ramrodata) {
+      /* Define text section */
+      os << "\t.text \t\t:" << std::endl;
+      os << "\t{" << std::endl;
+      os << "\t\t*(.text.unlikely .text.unlikely.*)" << std::endl;
+      os << "\t\t*(.text.startup .text.startup.*)" << std::endl;
+      os << "\t\t*(.text .text.*)" << std::endl;
+      os << "\t\t*(.gnu.linkonce.t.*)" << std::endl;
+      if (!itim) {
+        os << "\t\t*(.itim .itim.*)" << std::endl;
+        if (scratchpad) {
+          os << "\t} >ram AT>ram :ram" << std::endl;
+        } else {
+          os << "\t} >flash AT>flash :flash" << std::endl;
+        }
+      } else {
+        os << "\t} >itim AT>flash :flash" << std::endl;
+      }
+    }
 
     os << std::endl << std::endl;
     /* Define lalign section */
@@ -614,7 +646,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t\t*(.gnu.linkonce.d.*)" << std::endl;
     os << "\t\t. = ALIGN(8);" << std::endl;
     os << "\t\tPROVIDE( __global_pointer$ = . + 0x800 );" << std::endl;
-    os << "\t\t*(.sdata .sdata.*)" << std::endl;
+    os << "\t\t*(.sdata .sdata.* .sdata2.*)" << std::endl;
     os << "\t\t*(.gnu.linkonce.s.*)" << std::endl;
     os << "\t\t. = ALIGN(8);" << std::endl;
     os << "\t\t*(.srodata.cst16)" << std::endl;
@@ -796,14 +828,14 @@ int main (int argc, char* argv[])
    * scratchpad is when we load and run everything from memory, whether it is
    * dtim, testram.
    */
-  if ( !has_memory("spi") ) {
+  if ( !is_linker_memory("flash") ) {
     scratchpad = true;
   }
 
   /*
-   * Detect if we posess an ITIM
+   * Detect if we posess an ITIM and it can fit
    */
-  itim = has_memory("itim");
+  itim = is_linker_memory("itim");
 
   if ( !linker_file.empty() ) {
     std::fstream lds;
