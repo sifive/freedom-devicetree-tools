@@ -54,7 +54,7 @@ static inline bool has_memory (std::string mem)
   return false;
 }
 
-static inline bool is_linker_memory (std::string mem)
+static inline bool linker_has_memory (std::string mem)
 {
   for (auto entry : dts_memory_list) {
     if (entry.mem_alias.compare(mem) == 0) {
@@ -828,14 +828,14 @@ int main (int argc, char* argv[])
    * scratchpad is when we load and run everything from memory, whether it is
    * dtim, testram.
    */
-  if ( !is_linker_memory("flash") ) {
+  if ( !linker_has_memory("flash") ) {
     scratchpad = true;
   }
 
   /*
    * Detect if we posess an ITIM and it can fit
    */
-  itim = is_linker_memory("itim");
+  itim = linker_has_memory("itim");
 
   if ( !linker_file.empty() ) {
     std::fstream lds;
