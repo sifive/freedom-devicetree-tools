@@ -1,0 +1,23 @@
+#!/bin/bash -x
+
+for i in "$@"
+do
+case $i in
+    --configure-args=*)
+    CONFIGURE_ARGS="${i#*=}"
+    shift # past argument=value
+    ;;
+    --install-dir=*)
+    INSTALL_DIR="${i#*=}"
+    shift # past argument=value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+
+autoreconf
+./configure ${CONFIGURE_ARGS} --prefix=
+make
+make DESTDIR=$(pwd)/${INSTALL_DIR} install

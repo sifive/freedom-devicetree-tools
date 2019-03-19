@@ -16,30 +16,25 @@ def doJob cmdline inputs =
   | getJobOutputs
 
 def makeTool tool =
-  def autoreconfOutputs =
-    def cmdline = which "autoreconf", "-i", Nil
-    def inputs =  sources here '.*'
-    doJob cmdline inputs
-
-  # manual job because make modifies ".deps/*" outputs
-  def configureOutputs =
-    def configure = filter (configure_file ==~ _.getPathName) autoreconfOutputs
-    def cmdline = map (relative here _.getPathName) configure
-    def inputs = configure ++ autoreconfOutputs ++ sources here '.*'
-    doJob cmdline inputs
-
+  def installDir = mkdir 0775 "build/freedom-devicetree-tools"
+  def wrapperScript = (sources "{here}/scripts" 'autoconf_wrapper' | head)
+  def runDir = here
+  def cmdline =
+    relative runDir wrapperScript.getPathName,
+    "--configure-args=",
+    "--install-dir={relative runDir installDir.getPathName}",
+    Nil
+  def inputs = wrapperScript, installDir, sources here '.*'
+  def foutputs _ = files installDir.getPathName '.*'
   def makeOutputs =
-    def cmdline = which "make", Nil
-    def poFiles = files here '.*\.Po' | map makeStatePath
-    def allSources = sources here '.*'
-    def inputs = configureOutputs ++ autoreconfOutputs ++ allSources ++ poFiles
-    makePlan cmdline inputs
-    | setPlanDirectory here
-    | setPlanFnOutputs (filter (\f !(matches '.*\.Po' f)) _)
+    makeManualPlan cmdline inputs foutputs
+    | setPlanDirectory runDir
     | runJob
     | getJobOutputs
 
-  makeOutputs | filter (./tool ==~ _.getPathName) | head
+  makeOutputs
+  | filter ("{installDir.getPathName}/bin/{tool}" ==~ _.getPathName)
+  | head
 
 global def freedom_ldscript_generator       _ = makeTool "freedom-ldscript-generator"
 global def freedom_makeattributes_generator _ = makeTool "freedom-makeattributes-generator"
@@ -60,7 +55,7 @@ global def makeFreedomLdScriptGeneratorOptions dtbFile outputFile =
   FreedomLdScriptGeneratorOptions dtbFile outputFile False False
 
 global def runFreedomLdScriptGenerator options =
-  def tool = freedom_ldscript_generator 0
+  def tool = freedom_ldscript_generator Unit
   def dtbFile = options.getFreedomLdScriptGeneratorOptionsDTBFile
   def cmdline =
     def base =
@@ -92,7 +87,7 @@ global def makeFreedomMetalHeaderGeneratorOptions dtbFile outputFile =
   FreedomMetalHeaderGeneratorOptions dtbFile outputFile
 
 global def runFreedomMetalHeaderGenerator options =
-  def tool = freedom_metal_header_generator 0
+  def tool = freedom_metal_header_generator Unit
   def dtbFile = options.getFreedomMetalHeaderGeneratorOptionsDTBFile
   def outputFile = options.getFreedomMetalHeaderGeneratorOptionsOutputFile
   def cmdline =
@@ -120,7 +115,7 @@ global def getFreedomMakeAttributesMARCH = getFreedomMakeAttributesMARCH_
 global def getFreedomMakeAttributesMABI  = getFreedomMakeAttributesMABI_
 
 global def runFreedomMakeAttributesGenerator options =
-  def tool = freedom_makeattributes_generator 0
+  def tool = freedom_makeattributes_generator Unit
   def dtbFile = options.getFreedomMakeAttributesGeneratorOptionsDTBFile
   def outputFile = options.getFreedomMakeAttributesGeneratorOptionsOutputFile
   def cmdline =
