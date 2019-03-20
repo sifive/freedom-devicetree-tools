@@ -271,6 +271,9 @@ static void dts_memory (void)
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
 	    alias_memory("testram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("testram", "flash");
 	} else {
 	    alias_memory("testram", "ram");
 	}
