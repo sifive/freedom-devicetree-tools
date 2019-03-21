@@ -14,6 +14,21 @@ class riscv_plic0 : public Device {
       : Device(os, dtb, "riscv,plic0")
     {}
 
+    void create_machine_macros()
+    {
+      dtb.match(
+        std::regex("riscv,plic0"),
+        [&](node n) {
+	  /* Add 1 to number of interrupts for 0 base software index */
+          emit_def("__METAL_PLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("riscv,ndev") + 1));
+        });
+
+      /* If no CLIC exists, output 0 as a default value */
+      os << "#ifndef __METAL_PLIC_SUBINTERRUPTS\n";
+      os << "#define __METAL_PLIC_SUBINTERRUPTS 0\n";
+      os << "#endif\n";
+    }
+
     void create_defines()
     {
       uint32_t max_interrupts = 0;
@@ -24,6 +39,9 @@ class riscv_plic0 : public Device {
 	  uint32_t num_interrupts = n.get_fields_count<std::tuple<node, uint32_t>>("interrupts-extended");
 
 	  emit_def("__METAL_" + n.handle_cap() + "_INTERRUPTS", std::to_string(num_interrupts));
+
+          /* Add 1 to number of interrupts for 0 base software index */
+          emit_def("__METAL_PLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("riscv,ndev") + 1));
 
 	  if(num_interrupts > max_interrupts) {
 	    max_interrupts = num_interrupts;
@@ -83,7 +101,8 @@ class riscv_plic0 : public Device {
 	    });
 
 	  emit_struct_field_u32("max_priority", n.get_field<uint32_t>("riscv,max-priority"));
-	  emit_struct_field_u32("num_interrupts", n.get_field<uint32_t>("riscv,ndev"));
+          /* Add 1 to number of interrupts for 0 base software index */
+	  emit_struct_field_u32("num_interrupts", n.get_field<uint32_t>("riscv,ndev") + 1);
 
 	  if (n.field_exists("interrupt-controller")) { 
 	      emit_struct_field("interrupt_controller", "1");
