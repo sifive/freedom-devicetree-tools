@@ -23,7 +23,7 @@ class riscv_plic0 : public Device {
           emit_def("__METAL_PLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("riscv,ndev") + 1));
         });
 
-      /* If no CLIC exists, output 0 as a default value */
+      /* If no PLIC exists, output 0 as a default value */
       os << "#ifndef __METAL_PLIC_SUBINTERRUPTS\n";
       os << "#define __METAL_PLIC_SUBINTERRUPTS 0\n";
       os << "#endif\n";
