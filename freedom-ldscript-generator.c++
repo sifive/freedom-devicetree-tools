@@ -399,7 +399,7 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
       os << "\t\t*(.text.unlikely .text.unlikely.*)" << std::endl;
       os << "\t\t*(.text.startup .text.startup.*)" << std::endl;
       os << "\t\t*(.text .text.*)" << std::endl;
-      if (!itim) {
+      if (!itim && !has_memory("itim")) {
 	os << "\t\t*(.itim .itim.*)" << std::endl;
       }
       os << "\t\t*(.gnu.linkonce.t.*)" << std::endl;
@@ -600,7 +600,9 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
       os << "\t\t*(.text .text.*)" << std::endl;
       os << "\t\t*(.gnu.linkonce.t.*)" << std::endl;
       if (!itim) {
-        os << "\t\t*(.itim .itim.*)" << std::endl;
+        if (!has_memory("itim")) {
+          os << "\t\t*(.itim .itim.*)" << std::endl;
+	}
         if (scratchpad) {
           os << "\t} >ram AT>ram :ram" << std::endl;
         } else {
