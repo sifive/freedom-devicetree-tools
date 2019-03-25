@@ -31,6 +31,7 @@ class riscv_plic0 : public Device {
 
     void create_defines()
     {
+      uint32_t sub_interrupts = 0;
       uint32_t max_interrupts = 0;
 
       dtb.match(
@@ -41,13 +42,16 @@ class riscv_plic0 : public Device {
 	  emit_def("__METAL_" + n.handle_cap() + "_INTERRUPTS", std::to_string(num_interrupts));
 
           /* Add 1 to number of interrupts for 0 base software index */
-          emit_def("__METAL_PLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("riscv,ndev") + 1));
+          sub_interrupts = n.get_field<uint32_t>("riscv,ndev") + 1;
+          emit_def("__METAL_PLIC_SUBINTERRUPTS", std::to_string(sub_interrupts));
 
 	  if(num_interrupts > max_interrupts) {
 	    max_interrupts = num_interrupts;
 	  }
 	});
- 
+      if (sub_interrupts == 0) { 
+        os << "#define __METAL_PLIC_SUBINTERRUPTS 0\n";
+      }
       emit_def("METAL_MAX_PLIC_INTERRUPTS", std::to_string(max_interrupts));
     }
 
