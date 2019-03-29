@@ -435,6 +435,12 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
       os << "\t\t*(.rdata)" << std::endl;
       os << "\t\t*(.rodata .rodata.*)" << std::endl;
       os << "\t\t*(.gnu.linkonce.r.*)" << std::endl;
+      os << "\t\t. = ALIGN(8);" << std::endl;
+      os << "\t\t*(.srodata.cst16)" << std::endl;
+      os << "\t\t*(.srodata.cst8)" << std::endl;
+      os << "\t\t*(.srodata.cst4)" << std::endl;
+      os << "\t\t*(.srodata.cst2)" << std::endl;
+      os << "\t\t*(.srodata .srodata.*)" << std::endl;
       if (scratchpad) {
 	os << "\t} >ram AT>ram :ram" << std::endl;
       } else {
@@ -646,6 +652,12 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
       os << "\t\t*(.rdata)" << std::endl;
       os << "\t\t*(.rodata .rodata.*)" << std::endl;
       os << "\t\t*(.gnu.linkonce.r.*)" << std::endl;
+      os << "\t\t. = ALIGN(8);" << std::endl;
+      os << "\t\t*(.srodata.cst16)" << std::endl;
+      os << "\t\t*(.srodata.cst8)" << std::endl;
+      os << "\t\t*(.srodata.cst4)" << std::endl;
+      os << "\t\t*(.srodata.cst2)" << std::endl;
+      os << "\t\t*(.srodata .srodata.*)" << std::endl;      
     }
     os << "\t\t*(.data .data.*)" << std::endl;
     os << "\t\t*(.gnu.linkonce.d.*)" << std::endl;
@@ -653,12 +665,6 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t\tPROVIDE( __global_pointer$ = . + 0x800 );" << std::endl;
     os << "\t\t*(.sdata .sdata.* .sdata2.*)" << std::endl;
     os << "\t\t*(.gnu.linkonce.s.*)" << std::endl;
-    os << "\t\t. = ALIGN(8);" << std::endl;
-    os << "\t\t*(.srodata.cst16)" << std::endl;
-    os << "\t\t*(.srodata.cst8)" << std::endl;
-    os << "\t\t*(.srodata.cst4)" << std::endl;
-    os << "\t\t*(.srodata.cst2)" << std::endl;
-    os << "\t\t*(.srodata .srodata.*)" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram_init" << std::endl;
     } else {
