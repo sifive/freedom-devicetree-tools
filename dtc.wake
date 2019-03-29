@@ -28,7 +28,8 @@ global def runDTC options =
     "-I", options.getDTCOptionsInFormat.dtcFormatToString,
     "-O", options.getDTCOptionsOutFormat.dtcFormatToString,
     Nil
-  def inputs = options.getDTCOptionsInputFile, Nil
+  def outputDir = mkdir 0775 "{options.getDTCOptionsOutputFile}/.."
+  def inputs = outputDir, options.getDTCOptionsInputFile, Nil
   makePlan cmdline inputs
   | runJob
   | getJobOutput
