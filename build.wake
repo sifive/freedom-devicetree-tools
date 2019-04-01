@@ -16,7 +16,7 @@ def doJob cmdline inputs =
   | getJobOutputs
 
 def makeTool tool =
-  def installDir = mkdir 0775 "build/freedom-devicetree-tools"
+  def installDir = mkdir "build/freedom-devicetree-tools"
   def wrapperScript = (sources "{here}/scripts" 'autoconf_wrapper' | head)
   def runDir = here
   def cmdline =
@@ -95,7 +95,7 @@ global def runFreedomMetalHeaderGenerator options =
     "-d", dtbFile.getPathName,
     "-o", outputFile,
     Nil
-  def inputs = mkdir 0775 "{outputFile}/..".simplify, tool, dtbFile, Nil
+  def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   makePlan cmdline inputs | runJob | getJobOutput
 
 ### Make Attributes Generator ###
@@ -123,7 +123,7 @@ global def runFreedomMakeAttributesGenerator options =
     "-d", dtbFile.getPathName,
     "-o", outputFile,
     Nil
-  def inputs = mkdir 0775 "{outputFile}/..".simplify, tool, dtbFile, Nil
+  def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   def file = makePlan cmdline inputs | runJob | getJobOutput
   def contents = read file
   def mabi  = extract '.*FRAMEWORK_BOARD_DTS_MABI=([a-zA-Z0-9_]+).*'  contents | head
