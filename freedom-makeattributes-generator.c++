@@ -228,18 +228,31 @@ static void write_config_file (fstream &os, std::string board)
     string isa;
     string serial;
 
-    os << "#" << __FUNCTION__ << std::endl << std::endl;
-
     isa = arch2arch(get_dts_attribute("/cpus/cpu@0", "riscv,isa"));
-    os << "FRAMEWORK_BOARD_DTS_MARCH=" << isa << std::endl;
-    os << "FRAMEWORK_BOARD_DTS_MABI=" << arch2abi(isa) << std::endl;
-
-    serial = get_dts_attribute("/soc/serial@20000000", "compatible");
-    std::size_t found = serial.find("uart0");
+    std::size_t found = isa.find("rv64");
+    os << "RISCV_ARCH=" << isa << std::endl;
+    os << "RISCV_ABI=" << arch2abi(isa) << std::endl;
     if (found != std::string::npos) {
-        os << "FRAMEWORK_BOARD_DTS_UART=0x20000000" << std::endl;
+        os << "RISCV_CMODEL=medany" << std::endl;
     } else {
-        os << "FRAMEWORK_BOARD_DTS_UART=0x10013000" << std::endl;
+        os << "RISCV_CMODEL=medlow" << std::endl;
+    }
+    os << std::endl;
+
+    if (board.compare("rtl") == 0) {
+        if (found != std::string::npos) {
+            os << "COREIP_MEM_WIDTH=64" << std::endl;
+        } else {
+            os << "COREIP_MEM_WIDTH=32" << std::endl;
+        }
+        os << std::endl;
+        os << "TARGET_TAGS=rtl" << std::endl;
+    } else if (board.compare("arty") == 0) {
+        os << "TARGET_TAGS=fpga openocd" << std::endl;
+    } else if (board.compare("hifive1-revb") == 0) {
+        os << "TARGET_TAGS=board jlink" << std::endl;
+    } else {
+        os << "TARGET_TAGS=board openocd" << std::endl;
     }
 }
 
@@ -248,7 +261,7 @@ static void show_usage(string name)
   std::cerr << "Usage: " << name << " <option(s)>\n"
 	    << "Options:\n"
 	    << "\t-h,--help\t\t\tShow this help message\n"
-	    << "\t-b,--board <eg. arty | hifive1>\t\tSpecify board type\n"
+	    << "\t-b,--board <eg. rtl | arty | hifive1>\t\tSpecify board type\n"
 	    << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
 	    << "\t-o,--output <eg. openocd.cfg>\t\tGenerate openocd config file\n"
 	    << "\t-s,--show \t\tShow openocd config file on std-output\n"
@@ -271,9 +284,10 @@ int main (int argc, char* argv[])
           if ((arg == "-b") || (arg == "--board")) {
               if (i + 1 < argc) {
                   board = argv[++i];
-		  if ((board.compare("arty") != 0) &&
+		  if ((board.compare("rtl") != 0) &&
+		      (board.compare("arty") != 0) &&
 		      (board.compare("hifive1") != 0)) {
-		    std::cerr << "Possible options are <arty | hifive1>."
+		    std::cerr << "Possible options are <rtl | arty | hifive1>."
 			      << std::endl;
 		    return 1;
 		  }
