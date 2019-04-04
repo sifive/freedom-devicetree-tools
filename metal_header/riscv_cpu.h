@@ -72,12 +72,6 @@ class riscv_cpu : public Device {
 
     void create_handles()
     {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_def_handle("__METAL_DT_RISCV_CPU_HANDLE", n, ".cpu");
-	});
-
       emit_def("__METAL_DT_MAX_HARTS", std::to_string(num_cpus));
 
       emit_struct_pointer_begin("cpu", "__metal_cpu_table", "[]");

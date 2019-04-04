@@ -43,15 +43,6 @@ class riscv_cpu_intc : public Device {
 	  emit_struct_end();
 	});
     }
-
-    void create_handles()
-    {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_def_handle("__METAL_DT_RISCV_CPU_INTC_HANDLE", n, ".controller");
-      });
-    }
 };
 
 #endif
