@@ -54,7 +54,15 @@ class riscv_cpu : public Device {
 	  emit_struct_field("vtable", "&__metal_driver_vtable_cpu");
 	  emit_struct_field("cpu.vtable", "&__metal_driver_vtable_cpu.cpu_vtable");
 
-	  emit_struct_field_u32("timebase", n.get_field<uint32_t>("timebase-frequency"));
+	  n.maybe_tuple(
+	      "timebase-frequency",
+	      tuple_t<uint32_t>(),
+	      [&]() {
+		emit_struct_field_u32("timebase", n.parent().get_field<uint32_t>("timebase-frequency"));
+	      },
+	      [&](uint32_t timebase) {
+		emit_struct_field_u32("timebase", timebase);
+	      });
 
 	  emit_struct_field("interrupt_controller", "&__metal_dt_interrupt_controller.controller");
 
