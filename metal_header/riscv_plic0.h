@@ -10,9 +10,24 @@
 
 class riscv_plic0 : public Device {
   public:
+    int num_parents;
+
     riscv_plic0(std::ostream &os, const fdt &dtb)
       : Device(os, dtb, "riscv,plic0")
-    {}
+    {
+      num_parents = 0;
+
+      dtb.match(
+        std::regex("riscv,plic0"),
+        [&](node n) {
+	  n.maybe_tuple_size(
+	    "interrupts-extended", tuple_t<node, uint32_t>(),
+	    [&](){},
+	    [&](int s, node c, uint32_t line) {
+	      num_parents += 1;
+	    });
+        });
+    }
 
     void create_machine_macros()
     {
@@ -21,11 +36,16 @@ class riscv_plic0 : public Device {
         [&](node n) {
 	  /* Add 1 to number of interrupts for 0 base software index */
           emit_def("__METAL_PLIC_SUBINTERRUPTS", std::to_string(n.get_field<uint32_t>("riscv,ndev") + 1));
+
+          emit_def("__METAL_PLIC_NUM_PARENTS", std::to_string(num_parents));
         });
 
       /* If no PLIC exists, output 0 as a default value */
       os << "#ifndef __METAL_PLIC_SUBINTERRUPTS\n";
       os << "#define __METAL_PLIC_SUBINTERRUPTS 0\n";
+      os << "#endif\n";
+      os << "#ifndef __METAL_PLIC_NUM_PARENTS\n";
+      os << "#define __METAL_PLIC_NUM_PARENTS 0\n";
       os << "#endif\n";
     }
 
@@ -53,6 +73,8 @@ class riscv_plic0 : public Device {
         os << "#define __METAL_PLIC_SUBINTERRUPTS 0\n";
       }
       emit_def("METAL_MAX_PLIC_INTERRUPTS", std::to_string(max_interrupts));
+
+      emit_def("__METAL_PLIC_NUM_PARENTS", std::to_string(num_parents));
     }
 
     void include_headers()
@@ -86,15 +108,15 @@ class riscv_plic0 : public Device {
 
 	  emit_struct_field("init_done", "0");
 
-	  n.maybe_tuple_size(
+	  n.maybe_tuple_index(
 	    "interrupts-extended", tuple_t<node, uint32_t>(),
 	    [&](){
-		emit_struct_field_null("interrupt_parent");
+		emit_struct_field_null("interrupt_parents[0]");
 		emit_struct_field("interrupt_lines[0]", "0");
 	    },
-	    [&](int s, node c, uint32_t line) {
-		emit_struct_container_node_and_array(s, "interrupt_parent", c, ".controller",
-						     "interrupt_lines", line);
+	    [&](int i, node c, uint32_t line) {
+		os << "    .interrupt_parents[" + std::to_string(i) + "] = &__metal_dt_" + c.parent().handle() + "_" + c.handle() + ".controller,\n";
+		os << "    .interrupt_lines[" + std::to_string(i) + "] = " + std::to_string(line) + ",\n";
 	    });
 
 	  n.named_tuples(
