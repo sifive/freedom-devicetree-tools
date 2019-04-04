@@ -714,25 +714,11 @@ static void write_linker_sections (fstream &os, int num_harts, bool scratchpad, 
 
     os << std::endl << std::endl;
 
-    /* Define heap section
-     *
-     * For scratchpad mode:
-     *   Customer implementations might not map all of the addressable RAM,
-     *   so we want to put the heap immediately after the rest of memory and
-     *   size it to exactly __heap_size.
-     * For non-scratchpad mode:
-     *   We expect all addresses in RAM to be mapped, so start the heap after
-     *   the rest of the memory contents and extend to the top of RAM.
-     */
     os << "\t.heap :" << std::endl;
     os << "\t{" << std::endl;
     os << "\t\tPROVIDE( metal_segment_heap_target_start = . );" << std::endl;
 
     os << "\t\t. = __heap_size;" << std::endl;
-    if (!scratchpad) {
-      /* If the __heap_size == 0, don't let the heap grow to fill the rest of RAM. */
-      os << "\t\t. = __heap_size == 0 ? 0 : ORIGIN(ram) + LENGTH(ram);" << std::endl;
-    }
 
     os << "\t\tPROVIDE( metal_segment_heap_target_end = . );" << std::endl;;
     os << "\t\tPROVIDE( _heap_end = . );" << std::endl;
