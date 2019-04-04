@@ -64,7 +64,7 @@ class riscv_cpu : public Device {
 		emit_struct_field_u32("timebase", timebase);
 	      });
 
-	  emit_struct_field("interrupt_controller", "&__metal_dt_interrupt_controller.controller");
+	  emit_struct_field("interrupt_controller", "&__metal_dt_" + n.handle() + "_interrupt_controller.controller");
 
 	  emit_struct_end();
 	});
