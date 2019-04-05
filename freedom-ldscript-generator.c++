@@ -377,6 +377,7 @@ static void write_linker_sections (fstream &os, int num_harts, bool scratchpad, 
     /* Define stack size */
     os << "\t__stack_size = DEFINED(__stack_size) ? __stack_size : "
 	      << stack_cfg << ";" << std::endl;
+    os << "\tPROVIDE(__stack_size = __stack_size);" << std::endl;
     /* Define heap size */
     os << "\t__heap_size = DEFINED(__heap_size) ? __heap_size : "
 	      << heap_cfg << ";" << std::endl;
