@@ -82,7 +82,14 @@ class memory : public Device {
 
 	n.maybe_tuple(
 	  "attributes", tuple_t<string>(),
-	  [&]() { },
+	  [&]() { 
+	    os << "    ._attrs = {\n";
+	    os << "        .R = 1,\n";
+	    os << "        .W = 1,\n";
+	    os << "        .X = 1,\n";
+	    os << "        .C = 1,\n";
+	    os << "        .A = 1},\n";
+	  },
 	  [&](string attributes) {
 	    int R = 0;
 	    int W = 0;
