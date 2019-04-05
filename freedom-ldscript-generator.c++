@@ -1,16 +1,19 @@
 /* Copyright 2018 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>
-#include <iostream>
+#include <stdlib.h>
+#include <unistd.h>
+
 #include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
+#include <iostream>
 #include <iterator>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include <fdt.h++>
 
 using std::cout;
@@ -364,7 +367,7 @@ static void write_linker_phdrs (fstream &os, bool scratchpad)
     os << "}" << std::endl << std::endl;
 }
 
-static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata, bool itim)
+static void write_linker_sections (fstream &os, int num_harts, bool scratchpad, bool ramrodata, bool itim)
 {
     std::string stack_cfg = "0x400";
     std::string heap_cfg = "0x400";
@@ -702,6 +705,9 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t\tPROVIDE(metal_segment_stack_begin = .);" << std::endl;
     os << "\t\t. = __stack_size;" << std::endl;
     os << "\t\tPROVIDE( _sp = . );" << std::endl;
+    for (int i = 1; i < num_harts; i++) {
+      os << "\t\t. = __stack_size;" << std::endl;
+    }
     os << "\t\tPROVIDE(metal_segment_stack_end = .);" << std::endl;
     os << "\t} >ram AT>ram :ram" << std::endl;
 
@@ -861,10 +867,19 @@ int main (int argc, char* argv[])
         metal_entry = offset;
       });
 
+    int num_harts = 0;
+    dtb.match(
+      std::regex("cpu"),
+      [&](node n) {
+        num_harts += 1;
+      });
+
+    std::cout << "Found " << num_harts << " harts\n";
+
     write_linker_file(lds);
     write_linker_memory(lds, scratchpad, metal_entry);
     write_linker_phdrs(lds, scratchpad);
-    write_linker_sections(lds, scratchpad, ramrodata, itim);
+    write_linker_sections(lds, num_harts, scratchpad, ramrodata, itim);
   }
 
   if (!show.empty()) {
