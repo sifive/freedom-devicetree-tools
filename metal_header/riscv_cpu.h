@@ -54,9 +54,17 @@ class riscv_cpu : public Device {
 	  emit_struct_field("vtable", "&__metal_driver_vtable_cpu");
 	  emit_struct_field("cpu.vtable", "&__metal_driver_vtable_cpu.cpu_vtable");
 
-	  emit_struct_field_u32("timebase", n.get_field<uint32_t>("timebase-frequency"));
+	  n.maybe_tuple(
+	      "timebase-frequency",
+	      tuple_t<uint32_t>(),
+	      [&]() {
+		emit_struct_field_u32("timebase", n.parent().get_field<uint32_t>("timebase-frequency"));
+	      },
+	      [&](uint32_t timebase) {
+		emit_struct_field_u32("timebase", timebase);
+	      });
 
-	  emit_struct_field("interrupt_controller", "&__metal_dt_interrupt_controller.controller");
+	  emit_struct_field("interrupt_controller", "&__metal_dt_" + n.handle() + "_interrupt_controller.controller");
 
 	  emit_struct_end();
 	});
@@ -64,12 +72,6 @@ class riscv_cpu : public Device {
 
     void create_handles()
     {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_def_handle("__METAL_DT_RISCV_CPU_HANDLE", n, ".cpu");
-	});
-
       emit_def("__METAL_DT_MAX_HARTS", std::to_string(num_cpus));
 
       emit_struct_pointer_begin("cpu", "__metal_cpu_table", "[]");

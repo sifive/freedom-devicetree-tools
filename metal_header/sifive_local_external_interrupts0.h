@@ -67,7 +67,13 @@ class sifive_local_external_interrupts0 : public Device {
 	  n.maybe_tuple(
 	    "interrupt-parent", tuple_t<node>(),
 	    [&](){ emit_struct_field_null("interrupt_parent"); },
-	    [&](node n) { emit_struct_field_node("interrupt_parent", n, ".controller"); });
+	    [&](node n) {
+		if(n.handle().compare("interrupt_controller") == 0) {
+		  os << "    .interrupt_parent = &__metal_dt_" + n.parent().handle() + "_" + n.handle() + ".controller,\n";
+		} else {
+		  emit_struct_field_node("interrupt_parent", n, ".controller");
+		}
+	      });
 
 	  emit_struct_field("num_interrupts", "METAL_MAX_LOCAL_EXT_INTERRUPTS");
 

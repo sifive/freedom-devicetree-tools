@@ -94,7 +94,7 @@ void Device::emit_struct_container_node_and_array(int size, std::string field1,
 						std::string field2, uint32_t elem) {
   static int cna = 0;
   if (cna == 0) {
-      os << "    ." << field1 << " = &" << "__metal_dt_" << c.handle() << subfield1 << ",\n";
+      os << "    ." << field1 << " = &" << "__metal_dt_" << c.parent().handle() + "_" + c.handle() << subfield1 << ",\n";
   }
   os << "    ." << field2 << "[" << cna << "] = " << elem << ",\n";
   cna++;

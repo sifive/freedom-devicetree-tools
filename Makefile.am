@@ -25,6 +25,7 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/device.c++ \
 	metal_header/device.h \
 	metal_header/fixed_clock.h \
+	metal_header/fixed_factor_clock.h \
 	metal_header/memory.h \
 	metal_header/riscv_clint0.h \
 	metal_header/riscv_cpu.h \
