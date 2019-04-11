@@ -110,9 +110,11 @@ tuple FreedomMakeAttributes =
   File_ Path
   MARCH_ String
   MABI_  String
+  CMODEL_ String
 global def getFreedomMakeAttributesFile  = getFreedomMakeAttributesFile_
 global def getFreedomMakeAttributesMARCH = getFreedomMakeAttributesMARCH_
 global def getFreedomMakeAttributesMABI  = getFreedomMakeAttributesMABI_
+global def getFreedomMakeAttributesCMODEL  = getFreedomMakeAttributesCMODEL_
 
 global def runFreedomMakeAttributesGenerator options =
   def tool = freedom_makeattributes_generator Unit
@@ -125,7 +127,13 @@ global def runFreedomMakeAttributesGenerator options =
     Nil
   def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   def file = makePlan cmdline inputs | runJob | getJobOutput
-  def contents = read file
-  def mabi  = extract '.*FRAMEWORK_BOARD_DTS_MABI=([a-zA-Z0-9_]+).*'  contents | head
-  def march = extract '.*FRAMEWORK_BOARD_DTS_MARCH=([a-zA-Z0-9_]+).*' contents | head
-  FreedomMakeAttributes file march mabi
+  def lines = read file | tokenize '\n'
+  def getAttribute attribute =
+    def regex = "^{attribute}=(.*)$"
+    def filtered = filter (matches regex) lines | head
+    extract regex filtered | head
+
+  def mabi   = getAttribute "RISCV_ABI"
+  def march  = getAttribute "RISCV_ARCH"
+  def cmodel = getAttribute "RISCV_CMODEL"
+  FreedomMakeAttributes file march mabi cmodel
