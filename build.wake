@@ -46,10 +46,10 @@ global def freedom_zephyrdtsfixup_generator _ = makeTool "freedom-zephyrdtsfixup
 
 ### Linker Script Generator ###
 tuple FreedomLdScriptGeneratorOptions =
-  global DTBFile    Path
-  global OutputFile String
-  global Scratchpad Boolean
-  global Ramrodata  Boolean
+  global DTBFile:    Path
+  global OutputFile: String
+  global Scratchpad: Boolean
+  global Ramrodata:  Boolean
 
 global def makeFreedomLdScriptGeneratorOptions dtbFile outputFile =
   FreedomLdScriptGeneratorOptions dtbFile outputFile False False
@@ -80,8 +80,8 @@ global def runFreedomLdScriptGenerator options =
 
 ### Metal header Generator ###
 tuple FreedomMetalHeaderGeneratorOptions =
-  global DTBFile    Path
-  global OutputFile String
+  global DTBFile:    Path
+  global OutputFile: String
 
 global def makeFreedomMetalHeaderGeneratorOptions dtbFile outputFile =
   FreedomMetalHeaderGeneratorOptions dtbFile outputFile
@@ -100,17 +100,17 @@ global def runFreedomMetalHeaderGenerator options =
 
 ### Make Attributes Generator ###
 tuple FreedomMakeAttributesGeneratorOptions =
-  global DTBFile    Path
-  global OutputFile String
+  global DTBFile:    Path
+  global OutputFile: String
 
 global def makeFreedomMakeAttributesGeneratorOptions dtbFile outputFile =
   FreedomMakeAttributesGeneratorOptions dtbFile outputFile
 
 tuple FreedomMakeAttributes =
-  File_ Path
-  MARCH_ String
-  MABI_  String
-  CMODEL_ String
+  File_: Path
+  MARCH_: String
+  MABI_:  String
+  CMODEL_: String
 global def getFreedomMakeAttributesFile  = getFreedomMakeAttributesFile_
 global def getFreedomMakeAttributesMARCH = getFreedomMakeAttributesMARCH_
 global def getFreedomMakeAttributesMABI  = getFreedomMakeAttributesMABI_

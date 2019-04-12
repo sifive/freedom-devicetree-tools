@@ -1,8 +1,8 @@
 tuple DTCOptions =
-  global InFormat   DTCFormat
-  global InputFile  Path
-  global OutFormat  DTCFormat
-  global OutputFile String
+  global InFormat:   DTCFormat
+  global InputFile:  Path
+  global OutFormat:  DTCFormat
+  global OutputFile: String
 
 global data DTCFormat =
   DTC_DTB
