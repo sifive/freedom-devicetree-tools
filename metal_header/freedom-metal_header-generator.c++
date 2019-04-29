@@ -86,6 +86,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   os << "#ifndef " << cfg_file << std::endl;
   os << "#define " << cfg_file << std::endl << std::endl;
 
+  os << "#include <metal/machine/platform.h>" << std::endl << std::endl;
+
   std::list<Device *> devices;
 
   /* Generic Devices */

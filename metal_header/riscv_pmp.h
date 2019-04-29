@@ -37,7 +37,7 @@ class riscv_pmp : public Device {
 	[&](node n) {
 	  emit_comment(n);
 	  os << "struct metal_pmp __metal_dt_" << n.handle() << " = {\n";
-	  emit_struct_field_u32("num_regions", n.get_field<uint32_t>("regions"));
+	  emit_struct_field_platform_define("num_regions", n, "NUM_REGIONS");
 	  emit_struct_end();
 	});
     }

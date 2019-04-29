@@ -89,6 +89,45 @@ void Device::emit_struct_field_ts(std::string field, target_size value) {
   os << "    ." << field << " = " << std::to_string(value) << "UL,\n";
 }
 
+void Device::emit_struct_field_platform_define(std::string field, node n, std::string suffix) {
+  auto to_define = [](std::string input_string) -> std::string {
+    std::string s = input_string;
+    std::transform(s.begin(), s.end(), s.begin(),
+      [](unsigned char c) -> char { 
+	if(c == ',' || c == '-') {
+	  return '_';
+	}
+	return toupper(c);
+    });
+
+    return s;
+  };
+  std::string name = to_define(n.get_fields<std::string>("compatible")[0]);
+  std::string instance = to_define(n.instance());
+  suffix = to_define(suffix);
+
+  os << "    ." << field << " = METAL_" << name << "_" << instance << "_" << suffix << "," << std::endl; 
+}
+
+void Device::emit_struct_field_platform_define_offset(std::string field, node n, std::string suffix) {
+  auto to_define = [](std::string input_string) -> std::string {
+    std::string s = input_string;
+    std::transform(s.begin(), s.end(), s.begin(),
+      [](unsigned char c) -> char { 
+	if(c == ',' || c == '-') {
+	  return '_';
+	}
+	return toupper(c);
+    });
+
+    return s;
+  };
+  std::string name = to_define(n.get_fields<std::string>("compatible")[0]);
+  suffix = to_define(suffix);
+
+  os << "    ." << field << " = METAL_" << name << "_" << suffix << "," << std::endl; 
+}
+
 void Device::emit_struct_container_node_and_array(int size, std::string field1,
 						const node& c, std::string subfield1,
 						std::string field2, uint32_t elem) {

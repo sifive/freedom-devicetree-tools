@@ -52,8 +52,8 @@ class fixed_factor_clock : public Device {
 	      emit_struct_field_node("parent", c, ".clock");
 	    });
 
-	  emit_struct_field("mult", std::to_string(n.get_field<uint32_t>("clock-mult")));
-	  emit_struct_field("div", std::to_string(n.get_field<uint32_t>("clock-div")));
+	  emit_struct_field_platform_define("mult", n, "CLOCK_MULT");
+	  emit_struct_field_platform_define("div", n, "CLOCK_DIV");
 
 	  emit_struct_end();
 	});

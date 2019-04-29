@@ -53,12 +53,8 @@ class sifive_spi0 : public Device {
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_spi0");
 	  emit_struct_field("spi.vtable", "&__metal_driver_vtable_sifive_spi0.spi");
 
-	  n.named_tuples(
-	    "reg-names", "reg",
-	    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	      emit_struct_field_ta("control_base", base);
-	      emit_struct_field_ts("control_size", size);
-	    });
+	  emit_struct_field_platform_define("control_base", n, "BASE_ADDRESS");
+	  emit_struct_field_platform_define("control_size", n, "SIZE");
 
 	  n.maybe_tuple(
 	    "clocks", tuple_t<node>(),

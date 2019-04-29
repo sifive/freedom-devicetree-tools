@@ -37,7 +37,7 @@ class fixed_clock : public Device {
 	  emit_struct_begin("fixed_clock", n);
 	  emit_struct_field("vtable", "&__metal_driver_vtable_fixed_clock");
 	  emit_struct_field("clock.vtable", "&__metal_driver_vtable_fixed_clock.clock");
-	  emit_struct_field_u32("rate", n.get_field<uint32_t>("clock-frequency"));
+	  emit_struct_field_platform_define("rate", n, "CLOCK_FREQUENCY");
 	  emit_struct_end();
 	});
     }

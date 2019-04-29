@@ -72,12 +72,8 @@ class sifive_gpio0 : public Device {
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_gpio0");
 	  emit_struct_field("gpio.vtable", "&__metal_driver_vtable_sifive_gpio0.gpio");
 
-	  n.named_tuples(
-	    "reg-names", "reg",
-	    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	      emit_struct_field_ta("base", base);
-	      emit_struct_field_ts("size", size);
-	    });
+	  emit_struct_field_platform_define("base", n, "BASE_ADDRESS");
+	  emit_struct_field_platform_define("size", n, "SIZE");
 
 	  n.maybe_tuple(
 	    "interrupt-parent", tuple_t<node>(),

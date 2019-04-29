@@ -52,6 +52,8 @@ class Device {
     void emit_struct_field_u32(std::string field, uint32_t value);
     void emit_struct_field_ta(std::string field, target_addr value);
     void emit_struct_field_ts(std::string field, target_size value);
+    void emit_struct_field_platform_define(std::string field, node n, std::string suffix);
+    void emit_struct_field_platform_define_offset(std::string field, node n, std::string suffix);
 
     void emit_struct_container_node_and_array(int size,
 					      std::string field1,

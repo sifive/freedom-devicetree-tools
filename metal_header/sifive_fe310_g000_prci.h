@@ -42,12 +42,8 @@ class sifive_fe310_g000_prci : public Device {
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_prci");
 
-	  n.named_tuples(
-	    "reg-names", "reg",
-	    "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	      emit_struct_field_ta("base", base);
-	      emit_struct_field_ts("size", size);
-	  });
+	  emit_struct_field_platform_define("base", n, "BASE_ADDRESS");
+	  emit_struct_field_platform_define("size", n, "SIZE");
 
 	  emit_struct_end();
 	});
