@@ -239,7 +239,7 @@ static void write_config_file (fstream &os, std::string board)
     }
     os << std::endl;
 
-    if (board.compare("rtl") == 0) {
+    if (board.find("rtl") != std::string::npos) {
         if (found != std::string::npos) {
             os << "COREIP_MEM_WIDTH=64" << std::endl;
         } else {
@@ -247,9 +247,9 @@ static void write_config_file (fstream &os, std::string board)
         }
         os << std::endl;
         os << "TARGET_TAGS=rtl" << std::endl;
-    } else if (board.compare("arty") == 0) {
+    } else if (board.find("arty") != std::string::npos) {
         os << "TARGET_TAGS=fpga openocd" << std::endl;
-    } else if (board.compare("hifive1-revb") == 0) {
+    } else if (board.find("hifive1-revb") != std::string::npos) {
         os << "TARGET_TAGS=board jlink" << std::endl;
     } else {
         os << "TARGET_TAGS=board openocd" << std::endl;
@@ -284,9 +284,11 @@ int main (int argc, char* argv[])
           if ((arg == "-b") || (arg == "--board")) {
               if (i + 1 < argc) {
                   board = argv[++i];
-		  if ((board.compare("rtl") != 0) &&
-		      (board.compare("arty") != 0) &&
-		      (board.compare("hifive1") != 0)) {
+		  if ((board.find("rtl")  != std::string::npos) ||
+		      (board.find("arty") != std::string::npos) ||
+		      (board.find("hifive1") != std::string::npos)) {
+		    std::cout << "Board type given is " << board << std::endl;
+                  } else {
 		    std::cerr << "Possible options are <rtl | arty | hifive1>."
 			      << std::endl;
 		    return 1;
