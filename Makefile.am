@@ -6,6 +6,7 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-openocdcfg-generator \
 		freedom-makeattributes-generator \
 		freedom-metal_header-generator \
+		freedom-bare_header-generator \
 		freedom-zephyrdtsfixup-generator \
 		freedom-metal_specs-generator
 
@@ -49,6 +50,23 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_uart0.h \
 	metal_header/stdout_path.h \
 	metal_header/template_device.h
+
+freedom_bare_header_generator_SOURCES = \
+	fdt.c++ \
+	bare_header/freedom-bare_header-generator.c++ \
+	bare_header/device.c++ \
+	bare_header/device.h \
+	bare_header/fixed_clock.h \
+	bare_header/fixed_factor_clock.h \
+	bare_header/riscv_clint0.h \
+	bare_header/riscv_plic0.h \
+	bare_header/riscv_pmp.h \
+	bare_header/sifive_clic0.h \
+	bare_header/sifive_fe310_g000_prci.h \
+	bare_header/sifive_gpio0.h \
+	bare_header/sifive_spi0.h \
+	bare_header/sifive_test0.h \
+	bare_header/sifive_uart0.h
 
 freedom_zephyrdtsfixup_generator_SOURCES = \
 	freedom-zephyrdtsfixup-generator.c++ \

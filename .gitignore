@@ -22,5 +22,6 @@
 *.log
 *.trs
 /freedom-metal_header-generator
+/freedom-bare_header-generator
 *.swo
 freedom-metal_specs-generator
