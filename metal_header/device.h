@@ -7,6 +7,8 @@
 #include "fdt.h++"
 #include "libfdt.h++"
 
+#include "header-labels.h"
+
 #include <ostream>
 #include <string>
 

@@ -42,8 +42,8 @@ class sifive_fe310_g000_prci : public Device {
 
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_prci");
 
-	  emit_struct_field_platform_define("base", n, "BASE_ADDRESS");
-	  emit_struct_field_platform_define("size", n, "SIZE");
+	  emit_struct_field_platform_define("base", n, METAL_BASE_ADDRESS_LABEL);
+	  emit_struct_field_platform_define("size", n, METAL_SIZE_LABEL);
 
 	  emit_struct_end();
 	});

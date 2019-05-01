@@ -91,8 +91,8 @@ class riscv_clint0 : public Device {
 	  emit_struct_field("vtable", "&__metal_driver_vtable_riscv_clint0");
 	  emit_struct_field("controller.vtable", "&__metal_driver_vtable_riscv_clint0.clint_vtable");
 
-	  emit_struct_field_platform_define("control_base", n, "BASE_ADDRESS");
-	  emit_struct_field_platform_define("control_size", n, "SIZE");
+	  emit_struct_field_platform_define("control_base", n, METAL_BASE_ADDRESS_LABEL);
+	  emit_struct_field_platform_define("control_size", n, METAL_SIZE_LABEL);
 
 	  emit_struct_field("init_done", "0");
 	  emit_struct_field("num_interrupts", "METAL_MAX_CLINT_INTERRUPTS");

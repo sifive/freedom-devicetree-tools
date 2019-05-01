@@ -49,7 +49,7 @@ class sifive_fe310_g000_hfrosc : public Device {
 	    "reg-names", "reg",
 	    "config", tuple_t<node, target_size>(), [&](node base, target_size offset) {
 	      emit_struct_field_node("config_base", base, "");
-	      emit_struct_field_platform_define_offset("config_offset", base, "HFROSCCFG");
+	      emit_struct_field_platform_define_offset("config_offset", base, METAL_HFROSCCFG_LABEL);
 	  });
 
 	  emit_struct_end();

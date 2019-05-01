@@ -56,11 +56,11 @@ class sifive_fe310_g000_pll : public Device {
 	    "reg-names", "reg",
 	    "config", tuple_t<node, target_size>(), [&](node base, target_size off) {
 	      emit_struct_field_node("config_base", base, "");
-	      emit_struct_field_platform_define_offset("config_offset", base, "PLLCFG");
+	      emit_struct_field_platform_define_offset("config_offset", base, METAL_PLLCFG_LABEL);
 	    },
 	    "divider", tuple_t<node, target_size>(), [&](node base, target_size off) {
 	      emit_struct_field_node("divider_base", base, "");
-	      emit_struct_field_platform_define_offset("divider_offset", base, "PLLOUTDIV");
+	      emit_struct_field_platform_define_offset("divider_offset", base, METAL_PLLOUTDIV_LABEL);
 	    });
 
 	  emit_struct_field_u32("init_rate", n.get_field<uint32_t>("clock-frequency"));

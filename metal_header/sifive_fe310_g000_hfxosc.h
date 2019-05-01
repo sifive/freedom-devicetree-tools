@@ -49,7 +49,7 @@ class sifive_fe310_g000_hfxosc : public Device {
 	    "reg-names", "reg",
 	    "config", tuple_t<node, target_size>(), [&](node base, target_size offset) {
 	      emit_struct_field_node("config_base", base, "");
-	      emit_struct_field_platform_define_offset("config_offset", base, "HFXOSCCFG");
+	      emit_struct_field_platform_define_offset("config_offset", base, METAL_HFXOSCCFG_LABEL);
 	  });
 
 	  emit_struct_end();

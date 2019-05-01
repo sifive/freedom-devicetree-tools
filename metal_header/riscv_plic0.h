@@ -119,11 +119,11 @@ class riscv_plic0 : public Device {
 		os << "    .interrupt_lines[" + std::to_string(i) + "] = " + std::to_string(line) + ",\n";
 	    });
 
-	  emit_struct_field_platform_define("control_base", n, "BASE_ADDRESS");
-	  emit_struct_field_platform_define("control_size", n, "SIZE");
+	  emit_struct_field_platform_define("control_base", n, METAL_BASE_ADDRESS_LABEL);
+	  emit_struct_field_platform_define("control_size", n, METAL_SIZE_LABEL);
 
-	  emit_struct_field_platform_define("max_priority", n, "riscv,max-priority");
-	  emit_struct_field_platform_define("num_interrupts", n, "riscv,ndev");
+	  emit_struct_field_platform_define("max_priority", n, METAL_RISCV_MAX_PRIORITY_LABEL);
+	  emit_struct_field_platform_define("num_interrupts", n, METAL_RISCV_NDEV_LABEL);
 
 	  if (n.field_exists("interrupt-controller")) { 
 	      emit_struct_field("interrupt_controller", "1");

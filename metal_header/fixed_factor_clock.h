@@ -52,8 +52,8 @@ class fixed_factor_clock : public Device {
 	      emit_struct_field_node("parent", c, ".clock");
 	    });
 
-	  emit_struct_field_platform_define("mult", n, "CLOCK_MULT");
-	  emit_struct_field_platform_define("div", n, "CLOCK_DIV");
+	  emit_struct_field_platform_define("mult", n, METAL_CLOCK_MULT_LABEL);
+	  emit_struct_field_platform_define("div", n, METAL_CLOCK_DIV_LABEL);
 
 	  emit_struct_end();
 	});

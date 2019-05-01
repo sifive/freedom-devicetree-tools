@@ -22,6 +22,7 @@ freedom_makeattributes_generator_SOURCES = \
 
 freedom_metal_header_generator_SOURCES = \
 	fdt.c++ \
+	header-labels.h \
 	metal_header/freedom-metal_header-generator.c++ \
 	metal_header/device.c++ \
 	metal_header/device.h \

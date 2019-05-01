@@ -82,8 +82,8 @@ class sifive_clic0 : public Device {
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_clic0");
 	  emit_struct_field("controller.vtable", "&__metal_driver_vtable_sifive_clic0.clic_vtable");
 
-	  emit_struct_field_platform_define("control_base", n, "BASE_ADDRESS");
-	  emit_struct_field_platform_define("control_size", n, "SIZE");
+	  emit_struct_field_platform_define("control_base", n, METAL_BASE_ADDRESS_LABEL);
+	  emit_struct_field_platform_define("control_size", n, METAL_SIZE_LABEL);
 
 	  emit_struct_field("init_done", "0");
 	  emit_struct_field("num_interrupts", "METAL_MAX_CLIC_INTERRUPTS");
@@ -99,9 +99,9 @@ class sifive_clic0 : public Device {
 						     "interrupt_lines", line);
 	    });
 
-	  emit_struct_field_platform_define("num_subinterrupts", n, "SIFIVE_NUMINTS");
-	  emit_struct_field_platform_define("num_intbits", n, "SIFIVE_NUMINTBITS");
-	  emit_struct_field_platform_define("max_levels", n, "SIFIVE_NUMLEVELS");
+	  emit_struct_field_platform_define("num_subinterrupts", n, METAL_SIFIVE_NUMINTS_LABEL);
+	  emit_struct_field_platform_define("num_intbits", n, METAL_SIFIVE_NUMINTBITS_LABEL);
+	  emit_struct_field_platform_define("max_levels", n, METAL_SIFIVE_NUMLEVELS_LABEL);
 
 	  if (n.field_exists("interrupt-controller")) {
 	      emit_struct_field("interrupt_controller", "1");
