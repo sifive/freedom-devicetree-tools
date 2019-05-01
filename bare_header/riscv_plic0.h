@@ -25,8 +25,8 @@ class riscv_plic0 : public Device {
 	  emit_base(n);
 	  emit_size(n);
 
-	  emit_property_u32(n, "RISCV_MAX_PRIORITY", n.get_field<uint32_t>("riscv,max-priority"));
-	  emit_property_u32(n, "RISCV_NDEV", n.get_field<uint32_t>("riscv,ndev") + 1);
+	  emit_property_u32(n, METAL_RISCV_MAX_PRIORITY_LABEL, n.get_field<uint32_t>("riscv,max-priority"));
+	  emit_property_u32(n, METAL_RISCV_NDEV_LABEL, n.get_field<uint32_t>("riscv,ndev") + 1);
 
 	  os << std::endl;
 	});

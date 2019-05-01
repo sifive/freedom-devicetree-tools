@@ -23,9 +23,9 @@ class sifive_clic0 : public Device {
 	  emit_base(n);
 	  emit_size(n);
 
-	  emit_property_u32(n, "SIFIVE_NUMINTS", n.get_field<uint32_t>("sifive,numints"));
-	  emit_property_u32(n, "SIFIVE_NUMLEVELS", n.get_field<uint32_t>("sifive,numlevels"));
-	  emit_property_u32(n, "SIFIVE_NUMINTBITS", n.get_field<uint32_t>("sifive,numintbits"));
+	  emit_property_u32(n, METAL_SIFIVE_NUMINTS_LABEL, n.get_field<uint32_t>("sifive,numints"));
+	  emit_property_u32(n, METAL_SIFIVE_NUMLEVELS_LABEL, n.get_field<uint32_t>("sifive,numlevels"));
+	  emit_property_u32(n, METAL_SIFIVE_NUMINTBITS_LABEL, n.get_field<uint32_t>("sifive,numintbits"));
 
 	  os << std::endl;
 	});

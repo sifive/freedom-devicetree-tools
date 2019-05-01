@@ -53,6 +53,7 @@ freedom_metal_header_generator_SOURCES = \
 
 freedom_bare_header_generator_SOURCES = \
 	fdt.c++ \
+	header-labels.h \
 	bare_header/freedom-bare_header-generator.c++ \
 	bare_header/device.c++ \
 	bare_header/device.h \

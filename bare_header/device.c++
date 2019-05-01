@@ -45,7 +45,7 @@ uint64_t Device::base_address(const node &n) {
 }
 
 void Device::emit_base(const node &n) {
-  os << "#define " << def_handle(n) << "_BASE_ADDRESS " << base_address(n) << "UL" << std::endl;
+  os << "#define " << def_handle(n) << "_" METAL_BASE_ADDRESS_LABEL << base_address(n) << "UL" << std::endl;
 }
 
 uint64_t Device::size(const node &n) {
@@ -61,7 +61,7 @@ uint64_t Device::size(const node &n) {
 }
 
 void Device::emit_size(const node &n) {
-  os << "#define " << def_handle(n) << "_SIZE " << size(n) << "UL" << std::endl;
+  os << "#define " << def_handle(n) << "_" << METAL_SIZE_LABEL << size(n) << "UL" << std::endl;
 }
 
 void Device::emit_compat() {

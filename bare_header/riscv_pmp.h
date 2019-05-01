@@ -20,7 +20,7 @@ class riscv_pmp : public Device {
 	[&](node n) {
 	  emit_comment(n);
 
-	  emit_property_u32(n, "NUM_REGIONS", n.get_field<uint32_t>("regions"));
+	  emit_property_u32(n, METAL_NUM_REGIONS_LABEL, n.get_field<uint32_t>("regions"));
 
 	  os << std::endl;
 	});

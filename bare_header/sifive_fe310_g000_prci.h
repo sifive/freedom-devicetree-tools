@@ -56,10 +56,10 @@ class sifive_fe310_g000_prci : public Device {
     void emit_offsets() {
       if(dtb.match(std::regex(compat_string), [](const node n){}) != 0) {
 	emit_compat();
-	emit_offset("HFROSCCFG", 0x0);
-	emit_offset("HFXOSCCFG", 0x4);
-	emit_offset("PLLCFG", 0x8);
-	emit_offset("PLLOUTDIV", 0xC);
+	emit_offset(METAL_HFROSCCFG_LABEL, 0x0);
+	emit_offset(METAL_HFXOSCCFG_LABEL, 0x4);
+	emit_offset(METAL_PLLCFG_LABEL, 0x8);
+	emit_offset(METAL_PLLOUTDIV_LABEL, 0xC);
 
 	os << std::endl;
       }

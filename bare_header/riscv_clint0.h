@@ -30,9 +30,9 @@ class riscv_clint0 : public Device {
     void emit_offsets() {
       if(dtb.match(std::regex(compat_string), [](const node n){}) != 0) {
 	emit_compat();
-	emit_offset("MSIP_BASE", 0x0);
-	emit_offset("MTIMECMP_BASE", 0x4000);
-	emit_offset("MTIME", 0xBFF8);
+	emit_offset(METAL_MSIP_BASE_LABEL, 0x0);
+	emit_offset(METAL_MTIMECMP_BASE_LABEL, 0x4000);
+	emit_offset(METAL_MTIME_LABEL, 0xBFF8);
 
 	os << std::endl;
       }
