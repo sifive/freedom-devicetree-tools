@@ -62,12 +62,8 @@ class sifive_uart0 : public Device {
 	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_uart0");
 	  emit_struct_field("uart.vtable", "&__metal_driver_vtable_sifive_uart0.uart");
 
-	  n.named_tuples(
-	    "reg-names", "reg",
-	    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	      emit_struct_field_ta("control_base", base);
-	      emit_struct_field_ts("control_size", size);
-	    });
+	  emit_struct_field_platform_define("control_base", n, METAL_BASE_ADDRESS_LABEL);
+	  emit_struct_field_platform_define("control_size", n, METAL_SIZE_LABEL);
 
 	  n.maybe_tuple(
 	    "clocks", tuple_t<node>(),
