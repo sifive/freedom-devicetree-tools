@@ -102,7 +102,7 @@ void Device::emit_struct_field_platform_define(std::string field, node n, std::s
 
     return s;
   };
-  std::string name = to_define(n.get_fields<std::string>("compatible")[0]);
+  std::string name = to_define(compat_string);
   std::string instance = to_define(n.instance());
   suffix = to_define(suffix);
 
@@ -110,6 +110,10 @@ void Device::emit_struct_field_platform_define(std::string field, node n, std::s
 }
 
 void Device::emit_struct_field_platform_define_offset(std::string field, node n, std::string suffix) {
+  emit_struct_field_platform_define_offset(compat_string, field, n, suffix);
+}
+
+void Device::emit_struct_field_platform_define_offset(std::string compat_override, std::string field, node n, std::string suffix) {
   auto to_define = [](std::string input_string) -> std::string {
     std::string s = input_string;
     std::transform(s.begin(), s.end(), s.begin(),
@@ -122,7 +126,7 @@ void Device::emit_struct_field_platform_define_offset(std::string field, node n,
 
     return s;
   };
-  std::string name = to_define(n.get_fields<std::string>("compatible")[0]);
+  std::string name = to_define(compat_override);
   suffix = to_define(suffix);
 
   os << "    ." << field << " = METAL_" << name << "_" << suffix << "," << std::endl; 
