@@ -165,6 +165,7 @@ static string get_dts_attribute (const string path, const string tag)
     node = fdt_path_offset(dts_blob, path.c_str());
     if (node < 0) return "";
     value = (const char *)fdt_getprop(dts_blob, node, tag.c_str(), &len);
+    if (!value) return "";
     std::cout << string(value) << std::endl;
     return string(value);
 }
@@ -226,6 +227,8 @@ static void show_dts_attributes (void)
 static void write_config_file (fstream &os, std::string board)
 {
     string isa;
+    string cpucompat;
+    string mmutype;
     string serial;
 
     isa = arch2arch(get_dts_attribute("/cpus/cpu@0", "riscv,isa"));
@@ -239,10 +242,29 @@ static void write_config_file (fstream &os, std::string board)
     }
     os << std::endl;
 
+    // Get the CPU compatible string
+    cpucompat = get_dts_attribute("/cpus/cpu@0", "compatible");
+
+    // Get the mmu-type property
+    mmutype = get_dts_attribute("/cpus/cpu@0", "mmu-type");
+    if (mmutype == "") {
+      // If CPU 0 doesn't have mmu-type, make sure that CPU 1 (if it exists)
+      // also doesn't. This is needed for U54-MC, where CPU 0 is the S51 hart.
+      mmutype = get_dts_attribute("/cpus/cpu@1", "mmu-type");
+    }
+
     if (board.find("rtl") != std::string::npos) {
-        if (found != std::string::npos) {
+	if(mmutype != "") {
+	    // U54 and U54-MC need mem width 128
+            os << "COREIP_MEM_WIDTH=128" << std::endl;
+	}  else if(cpucompat.find("bullet") != std::string::npos) {
+	    // E76 has mem width 64
+            os << "COREIP_MEM_WIDTH=64" << std::endl;
+	} else if (isa.find("rv64") != std::string::npos) {
+	    // 64-bit designs by default have mem width 64
             os << "COREIP_MEM_WIDTH=64" << std::endl;
         } else {
+	    // 32-bit designs by default have mem width 32
             os << "COREIP_MEM_WIDTH=32" << std::endl;
         }
         os << std::endl;
