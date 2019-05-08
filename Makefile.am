@@ -67,6 +67,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_clic0.h \
 	bare_header/sifive_fe310_g000_prci.h \
 	bare_header/sifive_gpio0.h \
+	bare_header/sifive_i2c0.h \
 	bare_header/sifive_pwm0.h \
 	bare_header/sifive_spi0.h \
 	bare_header/sifive_test0.h \
