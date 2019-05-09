@@ -26,7 +26,7 @@ class Device {
 
     Device(std::ostream &os, const fdt &dtb, std::string compat_string);
 
-    int get_index(const node &n);
+    virtual int get_index(const node &n);
     int get_index(const node &n, string compat);
 
     virtual void emit_defines() {}
