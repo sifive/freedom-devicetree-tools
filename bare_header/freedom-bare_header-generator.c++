@@ -23,9 +23,12 @@
 #include "bare_header/riscv_pmp.h"
 
 /* SiFive Blocks */
+#include "bare_header/sifive_aon0.h"
 #include "bare_header/sifive_clic0.h"
 #include "bare_header/sifive_fe310_g000_prci.h"
 #include "bare_header/sifive_gpio0.h"
+#include "bare_header/sifive_i2c0.h"
+#include "bare_header/sifive_pwm0.h"
 #include "bare_header/sifive_spi0.h"
 #include "bare_header/sifive_test0.h"
 #include "bare_header/sifive_uart0.h"
@@ -79,9 +82,12 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   devices.push_back(new riscv_pmp(os, dtb));
 
   /* SiFive Blocks */
+  devices.push_back(new sifive_aon0(os, dtb));
   devices.push_back(new sifive_clic0(os, dtb));
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
   devices.push_back(new sifive_gpio0(os, dtb));
+  devices.push_back(new sifive_i2c0(os, dtb));
+  devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));

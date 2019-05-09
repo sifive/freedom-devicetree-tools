@@ -63,9 +63,12 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/riscv_clint0.h \
 	bare_header/riscv_plic0.h \
 	bare_header/riscv_pmp.h \
+	bare_header/sifive_aon0.h \
 	bare_header/sifive_clic0.h \
 	bare_header/sifive_fe310_g000_prci.h \
 	bare_header/sifive_gpio0.h \
+	bare_header/sifive_i2c0.h \
+	bare_header/sifive_pwm0.h \
 	bare_header/sifive_spi0.h \
 	bare_header/sifive_test0.h \
 	bare_header/sifive_uart0.h
