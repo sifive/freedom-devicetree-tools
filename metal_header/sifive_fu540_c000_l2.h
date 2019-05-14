@@ -23,6 +23,71 @@ class sifive_fu540_c000_l2 : public Device {
 	});
     }
 
+    void declare_inlines()
+    {
+      Inline* func;
+      std::list<Inline *> extern_inlines;
+      int count = 0;
+      
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  if (count == 0) {
+	    func = create_inline_dec("control_base",
+				     "uintptr_t",
+				     "struct metal_cache *cache");
+	    extern_inlines.push_back(func);
+	  }
+          count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- sifive_fu540_c000_l2 ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_dec(func, "sifive_fu540_c000_l2");
+	delete func;
+      }
+      os << "\n";
+    }
+
+    void define_inlines()
+    {
+      Inline* func;
+      std::list<Inline *> extern_inlines;
+
+      int count = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  if (count == 0) {
+	    n.named_tuples(
+	      "reg-names", "reg",
+	      "config", tuple_t<node>(), [&](node m) {
+	      func = create_inline_def("control_base",
+				       "uintptr_t",
+				       "(uintptr_t)cache == (uintptr_t)&__metal_dt_" + n.handle(),
+				       "&__metal_dt_" + m.handle(),
+				       "struct metal_cache *cache");
+	      add_inline_body(func, "else", "NULL");
+	      extern_inlines.push_back(func);
+	      });
+	  }
+	count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- sifive_fu540_c000_l2 ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_def(func, "sifive_fu540_c000_l2");
+	delete func;
+      }
+      os << "\n";
+    }
+
     void declare_structs()
     {
       dtb.match(
@@ -40,10 +105,7 @@ class sifive_fu540_c000_l2 : public Device {
 	[&](node n) {
 	  emit_struct_begin("sifive_fu540_c000_l2", n);
 
-	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fu540_c000_l2");
 	  emit_struct_field("cache.vtable", "&__metal_driver_vtable_sifive_fu540_c000_l2.cache");
-
-	  emit_struct_field_platform_define("control_base", n, METAL_BASE_ADDRESS_LABEL);
 
 	  emit_struct_end();
 	});

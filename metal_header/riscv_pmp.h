@@ -24,7 +24,6 @@ class riscv_pmp : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  os << "asm (\".weak __metal_dt_" << n.handle() << "\");\n";
 	  os << "struct metal_pmp __metal_dt_" << n.handle() << ";\n\n";
 	}
       );

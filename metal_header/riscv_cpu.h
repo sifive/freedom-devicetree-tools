@@ -34,6 +34,108 @@ class riscv_cpu : public Device {
 	});
     }
 
+    void declare_inlines()
+    {
+      Inline* func;
+      std::list<Inline *> extern_inlines;
+      int count = 0;
+      
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  if (count == 0) {
+	    func = create_inline_dec("timebase",
+				     "int",
+				     "struct metal_cpu *cpu");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("interrupt_controller",
+				     "struct metal_interrupt *",
+				     "struct metal_cpu *cpu");
+	    extern_inlines.push_back(func);
+	  }
+          count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- cpu ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_dec(func, "cpu");
+	delete func;
+      }
+      os << "\n";
+    }
+
+    void define_inlines()
+    {
+      Inline* func;
+      Inline* funci;
+      std::list<Inline *> extern_inlines;
+
+      int count = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  if (count == 0) {
+	    int tf;
+	    n.maybe_tuple(
+	      "timebase-frequency", tuple_t<uint32_t>(),
+	      [&]() {
+		tf = n.parent().get_field<uint32_t>("timebase-frequency");
+	      },
+	      [&](uint32_t timebase) {
+		tf = timebase;
+	      });
+	    func = create_inline_def("timebase",
+				     "int",
+				     "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
+				     std::to_string(tf),
+				     "struct metal_cpu *cpu");
+	    extern_inlines.push_back(func);
+
+	    funci = create_inline_def("interrupt_controller",
+				     "struct metal_interrupt *",
+				     "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
+				     "&__metal_dt_" + n.handle() + "_interrupt_controller.controller",
+				     "struct metal_cpu *cpu");
+	    extern_inlines.push_back(funci);
+	  }
+	  if ((count + 1) == num_cpus) {
+	    add_inline_body(func, "else", "0");
+	    add_inline_body(funci, "else", "NULL");
+	  } else {
+	    int tf;
+	    n.maybe_tuple(
+	      "timebase-frequency", tuple_t<uint32_t>(),
+	      [&]() {
+		tf = n.parent().get_field<uint32_t>("timebase-frequency");
+	      },
+	      [&](uint32_t timebase) {
+		tf = timebase;
+	      });
+	    add_inline_body(func,
+			    "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
+			    std::to_string(tf));
+	    add_inline_body(funci, "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
+			    "&__metal_dt_" + n.handle()
+			     + "_interrupt_controller.controller");
+	  }
+	  count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- cpu ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_def(func, "cpu");
+	delete func;
+      }
+      os << "\n";
+    }
+
     void declare_structs()
     {
       dtb.match(
@@ -51,20 +153,7 @@ class riscv_cpu : public Device {
 	[&](node n) {
 	  emit_struct_begin("cpu", n);
 
-	  emit_struct_field("vtable", "&__metal_driver_vtable_cpu");
 	  emit_struct_field("cpu.vtable", "&__metal_driver_vtable_cpu.cpu_vtable");
-
-	  n.maybe_tuple(
-	      "timebase-frequency",
-	      tuple_t<uint32_t>(),
-	      [&]() {
-		emit_struct_field_u32("timebase", n.parent().get_field<uint32_t>("timebase-frequency"));
-	      },
-	      [&](uint32_t timebase) {
-		emit_struct_field_u32("timebase", timebase);
-	      });
-
-	  emit_struct_field("interrupt_controller", "&__metal_dt_" + n.handle() + "_interrupt_controller.controller");
 
 	  emit_struct_end();
 	});
