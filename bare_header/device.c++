@@ -141,6 +141,9 @@ void Device::emit_offset(string offset_name, uint32_t offset) {
 
 void Device::emit_property_u32(const node &n, string property_name, uint32_t value) {
   os << "#define " << def_handle(n) << "_" << property_name << " " << value << "UL" << std::endl;
-  os << "#define " << def_handle_index(n) << "_" << property_name << " " << value << "UL" << std::endl;
+  /* Clock already index */
+  if (n.get_field<std::string>("compatible").compare("fixed-clock") != 0) {
+    os << "#define " << def_handle_index(n) << "_" << property_name << " " << value << "UL" << std::endl;
+  }
 }
 
