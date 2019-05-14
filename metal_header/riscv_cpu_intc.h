@@ -26,7 +26,6 @@ class riscv_cpu_intc : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  os << "asm (\".weak __metal_dt_" << handle(n) << "\");\n";
 	  os << "struct __metal_driver_riscv_cpu_intc __metal_dt_" << handle(n) << ";\n\n";
 	});
     }
@@ -39,14 +38,8 @@ class riscv_cpu_intc : public Device {
 	  emit_comment(n);
 	  os << "struct __metal_driver_riscv_cpu_intc __metal_dt_" << handle(n) << " = {\n";
 
-	  emit_struct_field("vtable", "&__metal_driver_vtable_riscv_cpu_intc");
 	  emit_struct_field("controller.vtable", "&__metal_driver_vtable_riscv_cpu_intc.controller_vtable");
-
 	  emit_struct_field("init_done", "0");
-
-	  if (n.field_exists("interrupt-controller")) {
-	    emit_struct_field("interrupt_controller", "1");
-	  }
 
 	  emit_struct_end();
 	});

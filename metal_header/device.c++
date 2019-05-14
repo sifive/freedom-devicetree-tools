@@ -51,6 +51,82 @@ void Device::emit_struct_pointer_end(std::string empty) {
   os << "\t\t\t\t\t" << empty << " };\n";
 }
 
+void Device::emit_inline_retun_type(bool declare, std::string type) {
+  (declare == true) ?
+    (os << "extern inline " << type << " ") : 
+    (os << "static inline " << type << " ");
+}
+void Device::emit_inline_name(std::string type, std::string field) {
+  os << "__metal_driver_" << type << "_" << field << "(";
+}
+
+void Device::emit_inline_body(Inline::Stage stage, std::string condition, std::string return_value) {
+  switch (stage) {
+  case Inline::Start:
+    os << "{\n" ;
+    os << "\tif (" << condition << ") {\n";
+    os << "\t\treturn " << return_value << ";\n";
+    os << "\t}\n";
+    break;
+  case Inline::Middle:
+    os << "\telse if (" << condition << ") {\n";
+    os << "\t\treturn " << return_value << ";\n";
+    os << "\t}\n" ;
+    break;
+  case Inline::End:
+    os << "\telse {\n";
+    os << "\t\treturn " << return_value << ";\n";
+    os << "\t}\n";
+    os << "}\n\n" ;
+    break;
+  case Inline::Empty:
+  defaut:
+    os << "{\n" ;
+    os << "\t\treturn " << return_value << ";\n";
+    os << "}\n\n" ;
+    break;
+  }
+}
+
+std::string Device::platform_define(node n, std::string suffix) {
+  auto to_define = [](std::string input_string) -> std::string {
+    std::string s = input_string;
+    std::transform(s.begin(), s.end(), s.begin(),
+      [](unsigned char c) -> char {
+        if(c == ',' || c == '-') {
+          return '_';
+        }
+        return toupper(c);
+    });
+
+    return s;
+  };
+  std::string name = to_define(n.get_fields<std::string>("compatible")[0]);
+  std::string instance = to_define(n.instance());
+  suffix = to_define(suffix);
+
+  return "METAL_" + name + "_" + instance + "_" + suffix;
+}
+
+std::string Device::platform_define_offset(node n, std::string suffix) {
+  auto to_define = [](std::string input_string) -> std::string {
+    std::string s = input_string;
+    std::transform(s.begin(), s.end(), s.begin(),
+      [](unsigned char c) -> char { 
+	if(c == ',' || c == '-') {
+	  return '_';
+	}
+	return toupper(c);
+    });
+
+    return s;
+  };
+  std::string name = to_define(n.get_fields<std::string>("compatible")[0]);
+  suffix = to_define(suffix);
+
+  return "METAL_" + name + "_" + suffix;
+}
+
 /* Emits the header for a structure.  This is particularly tricky: here we're
  * telling GCC that the structure is a constant, but then telling the
  * assembler than it can be optimized.  This allows GCC to inline these
@@ -60,7 +136,6 @@ void Device::emit_struct_pointer_end(std::string empty) {
  * "__metal_" namespace */
 void Device::emit_struct_decl(std::string type, const node &n) {
   emit_comment(n);
-  os << "asm (\".weak __metal_dt_" << n.handle() << "\");\n";
   os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << ";\n\n";
 }
 
