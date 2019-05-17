@@ -94,7 +94,11 @@ uint64_t Device::base_address(const node &n) {
 
 void Device::emit_base(const node &n) {
   os << "#define " << def_handle(n) << "_" METAL_BASE_ADDRESS_LABEL << " " << base_address(n) << "UL" << std::endl;
-  os << "#define " << def_handle_index(n) << "_" METAL_BASE_ADDRESS_LABEL << " " << base_address(n) << "UL" << std::endl;
+
+  // If the address is very small, it already is an index.
+  if(n.instance().length() > 2) {
+    os << "#define " << def_handle_index(n) << "_" METAL_BASE_ADDRESS_LABEL << " " << base_address(n) << "UL" << std::endl;
+  }
 }
 
 uint64_t Device::size(const node &n) {
@@ -111,7 +115,11 @@ uint64_t Device::size(const node &n) {
 
 void Device::emit_size(const node &n) {
   os << "#define " << def_handle(n) << "_" << METAL_SIZE_LABEL << " " << size(n) << "UL" << std::endl;
-  os << "#define " << def_handle_index(n) << "_" << METAL_SIZE_LABEL << " " << size(n) << "UL" << std::endl;
+
+  // If the address is very small, it already is an index.
+  if(n.instance().length() > 2) {
+    os << "#define " << def_handle_index(n) << "_" << METAL_SIZE_LABEL << " " << size(n) << "UL" << std::endl;
+  }
 }
 
 void Device::emit_compat() {
@@ -141,6 +149,9 @@ void Device::emit_offset(string offset_name, uint32_t offset) {
 
 void Device::emit_property_u32(const node &n, string property_name, uint32_t value) {
   os << "#define " << def_handle(n) << "_" << property_name << " " << value << "UL" << std::endl;
-  os << "#define " << def_handle_index(n) << "_" << property_name << " " << value << "UL" << std::endl;
+  // If the address is very small, it already is an index.
+  if(n.instance().length() > 2) {
+    os << "#define " << def_handle_index(n) << "_" << property_name << " " << value << "UL" << std::endl;
+  }
 }
 
