@@ -39,16 +39,50 @@ void Device::emit_include(std::string d) {
   included.insert(d);
 }
 
-void Device::emit_struct_pointer_begin(std::string type, std::string name, std::string ext) {
-  os << "asm (\".weak " << name << "\");\n";
-  os << "struct __metal_driver_" << type << " *" << name << ext << " = {\n";
+Inline *Device::create_inline_dec(std::string name, std::string ret_type,
+				  std::string arg) const
+{
+  Inline* func;
+  func = new Inline(name, ret_type);
+  func->args.push_back(arg);
+
+  return func;
 }
-void Device::emit_struct_pointer_element(std::string type, uint32_t id,
-				       std::string field, std::string delimiter) {
-  os << "\t\t\t\t\t&__metal_dt_" << type << "_" << id << field << delimiter;
+
+Inline *Device::create_inline_dec(std::string name, std::string ret_type,
+				  std::string arg1, std::string arg2) const
+{
+  Inline* func = create_inline_dec(name, ret_type, arg1);
+  func->args.push_back(arg2);
+  return func;
 }
-void Device::emit_struct_pointer_end(std::string empty) {
-  os << "\t\t\t\t\t" << empty << " };\n";
+
+Inline *Device::create_inline_def(std::string name, std::string ret_type,
+				  std::string body, std::string ret_value,
+				  std::string arg) const
+{
+  Inline* func;
+  func = new Inline(name, ret_type);
+  func->args.push_back(arg);
+  func->body_cases.push_back(body);
+  func->body_returns.push_back(ret_value);
+
+  return func;
+}
+
+Inline *Device::create_inline_def(std::string name, std::string ret_type,
+				  std::string body, std::string ret_value,
+				  std::string arg1, std::string arg2) const
+{
+  Inline* func = create_inline_def(name, ret_type, body, ret_value, arg1);
+  func->args.push_back(arg2);
+  return func;
+}
+
+void Device::add_inline_body(Inline *func, std::string body, std::string ret_value) const
+{
+  func->body_cases.push_back(body);
+  func->body_returns.push_back(ret_value);
 }
 
 void Device::emit_inline_retun_type(bool declare, std::string type) {
@@ -60,7 +94,8 @@ void Device::emit_inline_name(std::string type, std::string field) {
   os << "__metal_driver_" << type << "_" << field << "(";
 }
 
-void Device::emit_inline_body(Inline::Stage stage, std::string condition, std::string return_value) {
+void Device::emit_inline_body(Inline::Stage stage, std::string condition,
+			      std::string return_value) {
   switch (stage) {
   case Inline::Start:
     os << "{\n" ;
@@ -86,6 +121,66 @@ void Device::emit_inline_body(Inline::Stage stage, std::string condition, std::s
     os << "}\n\n" ;
     break;
   }
+}
+
+void Device::emit_inline_arg(std::ostream &os, std::list<std::string> params) {
+  while (!params.empty()) {
+    os << params.front();
+    if (params.size() > 1) {
+      os << ", " ;
+    }
+    params.pop_front();
+  }
+}
+
+void Device::emit_inline_dec(Inline* func, std::string device)
+{
+  emit_inline_retun_type(true, func->return_type);
+  emit_inline_name(device, func->name);
+  emit_inline_arg(os, func->args);
+  os << ");\n";
+}
+
+void Device::emit_inline_def(Inline* func, std::string device)
+{
+  emit_inline_retun_type(false, func->return_type);
+  emit_inline_name(device, func->name);
+  emit_inline_arg(os, func->args);
+  os << ")\n";
+  bool start = true;
+  std::string bc, br;
+  Inline::Stage stage;
+  while (!func->body_cases.empty()) {
+    bc = func->body_cases.front();
+    func->body_cases.pop_front();
+    br = func->body_returns.front();
+    func->body_returns.pop_front();
+    if (bc == "empty") {
+      stage = Inline::Empty;
+    } else if (bc == "else") {
+      stage = Inline::End;
+    } else {
+      if (start == true) {
+	stage = Inline::Start;
+	start = false;
+      } else {
+	stage = Inline::Middle;
+      }
+    }
+    emit_inline_body(stage, bc, br);
+  }
+}
+
+void Device::emit_struct_pointer_begin(std::string type, std::string name, std::string ext) {
+  os << "asm (\".weak " << name << "\");\n";
+  os << "struct __metal_driver_" << type << " *" << name << ext << " = {\n";
+}
+void Device::emit_struct_pointer_element(std::string type, uint32_t id,
+				       std::string field, std::string delimiter) {
+  os << "\t\t\t\t\t&__metal_dt_" << type << "_" << id << field << delimiter;
+}
+void Device::emit_struct_pointer_end(std::string empty) {
+  os << "\t\t\t\t\t" << empty << " };\n";
 }
 
 std::string Device::platform_define(node n, std::string suffix) {
