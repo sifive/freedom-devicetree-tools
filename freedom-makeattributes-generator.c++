@@ -11,6 +11,8 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
+#include <iomanip>
+#include <ctime>
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -48,6 +50,18 @@ memory::memory (std::string mtype, std::string alias, std::string name,
   mem_base = base;
   mem_start = start;
   mem_length = length;
+}
+
+static void write_banner(fstream &os, std::string rel_tag)
+{
+  os << "# Copyright 2019 SiFive, Inc #" << std::endl;
+  os << "# SPDX-License-Identifier: Apache-2.0 #" << std::endl;
+  os << "# ----------------------------------- #" << std::endl;
+  auto t = std::time(nullptr);
+  auto tm = *std::localtime(&t);
+  os << "# [" << (rel_tag.empty() ? "XXXXX" : rel_tag) << "] "
+     << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        #" << std::endl;
+  os << "# ----------------------------------- #" << std::endl << std::endl;
 }
 
 static char *dts_blob;
@@ -224,12 +238,14 @@ static void show_dts_attributes (void)
     get_dts_attribute("/soc/serial@20000000", "compatible");
 }
 
-static void write_config_file (fstream &os, std::string board)
+static void write_config_file (fstream &os, std::string board, std::string release)
 {
     string isa;
     string cpucompat;
     string mmutype;
     string serial;
+
+    write_banner(os, release);
 
     isa = arch2arch(get_dts_attribute("/cpus/cpu@0", "riscv,isa"));
     std::size_t found = isa.find("rv64");
@@ -296,6 +312,7 @@ int main (int argc, char* argv[])
   string board = "arty";;
   string dtb_file;
   string config_file;
+  string release;
 
   if ((argc < 2) && (argc > 5)) {
       show_usage(argv[0]);
@@ -332,6 +349,10 @@ int main (int argc, char* argv[])
                   show_usage(argv[0]);
                   return 1;
               }
+          } else if (arg == "-r") {
+              if (i + 1 < argc) {
+                  release = argv[++i];
+              }
           } else if ((arg == "-s") || (arg == "--show")) {
 	      show = true;
           } else {
@@ -363,7 +384,7 @@ int main (int argc, char* argv[])
       return 1;
     }
 
-    write_config_file(cfg, board);
+    write_config_file(cfg, board, release);
   }
 
   if (show) {

@@ -13,6 +13,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iomanip>
+#include <ctime>
 
 #include <fdt.h++>
 
@@ -41,6 +43,18 @@ memory::memory (std::string mtype, std::string alias, std::string name, uint64_t
   mem_name = name;
   mem_start = start;
   mem_length = length;
+}
+
+static void write_banner(fstream &os, std::string rel_tag)
+{
+  os << "/* Copyright 2019 SiFive, Inc */" << std::endl;
+  os << "/* SPDX-License-Identifier: Apache-2.0 */" << std::endl;
+  os << "/* ----------------------------------- */" << std::endl;
+  auto t = std::time(nullptr);
+  auto tm = *std::localtime(&t);
+  os << "/* [" << (rel_tag.empty() ? "XXXXX" : rel_tag) << "] "
+     << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        */" << std::endl;
+  os << "/* ----------------------------------- */" << std::endl << std::endl;
 }
 
 static char *dts_blob;
@@ -316,8 +330,9 @@ static void show_dts_memory (string mtype)
     std::cout << "}" << std::endl;
 }
 
-static void write_linker_file (fstream &os)
+static void write_linker_file (fstream &os, std::string release)
 {
+    write_banner(os, release);
     os << "OUTPUT_ARCH(\"riscv\")" << std::endl << std::endl;
     os << "ENTRY(_enter)" << std::endl << std::endl;
 }
@@ -754,6 +769,7 @@ int main (int argc, char* argv[])
   string show;
   string dtb_file;
   string linker_file;
+  string release;
   bool ramrodata = false;
   bool scratchpad = false;
   bool itim = false;
@@ -806,6 +822,10 @@ int main (int argc, char* argv[])
 		  }
               } else {
 		  show = "all";
+              }
+          } else if (arg == "-r") {
+              if (i + 1 < argc) {
+                  release = argv[++i];
               }
           } else {
               show_usage(argv[0]);
@@ -869,7 +889,7 @@ int main (int argc, char* argv[])
 
     std::cout << "Found " << num_harts << " harts\n";
 
-    write_linker_file(lds);
+    write_linker_file(lds, release);
     write_linker_memory(lds, scratchpad, metal_entry);
     write_linker_phdrs(lds, scratchpad);
     write_linker_sections(lds, num_harts, scratchpad, ramrodata, itim);

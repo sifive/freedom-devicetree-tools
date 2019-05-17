@@ -46,11 +46,25 @@
 #include <map>
 #include <list>
 #include <string>
+#include <iomanip>
+#include <ctime>
 
 using std::cerr;
 using std::endl;
 using std::fstream;
 using std::string;
+
+static void write_banner(fstream &os, std::string rel_tag)
+{
+  os << "/* Copyright 2019 SiFive, Inc */" << std::endl;
+  os << "/* SPDX-License-Identifier: Apache-2.0 */" << std::endl;
+  os << "/* ----------------------------------- */" << std::endl;
+  auto t = std::time(nullptr);
+  auto tm = *std::localtime(&t);
+  os << "/* [" << (rel_tag.empty() ? "XXXXX" : rel_tag) << "] "
+     << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        */" << std::endl;
+  os << "/* ----------------------------------- */" << std::endl << std::endl;
+}
 
 static void show_usage(string name)
 {
@@ -109,7 +123,8 @@ static void prepare_devices(const fdt &dtb, fstream &os, std::list<Device *>& de
   devices.push_back(new sifive_fu540_c000_l2(os, dtb));
 }
 
-static void write_h_file(const fdt &dtb, fstream &os, std::string h_file)
+static void write_h_file(const fdt &dtb, fstream &os,
+			 std::string h_file, std::string release)
 {
   std::transform(h_file.begin(), h_file.end(), h_file.begin(),
                    [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
@@ -117,6 +132,8 @@ static void write_h_file(const fdt &dtb, fstream &os, std::string h_file)
                    [](unsigned char c) { return (c == '.') ? '_' : c; });
 
   search_replace_all(h_file, "/", "__");
+
+  write_banner(os, release);
 
   os << "#ifndef ASSEMBLY" << std::endl << std::endl;
 
@@ -171,7 +188,8 @@ static void write_h_file(const fdt &dtb, fstream &os, std::string h_file)
   os << "#endif /* ! ASSEMBLY */" << std::endl;
 }
 
-static void write_i_file(const fdt &dtb, fstream &os, std::string i_file)
+static void write_i_file(const fdt &dtb, fstream &os,
+			 std::string i_file, std::string release)
 {
   std::transform(i_file.begin(), i_file.end(), i_file.begin(),
                    [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
@@ -179,6 +197,8 @@ static void write_i_file(const fdt &dtb, fstream &os, std::string i_file)
                    [](unsigned char c) { return (c == '.') ? '_' : c; });
 
   search_replace_all(i_file, "/", "__");
+
+  write_banner(os, release);
 
   os << "#ifndef ASSEMBLY" << std::endl << std::endl;
 
@@ -209,6 +229,7 @@ int main (int argc, char* argv[])
 {
   string dtb_file;
   string header_file;
+  string release;
 
   if ((argc < 2) && (argc > 5)) {
       show_usage(argv[0]);
@@ -231,6 +252,10 @@ int main (int argc, char* argv[])
                   std::cerr << "--output option requires file path." << std::endl;
                   show_usage(argv[0]);
                   return 1;
+              }
+          } else if (arg == "-r") {
+              if (i + 1 < argc) {
+                  release = argv[++i];
               }
           } else {
               show_usage(argv[0]);
@@ -264,8 +289,8 @@ int main (int argc, char* argv[])
       return 1;
     }
 
-    write_h_file(f, h_file, header_file);
-    write_i_file(f, i_file, inline_file);
+    write_h_file(f, h_file, header_file, release);
+    write_i_file(f, i_file, inline_file, release);
   }
 
   return 0;
