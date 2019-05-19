@@ -10,9 +10,19 @@
 
 class fixed_clock : public Device {
   public:
+    int num_clocks;
+
     fixed_clock(std::ostream &os, const fdt &dtb)
       : Device(os, dtb, "fixed-clock")
-    {}
+    {
+      /* Count the number of Fixed-Clocks */
+      num_clocks = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  num_clocks += 1;
+	});
+    }
 
     void include_headers()
     {
@@ -31,7 +41,7 @@ class fixed_clock : public Device {
 	  if (count == 0) {
 	    func = create_inline_dec("rate",
 				     "unsigned long",
-				     " ");
+				     "struct metal_clock *clock");
 	    extern_inlines.push_back(func);
 	  }
           count++;
@@ -57,13 +67,21 @@ class fixed_clock : public Device {
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	 if (count == 0) {
-	   func = create_inline_def("rate",
-				    "unsigned long",
-				    "empty",
-                                    platform_define(n, METAL_CLOCK_FREQUENCY_LABEL),
-				    " ");
+	  if (count == 0) {
+	    func = create_inline_def("rate",
+				     "unsigned long",
+				     "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
+				     platform_define(n, METAL_CLOCK_FREQUENCY_LABEL),
+				     "struct metal_clock *clock");
 	    extern_inlines.push_back(func);
+	  }
+	  if (count > 0) {
+	    add_inline_body(func,
+			    "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
+			    platform_define(n, METAL_CLOCK_FREQUENCY_LABEL));
+	  }
+	  if ((count + 1) == num_clocks) {
+	    add_inline_body(func, "else", "0");
 	  }
 	  count++;
 	}

@@ -103,13 +103,15 @@ class sifive_gpio0 : public Device {
     void define_inlines()
     {
       Inline* func;
+      Inline *func1, *func2, *func3;
+      Inline *func4, *func5;
       std::list<Inline *> extern_inlines;
 
       int count = 0;
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
-	  if (max_interrupts == 0) {
+	  if (num_gpios == 0) {
 	    func = create_inline_def("base",
 				     "unsigned long",
 				     "empty",
@@ -132,29 +134,42 @@ class sifive_gpio0 : public Device {
 	    extern_inlines.push_back(func);
 	  } else {
 	    if (count == 0) {
-	      func = create_inline_def("base",
+	      func1 = create_inline_def("base",
 				       "unsigned long",
 				       "(uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle(),
                                        platform_define(n, METAL_BASE_ADDRESS_LABEL),
 				       "struct metal_gpio *gpio");
-	      add_inline_body(func, "else", "0");
-	      extern_inlines.push_back(func);
+	      extern_inlines.push_back(func1);
 
-	      func = create_inline_def("size",
+	      func2 = create_inline_def("size",
 				       "unsigned long",
 				       "(uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle(),
                                        platform_define(n, METAL_SIZE_LABEL),
 				       "struct metal_gpio *gpio");
-	      add_inline_body(func, "else", "0");
-	      extern_inlines.push_back(func);
+	      extern_inlines.push_back(func2);
 
-	      func = create_inline_def("num_interrupts",
+	      func3 = create_inline_def("num_interrupts",
 				       "int",
 				       "(uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle(),
 				       "METAL_MAX_GPIO_INTERRUPTS",
 				       "struct metal_gpio *gpio");
-	      add_inline_body(func, "else", "0");
-	      extern_inlines.push_back(func);
+	      extern_inlines.push_back(func3);
+	    }
+	    if (count > 0) {
+	      add_inline_body(func1,
+			      "(uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle(),
+			      platform_define(n, METAL_BASE_ADDRESS_LABEL));
+	      add_inline_body(func2,
+			      "(uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle(),
+			      platform_define(n, METAL_SIZE_LABEL));
+	      add_inline_body(func3,
+			      "(uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle(),
+			      "METAL_MAX_GPIO_INTERRUPTS");
+	    }
+	    if ((count + 1) == num_gpios) {
+	      add_inline_body(func1, "else", "0");
+	      add_inline_body(func2, "else", "0");
+	      add_inline_body(func3, "else", "0");
 	    }
 	  }
 
@@ -171,16 +186,23 @@ class sifive_gpio0 : public Device {
 	      }
 	    },
 	    [&](node m) {
-	      if (count == 0) {
-		std::string value = "(struct metal_interrupt *)&__metal_dt_"
+	      std::string value = "(struct metal_interrupt *)&__metal_dt_"
 		                  + m.handle() + ".controller";
-		func = create_inline_def("interrupt_parent",
+	      if (count == 0) {
+		func4 = create_inline_def("interrupt_parent",
 					 "struct metal_interrupt *",
 					 "(uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle(),
 					 value,
 					 "struct metal_gpio *gpio");
-		add_inline_body(func, "else", "NULL");
-		extern_inlines.push_back(func);
+		extern_inlines.push_back(func4);
+	      }
+	      if (count > 0) {
+		add_inline_body(func4,
+				"(uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle(),
+				value);
+	      }
+	      if ((count + 1) == num_gpios) {
+		add_inline_body(func4, "else", "0");
 	      }
 	    });
 
@@ -197,19 +219,26 @@ class sifive_gpio0 : public Device {
 	      }
 	    },
 	    [&](int i, uint32_t irline){
-	      if (i == 0) {
-		func = create_inline_def("interrupt_lines",
-					 "int",
-					 "idx == " + std::to_string(i),
-					 std::to_string(irline),
-					 "struct metal_gpio *gpio", "int idx");
-		extern_inlines.push_back(func);
-	      } else if ((i + 1) == max_interrupts) {
-		add_inline_body(func, "idx == " + std::to_string(i), std::to_string(irline));
-		add_inline_body(func, "else", "0");
-	      } else {
-		add_inline_body(func, "idx == " + std::to_string(i), std::to_string(irline));
-	      }
+	      if ((count == 0) && (i == 0)) {
+		func5 = create_inline_def("interrupt_lines",
+					  "int",
+					  "((uintptr_t)gpio == (uintptr_t)&__metal_dt_" 
+                                           + n.handle() + ") && (" + "idx == " + std::to_string(i) + ")",
+					  std::to_string(irline),
+					  "struct metal_gpio *gpio", "int idx");
+		extern_inlines.push_back(func5);
+              } else if (((count + 1) == num_gpios) && ((i + 1) == max_interrupts)) {
+                add_inline_body(func5,
+                                "(((uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle()
+                                 + ") && (" + "idx == " + std::to_string(i) + "))",
+                                std::to_string(irline));
+                add_inline_body(func5, "else", "0");
+              } else {
+                add_inline_body(func5,
+                                "(((uintptr_t)gpio == (uintptr_t)&__metal_dt_" + n.handle()
+                                 + ") && (" + "idx == " + std::to_string(i) + "))",
+                                std::to_string(irline));
+              }
 	    });
 
 	  count++;

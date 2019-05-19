@@ -10,9 +10,19 @@
 
 class fixed_factor_clock : public Device {
   public:
+    int num_clocks;
+
     fixed_factor_clock(std::ostream &os, const fdt &dtb)
       : Device(os, dtb, "fixed-factor-clock")
-    {}
+    {
+      /* Count the number of Fixed-Factor-Clocks */
+      num_clocks = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  num_clocks += 1;
+	});
+    }
 
     void include_headers()
     {
@@ -41,11 +51,11 @@ class fixed_factor_clock : public Device {
 
 	    func = create_inline_dec("mult",
 				     "unsigned long",
-				     " ");
+				     "struct metal_clock *clock");
 	    extern_inlines.push_back(func);
 	    func = create_inline_dec("div",
 				     "unsigned long",
-				     " ");
+				     "struct metal_clock *clock");
 	    extern_inlines.push_back(func);
 	  }
           count++;
@@ -65,6 +75,7 @@ class fixed_factor_clock : public Device {
     void define_inlines()
     {
       Inline* func;
+      Inline *func1, *func2;
       std::list<Inline *> extern_inlines;
 
       int count = 0;
@@ -97,18 +108,30 @@ class fixed_factor_clock : public Device {
 	    });
 
 	  if (count == 0) {
-	    func = create_inline_def("mult",
+	    func1 = create_inline_def("mult",
 		       		     "unsigned long",
-			       	     "empty",
+				    "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
                                      platform_define(n, METAL_CLOCK_MULT_LABEL),
-			             " ");
-	    extern_inlines.push_back(func);
-	    func = create_inline_def("div",
+				     "struct metal_clock *clock");
+	    extern_inlines.push_back(func1);
+	    func2 = create_inline_def("div",
 			       	     "unsigned long",
-			             "empty",
+				    "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
                                      platform_define(n, METAL_CLOCK_DIV_LABEL),
-			       	     " ");
-	    extern_inlines.push_back(func);
+				     "struct metal_clock *clock");
+	    extern_inlines.push_back(func2);
+	  }
+	  if (count > 0) {
+	    add_inline_body(func1,
+			    "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
+			    platform_define(n, METAL_CLOCK_MULT_LABEL));
+	    add_inline_body(func2,
+			    "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
+			    platform_define(n, METAL_CLOCK_DIV_LABEL));
+	  }
+	  if ((count + 1) == num_clocks) {
+	    add_inline_body(func1, "else", "0");
+	    add_inline_body(func2, "else", "0");
 	  }
 	  count++;
 	}

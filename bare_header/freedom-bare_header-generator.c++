@@ -32,11 +32,13 @@
 #include "bare_header/sifive_fe310_g000_prci.h"
 #include "bare_header/sifive_fe310_g000_pll.h"
 #include "bare_header/sifive_fu540_c000_l2.h"
+#include "bare_header/sifive_global_external_interrupts0.h"
 #include "bare_header/sifive_gpio0.h"
 #include "bare_header/sifive_gpio_buttons.h"
 #include "bare_header/sifive_gpio_leds.h"
 #include "bare_header/sifive_gpio_switches.h"
 #include "bare_header/sifive_i2c0.h"
+#include "bare_header/sifive_local_external_interrupts0.h"
 #include "bare_header/sifive_pwm0.h"
 #include "bare_header/sifive_spi0.h"
 #include "bare_header/sifive_test0.h"
@@ -113,11 +115,13 @@ static void write_config_file(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
   devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_fu540_c000_l2(os, dtb));
+  devices.push_back(new sifive_global_external_interrupts0(os, dtb));
   devices.push_back(new sifive_gpio0(os, dtb));
   devices.push_back(new sifive_gpio_buttons(os, dtb));
   devices.push_back(new sifive_gpio_leds(os, dtb));
   devices.push_back(new sifive_gpio_switches(os, dtb));
   devices.push_back(new sifive_i2c0(os, dtb));
+  devices.push_back(new sifive_local_external_interrupts0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
