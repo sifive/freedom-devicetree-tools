@@ -44,7 +44,6 @@ class memory : public Device {
     void declare_structs()
     {
       auto declare = [&](node n) {
-	os << "asm (\".weak __metal_dt_mem_" << n.handle() << "\");\n";
 	os << "struct metal_memory __metal_dt_mem_" << n.handle() << ";\n\n";
       };
 

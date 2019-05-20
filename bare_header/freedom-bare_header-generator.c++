@@ -11,6 +11,8 @@
 #include <map>
 #include <list>
 #include <string>
+#include <iomanip>
+#include <ctime>
 
 /* Generic Devices */
 #include "bare_header/device.h"
@@ -25,10 +27,18 @@
 /* SiFive Blocks */
 #include "bare_header/sifive_aon0.h"
 #include "bare_header/sifive_clic0.h"
+#include "bare_header/sifive_fe310_g000_hfrosc.h"
+#include "bare_header/sifive_fe310_g000_hfxosc.h"
 #include "bare_header/sifive_fe310_g000_prci.h"
+#include "bare_header/sifive_fe310_g000_pll.h"
 #include "bare_header/sifive_fu540_c000_l2.h"
+#include "bare_header/sifive_global_external_interrupts0.h"
 #include "bare_header/sifive_gpio0.h"
+#include "bare_header/sifive_gpio_buttons.h"
+#include "bare_header/sifive_gpio_leds.h"
+#include "bare_header/sifive_gpio_switches.h"
 #include "bare_header/sifive_i2c0.h"
+#include "bare_header/sifive_local_external_interrupts0.h"
 #include "bare_header/sifive_pwm0.h"
 #include "bare_header/sifive_spi0.h"
 #include "bare_header/sifive_test0.h"
@@ -38,6 +48,18 @@ using std::cerr;
 using std::endl;
 using std::fstream;
 using std::string;
+
+static void write_banner(fstream &os, std::string rel_tag)
+{
+  os << "/* Copyright 2019 SiFive, Inc */" << std::endl;
+  os << "/* SPDX-License-Identifier: Apache-2.0 */" << std::endl;
+  os << "/* ----------------------------------- */" << std::endl;
+  auto t = std::time(nullptr);
+  auto tm = *std::localtime(&t);
+  os << "/* [" << (rel_tag.empty() ? "XXXXX" : rel_tag) << "] "
+     << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        */" << std::endl;
+  os << "/* ----------------------------------- */" << std::endl << std::endl;
+}
 
 static void show_usage(string name)
 {
@@ -59,7 +81,8 @@ void search_replace_all(std::string& str, const std::string& from, const std::st
     }
 }
 
-static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
+static void write_config_file(const fdt &dtb, fstream &os,
+			      std::string cfg_file, std::string release)
 {
   std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
                    [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
@@ -67,6 +90,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
                    [](unsigned char c) { return (c == '.') ? '_' : c; });
 
   search_replace_all(cfg_file, "/", "__");
+
+  write_banner(os, release);
 
   os << "#ifndef " << cfg_file << std::endl;
   os << "#define " << cfg_file << std::endl << std::endl;
@@ -85,10 +110,18 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   /* SiFive Blocks */
   devices.push_back(new sifive_aon0(os, dtb));
   devices.push_back(new sifive_clic0(os, dtb));
+  devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
+  devices.push_back(new sifive_fe310_g000_hfxosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
+  devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_fu540_c000_l2(os, dtb));
+  devices.push_back(new sifive_global_external_interrupts0(os, dtb));
   devices.push_back(new sifive_gpio0(os, dtb));
+  devices.push_back(new sifive_gpio_buttons(os, dtb));
+  devices.push_back(new sifive_gpio_leds(os, dtb));
+  devices.push_back(new sifive_gpio_switches(os, dtb));
   devices.push_back(new sifive_i2c0(os, dtb));
+  devices.push_back(new sifive_local_external_interrupts0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
@@ -106,6 +139,7 @@ int main (int argc, char* argv[])
 {
   string dtb_file;
   string config_file;
+  string release;
 
   if ((argc < 2) && (argc > 5)) {
       show_usage(argv[0]);
@@ -128,6 +162,10 @@ int main (int argc, char* argv[])
                   std::cerr << "--output option requires file path." << std::endl;
                   show_usage(argv[0]);
                   return 1;
+              }
+          } else if (arg == "-r") {
+              if (i + 1 < argc) {
+                  release = argv[++i];
               }
           } else {
               show_usage(argv[0]);
@@ -153,7 +191,7 @@ int main (int argc, char* argv[])
       return 1;
     }
 
-    write_config_file(f, cfg, config_file);
+    write_config_file(f, cfg, config_file, release);
   }
 
   return 0;

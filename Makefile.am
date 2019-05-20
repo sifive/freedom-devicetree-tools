@@ -28,6 +28,7 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/device.h \
 	metal_header/fixed_clock.h \
 	metal_header/fixed_factor_clock.h \
+	metal_header/inline.h \
 	metal_header/memory.h \
 	metal_header/riscv_clint0.h \
 	metal_header/riscv_cpu.h \
@@ -65,10 +66,18 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/riscv_pmp.h \
 	bare_header/sifive_aon0.h \
 	bare_header/sifive_clic0.h \
+	bare_header/sifive_fe310_g000_hfrosc.h \
+	bare_header/sifive_fe310_g000_hfxosc.h \
 	bare_header/sifive_fe310_g000_prci.h \
+	bare_header/sifive_fe310_g000_pll.h \
 	bare_header/sifive_fu540_c000_l2.h \
+	bare_header/sifive_global_external_interrupts0.h \
 	bare_header/sifive_gpio0.h \
+	bare_header/sifive_gpio_buttons.h \
+	bare_header/sifive_gpio_leds.h \
+	bare_header/sifive_gpio_switches.h \
 	bare_header/sifive_i2c0.h \
+	bare_header/sifive_local_external_interrupts0.h \
 	bare_header/sifive_pwm0.h \
 	bare_header/sifive_spi0.h \
 	bare_header/sifive_test0.h \
