@@ -299,7 +299,7 @@ static void show_usage(string name)
   std::cerr << "Usage: " << name << " <option(s)>\n"
 	    << "Options:\n"
 	    << "\t-h,--help\t\t\tShow this help message\n"
-	    << "\t-b,--board <eg. rtl | arty | hifive1>\t\tSpecify board type\n"
+	    << "\t-b,--board <eg. rtl | arty | hifive>\t\tSpecify board type\n"
 	    << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
 	    << "\t-o,--output <eg. openocd.cfg>\t\tGenerate openocd config file\n"
 	    << "\t-s,--show \t\tShow openocd config file on std-output\n"
@@ -325,10 +325,10 @@ int main (int argc, char* argv[])
                   board = argv[++i];
 		  if ((board.find("rtl")  != std::string::npos) ||
 		      (board.find("arty") != std::string::npos) ||
-		      (board.find("hifive1") != std::string::npos)) {
+		      (board.find("hifive") != std::string::npos)) {
 		    std::cout << "Board type given is " << board << std::endl;
                   } else {
-		    std::cerr << "Possible options are <rtl | arty | hifive1>."
+		    std::cerr << "Possible options are <rtl | arty | hifive>."
 			      << std::endl;
 		    return 1;
 		  }
