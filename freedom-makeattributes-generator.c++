@@ -21,6 +21,7 @@ extern "C"{
 }
 #endif
 #include "multilib.h++"
+#include <fdt.h++>
 
 using std::cout;
 using std::endl;
@@ -244,11 +245,24 @@ static void write_config_file (fstream &os, std::string board, std::string relea
     string cpucompat;
     string mmutype;
     string serial;
+    string boothart_str;
 
     write_banner(os, release);
 
-    isa = arch2arch(get_dts_attribute("/cpus/cpu@0", "riscv,isa"));
+    // Get the CPU compatible string
+    auto dtb = fdt((const uint8_t *)dts_blob);
+    int boot_hart = 0;
+    dtb.chosen(
+      "metal,boothart",
+      tuple_t<node>(),
+      [&](node n) {
+        boot_hart = std::stoi(n.instance());
+      });
+    boothart_str = "/cpus/cpu@" + std::to_string(boot_hart);
+
+    isa = arch2arch(get_dts_attribute(boothart_str, "riscv,isa"));
     std::size_t found = isa.find("rv64");
+
     os << "RISCV_ARCH=" << isa << std::endl;
     os << "RISCV_ABI=" << arch2abi(isa) << std::endl;
     if (found != std::string::npos) {
@@ -256,10 +270,21 @@ static void write_config_file (fstream &os, std::string board, std::string relea
     } else {
         os << "RISCV_CMODEL=medlow" << std::endl;
     }
-    os << std::endl;
 
-    // Get the CPU compatible string
-    cpucompat = get_dts_attribute("/cpus/cpu@0", "compatible");
+    cpucompat = get_dts_attribute(boothart_str, "compatible");
+    // Append SIFIVE series
+    if(cpucompat.find("bullet") != std::string::npos) {
+        os << "RISCV_SERIES=sifive-7-series" << std::endl;
+    } else if(cpucompat.find("caboose") != std::string::npos) {
+        os << "RISCV_SERIES=sifive-2-series" << std::endl;
+    } else if(cpucompat.find("rocket") != std::string::npos) {
+        if (found != std::string::npos) {
+            os << "RISCV_SERIES=sifive-5-series" << std::endl;
+        } else {
+            os << "RISCV_SERIES=sifive-3-series" << std::endl;
+        }
+    }
+    os << std::endl;
 
     // Get the mmu-type property
     mmutype = get_dts_attribute("/cpus/cpu@0", "mmu-type");
@@ -273,7 +298,7 @@ static void write_config_file (fstream &os, std::string board, std::string relea
 	if(mmutype != "") {
 	    // U54 and U54-MC need mem width 128
             os << "COREIP_MEM_WIDTH=128" << std::endl;
-	}  else if(cpucompat.find("bullet") != std::string::npos) {
+	} else if(cpucompat.find("bullet") != std::string::npos) {
 	    // E76 has mem width 64
             os << "COREIP_MEM_WIDTH=64" << std::endl;
 	} else if (isa.find("rv64") != std::string::npos) {
