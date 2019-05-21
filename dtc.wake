@@ -18,7 +18,7 @@ global def makeDTCOptions inFormat outFormat inFile outputFile =
   DTCOptions inFormat inFile outFormat outputFile
 
 global def dtsTodtb = makeDTCOptions DTC_DTS DTC_DTB _ _ | runDTC
-global def dtbTodts = makeDTCOptions DTC_DTS DTC_DTB _ _ | runDTC
+global def dtbTodts = makeDTCOptions DTC_DTB DTC_DTS _ _ | runDTC
 
 global def runDTC options =
   def cmdline =
