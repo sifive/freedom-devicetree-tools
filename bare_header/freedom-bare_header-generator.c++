@@ -22,7 +22,6 @@
 /* RISC-V Devices */
 #include "bare_header/riscv_clint0.h"
 #include "bare_header/riscv_plic0.h"
-#include "bare_header/riscv_pmp.h"
 
 /* SiFive Blocks */
 #include "bare_header/sifive_aon0.h"
@@ -105,7 +104,6 @@ static void write_config_file(const fdt &dtb, fstream &os,
   /* RISC-V Devices */
   devices.push_back(new riscv_clint0(os, dtb));
   devices.push_back(new riscv_plic0(os, dtb));
-  devices.push_back(new riscv_pmp(os, dtb));
 
   /* SiFive Blocks */
   devices.push_back(new sifive_aon0(os, dtb));

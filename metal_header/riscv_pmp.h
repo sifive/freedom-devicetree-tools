@@ -10,9 +10,23 @@
 
 class riscv_pmp : public Device {
   public:
+    int pmp_present;
     riscv_pmp(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "riscv,pmp")
-    {}
+      : Device(os, dtb, "riscv,pmpregions")
+    {
+      /* Check all RISC-V CPU nodes for the presence of the 'riscv,pmpregions'
+       * property */
+      pmp_present = 0;
+      dtb.match(
+	std::regex("cpu"),
+	[&](const node n) {
+	  n.maybe_tuple(compat_string, tuple_t<uint32_t>(),
+	      []() {},
+	      [&](uint32_t num) {
+		pmp_present = 1;
+	      });
+	});
+    }
 
     void include_headers()
     {
@@ -21,34 +35,22 @@ class riscv_pmp : public Device {
 
     void declare_structs()
     {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  os << "struct metal_pmp __metal_dt_" << n.handle() << ";\n\n";
-	}
-      );
-    }
-
-    void define_structs()
-    {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_comment(n);
-	  os << "struct metal_pmp __metal_dt_" << n.handle() << " = {\n";
-	  emit_struct_field_platform_define("num_regions", n, METAL_NUM_REGIONS_LABEL);
-	  emit_struct_end();
-	});
+      if (pmp_present) {
+	os << "struct metal_pmp __metal_dt_pmp;\n\n";
+      } else if (dtb.match(std::regex("riscv,pmp"), [](const node n) {}) != 0) {
+	/* This handles the old-style nodes with the riscv,pmp compat strings. */
+	os << "struct metal_pmp __metal_dt_pmp;\n\n";
+      }
     }
 
     void create_handles()
     {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_comment(n);
-	  os << "#define __METAL_DT_PMP_HANDLE" << " (&__metal_dt_" << n.handle() << ")\n\n";
-	});
+      if (pmp_present) {
+	os << "#define __METAL_DT_PMP_HANDLE (&__metal_dt_pmp)\n\n";
+      } else if (dtb.match(std::regex("riscv,pmp"), [](const node n) {}) != 0) {
+	/* This handles the old-style nodes with the riscv,pmp compat strings. */
+	os << "#define __METAL_DT_PMP_HANDLE (&__metal_dt_pmp)\n\n";
+      }
     }
 };
 
