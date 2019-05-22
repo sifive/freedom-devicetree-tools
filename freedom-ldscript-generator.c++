@@ -382,7 +382,7 @@ static void write_linker_phdrs (fstream &os, bool scratchpad)
     os << "}" << std::endl << std::endl;
 }
 
-static void write_linker_sections (fstream &os, int num_harts, bool scratchpad, bool ramrodata, bool itim)
+static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bool scratchpad, bool ramrodata, bool itim)
 {
     std::string stack_cfg = "0x400";
     std::string heap_cfg = "0x400";
@@ -396,6 +396,7 @@ static void write_linker_sections (fstream &os, int num_harts, bool scratchpad, 
     /* Define heap size */
     os << "\t__heap_size = DEFINED(__heap_size) ? __heap_size : "
 	      << heap_cfg << ";" << std::endl;
+    os << "\tPROVIDE(__metal_boot_hart = " << std::to_string(boot_hart) << ");" << std::endl;
 
     os << std::endl << std::endl;
     /* Define init section */
@@ -887,12 +888,20 @@ int main (int argc, char* argv[])
         num_harts += 1;
       });
 
+    int boot_hart = 0;
+    dtb.chosen(
+      "metal,boothart",
+      tuple_t<node>(),
+      [&](node n) {
+        boot_hart = std::stoi(n.instance());
+      });
+
     std::cout << "Found " << num_harts << " harts\n";
 
     write_linker_file(lds, release);
     write_linker_memory(lds, scratchpad, metal_entry);
     write_linker_phdrs(lds, scratchpad);
-    write_linker_sections(lds, num_harts, scratchpad, ramrodata, itim);
+    write_linker_sections(lds, num_harts, boot_hart, scratchpad, ramrodata, itim);
   }
 
   if (!show.empty()) {
