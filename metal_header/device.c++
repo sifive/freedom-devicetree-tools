@@ -32,10 +32,24 @@ void Device::emit_def(std::string handle, std::string field) {
 }
 
 void Device::emit_include(std::string d) {
+
+  auto to_include = [](std::string input_string) -> std::string {
+    std::string s = input_string;
+    std::transform(s.begin(), s.end(), s.begin(),
+      [](unsigned char c) -> char { 
+	if(c == ',') {
+	  return '_';
+	}
+	return c;
+    });
+    return s;
+  };
+
   static std::set<std::string> included;
   if (included.find(d) != included.end())
     return;
-  os << "#include <metal/drivers/" << d << ".h>\n";
+
+  os << "#include <metal/drivers/" << to_include(d) << ".h>\n";
   included.insert(d);
 }
 
