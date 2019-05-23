@@ -285,12 +285,16 @@ static void write_config_file (fstream &os, std::string board, std::string relea
         }
         os << std::endl;
         os << "TARGET_TAGS=rtl" << std::endl;
+        os << "TARGET_DHRY_ITERS=2000" << std::endl;
     } else if (board.find("arty") != std::string::npos) {
         os << "TARGET_TAGS=fpga openocd" << std::endl;
+        os << "TARGET_DHRY_ITERS=20000000" << std::endl;
     } else if (board.find("hifive1-revb") != std::string::npos) {
         os << "TARGET_TAGS=board jlink" << std::endl;
+        os << "TARGET_DHRY_ITERS=20000000" << std::endl;
     } else {
         os << "TARGET_TAGS=board openocd" << std::endl;
+        os << "TARGET_DHRY_ITERS=20000000" << std::endl;
     }
 }
 
