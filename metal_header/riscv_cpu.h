@@ -44,6 +44,11 @@ class riscv_cpu : public Device {
 	std::regex(compat_string),
 	[&](node n) {
 	  if (count == 0) {
+	    func = create_inline_dec("hartid",
+				     "int",
+				     "struct metal_cpu *cpu");
+	    extern_inlines.push_back(func);
+
 	    func = create_inline_dec("timebase",
 				     "int",
 				     "struct metal_cpu *cpu");
@@ -75,6 +80,7 @@ class riscv_cpu : public Device {
 
     void define_inlines()
     {
+      Inline *func_hartid;
       Inline* func_tf;
       Inline* func_ic;
       Inline* func_pmpregions;
@@ -99,6 +105,13 @@ class riscv_cpu : public Device {
 	    [&](uint32_t timebase) { tf = timebase; });
 
 	  if (count == 0) {
+	    func_hartid = create_inline_def("hartid",
+					    "int",
+					    "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
+					    n.instance(),
+					    "struct metal_cpu *cpu");
+	    extern_inlines.push_back(func_hartid);
+
 	    func_tf = create_inline_def("timebase",
 				     "int",
 				     "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
@@ -122,11 +135,15 @@ class riscv_cpu : public Device {
 
 	  }
 	  if ((count + 1) == num_cpus) {
+	    add_inline_body(func_hartid, "else", "-1");
 	    add_inline_body(func_tf, "else", "0");
 	    add_inline_body(func_ic, "else", "NULL");
 	    add_inline_body(func_pmpregions, "else", "0");
 
 	  } else {
+	    add_inline_body(func_hartid,
+			    "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
+			    n.instance());
 	    add_inline_body(func_tf,
 			    "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
 			    std::to_string(tf));
