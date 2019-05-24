@@ -18,7 +18,8 @@ freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++
 
 freedom_makeattributes_generator_SOURCES = \
-	freedom-makeattributes-generator.c++
+	freedom-makeattributes-generator.c++ \
+	fdt.c++
 
 freedom_metal_header_generator_SOURCES = \
 	fdt.c++ \
