@@ -166,14 +166,17 @@ static char *dts_read (const char *filename)
     return buf;
 }
 
-static void get_dts_attribute (const string path, const string tag)
+static string get_dts_attribute (const string path, const string tag)
 {
     int node, len;
     const char *value;
 
     node = fdt_path_offset(dts_blob, path.c_str());
+    if (node < 0) return "";
     value = (const char *)fdt_getprop(dts_blob, node, tag.c_str(), &len);
+    if (!value) return "";
     std::cout << string(value) << std::endl;
+    return string(value);
 }
 
 static void dts_memory (void)
@@ -382,7 +385,7 @@ static void write_linker_phdrs (fstream &os, bool scratchpad)
     os << "}" << std::endl << std::endl;
 }
 
-static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bool scratchpad, bool ramrodata, bool itim)
+static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bool scratchpad, bool ramrodata, bool itim, int chicken_bit)
 {
     std::string stack_cfg = "0x400";
     std::string heap_cfg = "0x400";
@@ -397,6 +400,7 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     os << "\t__heap_size = DEFINED(__heap_size) ? __heap_size : "
 	      << heap_cfg << ";" << std::endl;
     os << "\tPROVIDE(__metal_boot_hart = " << std::to_string(boot_hart) << ");" << std::endl;
+    os << "\tPROVIDE(__metal_chicken_bit = " << std::to_string(chicken_bit) << ");" << std::endl;
 
     os << std::endl << std::endl;
     /* Define init section */
@@ -677,7 +681,7 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
       os << "\t\t*(.srodata.cst8)" << std::endl;
       os << "\t\t*(.srodata.cst4)" << std::endl;
       os << "\t\t*(.srodata.cst2)" << std::endl;
-      os << "\t\t*(.srodata .srodata.*)" << std::endl;      
+      os << "\t\t*(.srodata .srodata.*)" << std::endl;
     }
     os << "\t\t*(.data .data.*)" << std::endl;
     os << "\t\t*(.gnu.linkonce.d.*)" << std::endl;
@@ -898,10 +902,19 @@ int main (int argc, char* argv[])
 
     std::cout << "Found " << num_harts << " harts\n";
 
+    int chicken_bit = 0;
+    string cpucompat;
+    string boothart_str;
+    boothart_str = "/cpus/cpu@" + std::to_string(boot_hart);
+    cpucompat = get_dts_attribute(boothart_str, "compatible");
+    if(cpucompat.find("bullet") != std::string::npos) {
+        chicken_bit = 1;
+    }
+
     write_linker_file(lds, release);
     write_linker_memory(lds, scratchpad, metal_entry);
     write_linker_phdrs(lds, scratchpad);
-    write_linker_sections(lds, num_harts, boot_hart, scratchpad, ramrodata, itim);
+    write_linker_sections(lds, num_harts, boot_hart, scratchpad, ramrodata, itim, chicken_bit);
   }
 
   if (!show.empty()) {
