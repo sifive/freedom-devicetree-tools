@@ -11,30 +11,31 @@ def m4_dir             = ./ "m4"
 def doJob cmdline inputs =
   makePlan cmdline inputs
   | setPlanDirectory here
-  | setPlanFnOutputs (filter (\f !(matches '.*\.Po' f)) _)
+  | setPlanFnOutputs (filter (\f !(matches `.*\.Po` f)) _)
   | runJob
   | getJobOutputs
 
 def makeTool tool =
-  def installDir = mkdir "build/freedom-devicetree-tools"
-  def wrapperScript = (sources "{here}/scripts" 'autoconf_wrapper' | head)
+  def installDir = mkdir "build/{here}"
+  def wrapperScript = source "{here}/scripts/autoconf_wrapper"
   def runDir = here
   def cmdline =
     relative runDir wrapperScript.getPathName,
     "--configure-args=",
     "--install-dir={relative runDir installDir.getPathName}",
     Nil
-  def inputs = wrapperScript, installDir, sources here '.*'
-  def foutputs _ = files installDir.getPathName '.*'
-  def makeOutputs =
-    makeManualPlan cmdline inputs foutputs
-    | setPlanDirectory runDir
-    | runJob
-    | getJobOutputs
+  def inputs = installDir, sources here `.*`
+  def foutputs _ = files installDir.getPathName `.*`
 
-  makeOutputs
+  makePlan cmdline inputs
+  | setPlanLocalOnly True
+  | setPlanFnOutputs foutputs
+  | setPlanDirectory runDir
+  | runJob
+  | getJobOutputs
   | filter ("{installDir.getPathName}/bin/{tool}" ==~ _.getPathName)
   | head
+  | getOrElse "could not build {tool}!".makeError.makeBadPath
 
 global def freedom_ldscript_generator       _ = makeTool "freedom-ldscript-generator"
 global def freedom_makeattributes_generator _ = makeTool "freedom-makeattributes-generator"
@@ -127,13 +128,43 @@ global def runFreedomMakeAttributesGenerator options =
     Nil
   def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   def file = makePlan cmdline inputs | runJob | getJobOutput
-  def lines = read file | tokenize '\n'
-  def getAttribute attribute =
-    def regex = "^{attribute}=(.*)$"
-    def filtered = filter (matches regex) lines | head
-    extract regex filtered | head
+  def rlines = read file | rmap `\n`.tokenize
+  match rlines
+    Pass lines =
+      def getAttribute attribute =
+        def regex = regExpCat (`^`, attribute, `=(.*)$`, Nil)
+        lines
+        | map regex.extract
+        | flatten
+        | head
+      match `RISCV_ABI`.getAttribute `RISCV_ARCH`.getAttribute `RISCV_CMODEL`.getAttribute
+        (Some mabi) (Some march) (Some cmodel) = Pass (FreedomMakeAttributes file march mabi cmodel)
+        _ _ _ = Fail "Generated make attributes file not formatted correctly: {file.getPathName}"
+    Fail fail = Fail "freedomMakeAttributesGenerator failed: {fail}"
 
-  def mabi   = getAttribute "RISCV_ABI"
-  def march  = getAttribute "RISCV_ARCH"
-  def cmodel = getAttribute "RISCV_CMODEL"
-  FreedomMakeAttributes file march mabi cmodel
+tuple FreedomBSP =
+  LinkerScript_: Path
+  Header_:       Path
+  Attributes_:   FreedomMakeAttributes
+
+global def getFreedomBSPLinkerScript = getFreedomBSPLinkerScript_
+global def getFreedomBSPHeader       = getFreedomBSPHeader_
+global def getFreedomBSPAttributes   = getFreedomBSPAttributes_
+
+global def makeFreedomBSP testDTS prefix =
+  def testDTB = dtsTodtb testDTS "{prefix}.dtb"
+  def ldScript =
+    makeFreedomLdScriptGeneratorOptions testDTB "{prefix}.lds"
+    | runFreedomLdScriptGenerator
+
+  def header =
+    makeFreedomMetalHeaderGeneratorOptions testDTB "{prefix}.h"
+    | runFreedomMetalHeaderGenerator
+
+  def attributesResult =
+    makeFreedomMakeAttributesGeneratorOptions testDTB "{prefix}.conf"
+    | runFreedomMakeAttributesGenerator
+
+  match ldScript.getPathError header.getPathError attributesResult
+    None None (Pass attributes) = Pass (FreedomBSP ldScript header attributes)
+    _ _ _ = Fail (Triple ldScript header attributesResult)
