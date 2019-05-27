@@ -58,10 +58,12 @@ static void write_banner(fstream &os, std::string rel_tag)
   os << "# Copyright 2019 SiFive, Inc #" << std::endl;
   os << "# SPDX-License-Identifier: Apache-2.0 #" << std::endl;
   os << "# ----------------------------------- #" << std::endl;
-  auto t = std::time(nullptr);
-  auto tm = *std::localtime(&t);
-  os << "# [" << (rel_tag.empty() ? "XXXXX" : rel_tag) << "] "
-     << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        #" << std::endl;
+  if ( !rel_tag.empty() ) {
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    os << "# [" << rel_tag << "] "
+       << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        #" << std::endl;
+  }
   os << "# ----------------------------------- #" << std::endl << std::endl;
 }
 
