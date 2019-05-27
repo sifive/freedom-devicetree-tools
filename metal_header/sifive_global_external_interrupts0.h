@@ -10,11 +10,20 @@
 
 class sifive_global_external_interrupts0 : public Device {
   public:
+    int num_global_ext_ints = 0;
     uint32_t max_interrupts = 0;
 
     sifive_global_external_interrupts0(std::ostream &os, const fdt &dtb)
       : Device(os, dtb, "sifive,global-external-interrupts0")
-    {}
+    {
+      /* Count the number of Global External Interrupts0 */
+      num_global_ext_ints = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  num_global_ext_ints += 1;
+	});
+    }
 
     void create_defines()
     {
@@ -166,14 +175,18 @@ class sifive_global_external_interrupts0 : public Device {
 	      }
 	    },
 	    [&](int i, uint32_t irline){
-	      if (i == 0) {
+	      if ((count == 0) && (i == 0)) {
 		func = create_inline_def("interrupt_lines",
 					 "int",
 					 "idx == " + std::to_string(i),
 					 std::to_string(irline),
 					 "struct metal_interrupt *controller", "int idx");
+		if (((count + 1) == num_global_ext_ints) &&
+		    ((i + 1) == max_interrupts)) {
+		      add_inline_body(func, "else", "0");
+		}
 		extern_inlines.push_back(func);
-	      } else if ((i + 1) == max_interrupts) {
+              } else if (((count + 1) == num_global_ext_ints) && ((i + 1) == max_interrupts)) {
 		add_inline_body(func, "idx == " + std::to_string(i), std::to_string(irline));
 		add_inline_body(func, "else", "0");
 	      } else {
