@@ -16,7 +16,7 @@ then
     exit 1
 fi
 
-if [[ "$(cat e34-eval-build.env | grep mabi=ilp32f | wc -l)" == 0 ]]
+if [[ "$(cat e34-eval-build.env | grep mabi=ilp32d | wc -l)" == 0 ]]
 then
     echo "wrong mabi"
     exit 1

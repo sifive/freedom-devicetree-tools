@@ -6,16 +6,26 @@
 
 std::string arch2arch(std::string arch)
 {
+    if (arch == "rv32e")      return "rv32e";
+    if (arch == "rv32em")     return "rv32em";
+    if (arch == "rv32eac")    return "rv32eac";
+    if (arch == "rv32emac")   return "rv32emac";
+    if (arch == "rv32emafc")  return "rv32emafc";
+    if (arch == "rv32emafdc") return "rv32emafdc";
     if (arch == "rv32i")      return "rv32i";
     if (arch == "rv32im")     return "rv32im";
     if (arch == "rv32imc")    return "rv32imc";
     if (arch == "rv32iac")    return "rv32iac";
     if (arch == "rv32imac")   return "rv32imac";
     if (arch == "rv32imafc")  return "rv32imafc";
-    if (arch == "rv64imac")   return "rv64imac";
-    if (arch == "rv64imafdc") return "rv64imafdc";
-
     if (arch == "rv32imafdc") return "rv32imafdc";
+    if (arch == "rv64i")      return "rv64i";
+    if (arch == "rv64im")     return "rv64im";
+    if (arch == "rv64imc")    return "rv64imc";
+    if (arch == "rv64iac")    return "rv64iac";
+    if (arch == "rv64imac")   return "rv64imac";
+    if (arch == "rv64imafc")  return "rv64imafc";
+    if (arch == "rv64imafdc") return "rv64imafdc";
 
     std::cerr << "arch2arch(): unknown arch " << arch << std::endl;
     abort();
@@ -24,16 +34,26 @@ std::string arch2arch(std::string arch)
 
 std::string arch2abi(std::string arch)
 {
+    if (arch == "rv32e")      return "ilp32e";
+    if (arch == "rv32em")     return "ilp32e";
+    if (arch == "rv32eac")    return "ilp32e";
+    if (arch == "rv32emac")   return "ilp32e";
+    if (arch == "rv32emafc")  return "ilp32f";
+    if (arch == "rv32emafdc") return "ilp32d";
     if (arch == "rv32i")      return "ilp32";
     if (arch == "rv32im")     return "ilp32";
     if (arch == "rv32imc")    return "ilp32";
     if (arch == "rv32iac")    return "ilp32";
     if (arch == "rv32imac")   return "ilp32";
     if (arch == "rv32imafc")  return "ilp32f";
+    if (arch == "rv32imafdc") return "ilp32d";
+    if (arch == "rv64i")      return "lp64";
+    if (arch == "rv64im")     return "lp64";
+    if (arch == "rv64imc")    return "lp64";
+    if (arch == "rv64iac")    return "lp64";
     if (arch == "rv64imac")   return "lp64";
+    if (arch == "rv64imafc")  return "lp64f";
     if (arch == "rv64imafdc") return "lp64d";
-
-    if (arch == "rv32imafdc") return "ilp32f";
 
     std::cerr << "arch2abi(): unknown arch " << arch << std::endl;
     abort();
