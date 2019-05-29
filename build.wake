@@ -139,8 +139,8 @@ global def runFreedomMakeAttributesGenerator options =
         | head
       match `RISCV_ABI`.getAttribute `RISCV_ARCH`.getAttribute `RISCV_CMODEL`.getAttribute
         (Some mabi) (Some march) (Some cmodel) = Pass (FreedomMakeAttributes file march mabi cmodel)
-        _ _ _ = Fail "Generated make attributes file not formatted correctly: {file.getPathName}"
-    Fail fail = Fail "freedomMakeAttributesGenerator failed: {fail}"
+        _ _ _ = Fail "Generated make attributes file not formatted correctly: {file.getPathName}".makeError
+    Fail fail = Fail "freedomMakeAttributesGenerator failed: {fail}".makeError
 
 tuple FreedomBSP =
   LinkerScript_: Path
