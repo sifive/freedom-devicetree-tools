@@ -9,9 +9,64 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-bare_header-generator \
 		freedom-metal_specs-generator
 
+
+freedom_ldscript_generator_CPPFLAGS = -I$(srcdir)/linker_script
+
 freedom_ldscript_generator_SOURCES = \
-	freedom-ldscript-generator.c++ \
-	fdt.c++
+	fdt.c++ \
+	linker_script/freedom-ldscript-generator.c++ \
+	linker_script/layouts/default_layout.c++ \
+	linker_script/layouts/default_layout.h \
+	linker_script/layouts/ramrodata_layout.c++ \
+	linker_script/layouts/ramrodata_layout.h \
+	linker_script/layouts/scratchpad_layout.c++ \
+	linker_script/layouts/scratchpad_layout.h \
+	linker_script/sections/constants_group.c++ \
+	linker_script/sections/constants_group.h \
+	linker_script/sections/ctors_group.c++ \
+	linker_script/sections/ctors_group.h \
+	linker_script/sections/data_group.c++ \
+	linker_script/sections/data_group.h \
+	linker_script/sections/itim_group.c++ \
+	linker_script/sections/itim_group.h \
+	linker_script/sections/rodata_group.c++ \
+	linker_script/sections/rodata_group.h \
+	linker_script/sections/text_group.c++ \
+	linker_script/sections/text_group.h \
+	linker_script/sections/uninit_group.c++ \
+	linker_script/sections/uninit_group.h \
+	linker_script/strategies/chosen_strategy.c++ \
+	linker_script/strategies/chosen_strategy.h \
+	linker_script/strategies/default_bullet_arty.c++ \
+	linker_script/strategies/default_bullet_arty.h \
+	linker_script/strategies/default_bullet_strategy.c++ \
+	linker_script/strategies/default_bullet_strategy.h \
+	linker_script/strategies/default_e20_arty_strategy.c++ \
+	linker_script/strategies/default_e20_arty_strategy.h \
+	linker_script/strategies/default_e20_strategy.c++ \
+	linker_script/strategies/default_e20_strategy.h \
+	linker_script/strategies/default_e21_arty_strategy.c++ \
+	linker_script/strategies/default_e21_arty_strategy.h \
+	linker_script/strategies/default_e21_strategy.c++ \
+	linker_script/strategies/default_e21_strategy.h \
+	linker_script/strategies/default_rocket_arty.c++ \
+	linker_script/strategies/default_rocket_arty.h \
+	linker_script/strategies/default_rocket_strategy.c++ \
+	linker_script/strategies/default_rocket_strategy.h \
+	linker_script/linker_script.c++ \
+	linker_script/linker_script.h \
+	linker_script/map_strategy.c++ \
+	linker_script/map_strategy.h \
+	linker_script/memory.c++ \
+	linker_script/memory.h \
+	linker_script/phdr.c++ \
+	linker_script/phdr.h \
+	linker_script/ranges.c++ \
+	linker_script/ranges.h \
+	linker_script/section.c++ \
+	linker_script/section.h \
+	linker_script/section_group.c++ \
+	linker_script/section_group.h
 
 freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++ \
