@@ -11,7 +11,6 @@
 .deps
 .dirstamp
 /freedom-ldscript-generator-*.tar.gz
-/test-driver
 *.log
 *.trs
 /freedom-metal_header-generator
