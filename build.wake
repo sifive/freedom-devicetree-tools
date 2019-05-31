@@ -15,17 +15,21 @@ def doJob cmdline inputs =
   | runJob
   | getJobOutputs
 
-def makeTool tool =
-  def installDir = mkdir "build/{here}"
+def installDir = "build/{here}"
+global def freedomDevicetreeToolsInstallDir = "build/{here}"
+
+global def freedomDevicetreeToolsPath = "{installDir}/bin"
+
+global def freedomDevicetreeToolsInstall Unit =
   def wrapperScript = source "{here}/scripts/autoconf_wrapper"
   def runDir = here
   def cmdline =
     relative runDir wrapperScript.getPathName,
     "--configure-args=",
-    "--install-dir={relative runDir installDir.getPathName}",
+    "--install-dir={relative runDir installDir}",
     Nil
-  def inputs = installDir, sources here `.*`
-  def foutputs _ = files installDir.getPathName `.*`
+  def inputs = mkdir installDir, sources here `.*`
+  def foutputs _ = files installDir `.*`
 
   makePlan cmdline inputs
   | setPlanLocalOnly True
@@ -33,7 +37,10 @@ def makeTool tool =
   | setPlanDirectory runDir
   | runJob
   | getJobOutputs
-  | filter ("{installDir.getPathName}/bin/{tool}" ==~ _.getPathName)
+
+def makeTool tool =
+  freedomDevicetreeToolsInstall Unit
+  | filter ("{installDir}/bin/{tool}" ==~ _.getPathName)
   | head
   | getOrElse "could not build {tool}!".makeError.makeBadPath
 
