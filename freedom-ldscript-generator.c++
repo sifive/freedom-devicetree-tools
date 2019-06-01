@@ -102,6 +102,27 @@ static void alias_memory (std::string from, std::string to)
   }
 }
 
+static void split_sram (std::string sram_orig)
+{
+  std::vector<memory>::iterator it;
+  uint64_t split_mem_start = 0;
+  uint64_t split_mem_length = 0;
+
+  for (it = dts_memory_list.begin(); it != dts_memory_list.end(); ++it) {
+    if (it->mem_alias.compare(sram_orig) == 0) {
+      if (it->mem_length >= 0x10000) {
+        it->mem_length = it->mem_length / 2;
+        split_mem_start = it->mem_start + it->mem_length;
+        split_mem_length = it->mem_length;
+      } else
+        std::cout << "sram size not big enough for spliting" << std::endl;
+    }
+  }
+  if (split_mem_start != 0)
+    dts_memory_list.push_back(memory("mem", "sram1", "sifive,sram0",
+                split_mem_start, split_mem_length));
+}
+
 template<typename Out>
 void split(const std::string &s, char delim, Out result) {
   std::stringstream ss(s);
@@ -181,7 +202,7 @@ static string get_dts_attribute (const string path, const string tag)
     return string(value);
 }
 
-static void dts_memory (void)
+static void dts_memory (bool ramrodata)
 {
     if (dts_blob == nullptr)
         return;
@@ -296,19 +317,22 @@ static void dts_memory (void)
         } else if (dtim_count > 0) {
             alias_memory("dtim", "ram");
             alias_memory("testram", "flash");
-	} else {
-	    alias_memory("testram", "ram");
-	}
+        } else {
+            alias_memory("testram", "ram");
+        }
     } else if (memory_count > 0) {
         alias_memory("memory", "ram");
     	if (spi_count > 0) {
             alias_memory("spi", "flash");
-	}
+        }
     } else if (periph_count > 0)
         alias_memory("periph_ram", "ram");
     else if (sys_count > 0)
         alias_memory("sys_ram", "ram");
     else if (sram_count > 0) {
+        if (sram_count == 1 && ramrodata) {
+            split_sram("sram0");
+        }
         alias_memory("sram0", "ram");
         alias_memory("sram1", "itim");
         alias_memory("spi", "flash");
@@ -348,18 +372,19 @@ static void write_linker_memory (fstream &os, bool scratchpad, uint32_t metal_en
     os << "MEMORY" << std::endl << "{" << std::endl;
     for (auto entry : dts_memory_list) {
       if ((entry.mem_type.compare("mem") == 0) &&
-	  (entry.mem_alias.compare("flash") == 0)) {
+        (entry.mem_alias.compare("flash") == 0)) {
         if (entry.mem_name.find("spi") != std::string::npos) {
           flash_offset = metal_entry;
           entry.mem_length -= metal_entry;
-	}
-	os << "\t" << entry.mem_alias <<  " (rxai!w)";
+        }
+        os << "\t" << entry.mem_alias <<  " (rxai!w)";
       } else if (entry.mem_alias.compare("ram") == 0) {
-	os << "\t" << entry.mem_alias <<  " (wxa!ri)";
+        os << "\t" << entry.mem_alias <<  " (wxa!ri)";
       } else if (entry.mem_alias.compare("itim") == 0) {
-	os << "\t" << entry.mem_alias <<  " (wx!rai)";
+        os << "\t" << entry.mem_alias <<  " (wx!rai)";
+        flash_offset = 0;
       } else {
-	continue;
+        continue;
       }
       os << " : ORIGIN = 0x" << std::hex << (entry.mem_start + flash_offset);
       /* FIXME: Here we restrict the length of any segment to 2GiB.  While this
@@ -853,7 +878,7 @@ int main (int argc, char* argv[])
   }
 
   get_dts_attribute("/cpus/cpu@0", "riscv,isa");
-  dts_memory();
+  dts_memory(ramrodata);
 
   /**
    * scratchpad is when we load and run everything from memory, whether it is
