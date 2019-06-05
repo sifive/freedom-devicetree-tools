@@ -1,16 +1,21 @@
 /* Copyright 2018 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>
-#include <iostream>
+#include <stdlib.h>
+#include <unistd.h>
+
 #include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
+#include <iostream>
 #include <iterator>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <iomanip>
+#include <ctime>
+
 #include <fdt.h++>
 
 using std::cout;
@@ -38,6 +43,20 @@ memory::memory (std::string mtype, std::string alias, std::string name, uint64_t
   mem_name = name;
   mem_start = start;
   mem_length = length;
+}
+
+static void write_banner(fstream &os, std::string rel_tag)
+{
+  os << "/* Copyright 2019 SiFive, Inc */" << std::endl;
+  os << "/* SPDX-License-Identifier: Apache-2.0 */" << std::endl;
+  os << "/* ----------------------------------- */" << std::endl;
+  if ( !rel_tag.empty() ) {
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    os << "/* [" << rel_tag << "] "
+       << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        */" << std::endl;
+  }
+  os << "/* ----------------------------------- */" << std::endl << std::endl;
 }
 
 static char *dts_blob;
@@ -81,6 +100,27 @@ static void alias_memory (std::string from, std::string to)
       std::cout << "alias " << from << " to " << it->mem_alias << std::endl;
     }
   }
+}
+
+static void split_sram (std::string sram_orig)
+{
+  std::vector<memory>::iterator it;
+  uint64_t split_mem_start = 0;
+  uint64_t split_mem_length = 0;
+
+  for (it = dts_memory_list.begin(); it != dts_memory_list.end(); ++it) {
+    if (it->mem_alias.compare(sram_orig) == 0) {
+      if (it->mem_length >= 0x10000) {
+        it->mem_length = it->mem_length / 2;
+        split_mem_start = it->mem_start + it->mem_length;
+        split_mem_length = it->mem_length;
+      } else
+        std::cout << "sram size not big enough for spliting" << std::endl;
+    }
+  }
+  if (split_mem_start != 0)
+    dts_memory_list.push_back(memory("mem", "sram1", "sifive,sram0",
+                split_mem_start, split_mem_length));
 }
 
 template<typename Out>
@@ -149,17 +189,20 @@ static char *dts_read (const char *filename)
     return buf;
 }
 
-static void get_dts_attribute (const string path, const string tag)
+static string get_dts_attribute (const string path, const string tag)
 {
     int node, len;
     const char *value;
 
     node = fdt_path_offset(dts_blob, path.c_str());
+    if (node < 0) return "";
     value = (const char *)fdt_getprop(dts_blob, node, tag.c_str(), &len);
+    if (!value) return "";
     std::cout << string(value) << std::endl;
+    return string(value);
 }
 
-static void dts_memory (void)
+static void dts_memory (bool ramrodata)
 {
     if (dts_blob == nullptr)
         return;
@@ -274,19 +317,22 @@ static void dts_memory (void)
         } else if (dtim_count > 0) {
             alias_memory("dtim", "ram");
             alias_memory("testram", "flash");
-	} else {
-	    alias_memory("testram", "ram");
-	}
+        } else {
+            alias_memory("testram", "ram");
+        }
     } else if (memory_count > 0) {
         alias_memory("memory", "ram");
     	if (spi_count > 0) {
             alias_memory("spi", "flash");
-	}
+        }
     } else if (periph_count > 0)
         alias_memory("periph_ram", "ram");
     else if (sys_count > 0)
         alias_memory("sys_ram", "ram");
     else if (sram_count > 0) {
+        if (sram_count == 1 && ramrodata) {
+            split_sram("sram0");
+        }
         alias_memory("sram0", "ram");
         alias_memory("sram1", "itim");
         alias_memory("spi", "flash");
@@ -313,8 +359,9 @@ static void show_dts_memory (string mtype)
     std::cout << "}" << std::endl;
 }
 
-static void write_linker_file (fstream &os)
+static void write_linker_file (fstream &os, std::string release)
 {
+    write_banner(os, release);
     os << "OUTPUT_ARCH(\"riscv\")" << std::endl << std::endl;
     os << "ENTRY(_enter)" << std::endl << std::endl;
 }
@@ -325,18 +372,19 @@ static void write_linker_memory (fstream &os, bool scratchpad, uint32_t metal_en
     os << "MEMORY" << std::endl << "{" << std::endl;
     for (auto entry : dts_memory_list) {
       if ((entry.mem_type.compare("mem") == 0) &&
-	  (entry.mem_alias.compare("flash") == 0)) {
+        (entry.mem_alias.compare("flash") == 0)) {
         if (entry.mem_name.find("spi") != std::string::npos) {
           flash_offset = metal_entry;
           entry.mem_length -= metal_entry;
-	}
-	os << "\t" << entry.mem_alias <<  " (rxai!w)";
+        }
+        os << "\t" << entry.mem_alias <<  " (rxai!w)";
       } else if (entry.mem_alias.compare("ram") == 0) {
-	os << "\t" << entry.mem_alias <<  " (wxa!ri)";
+        os << "\t" << entry.mem_alias <<  " (wxa!ri)";
       } else if (entry.mem_alias.compare("itim") == 0) {
-	os << "\t" << entry.mem_alias <<  " (wx!rai)";
+        os << "\t" << entry.mem_alias <<  " (wx!rai)";
+        flash_offset = 0;
       } else {
-	continue;
+        continue;
       }
       os << " : ORIGIN = 0x" << std::hex << (entry.mem_start + flash_offset);
       /* FIXME: Here we restrict the length of any segment to 2GiB.  While this
@@ -364,7 +412,7 @@ static void write_linker_phdrs (fstream &os, bool scratchpad)
     os << "}" << std::endl << std::endl;
 }
 
-static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata, bool itim)
+static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bool scratchpad, bool ramrodata, bool itim, int chicken_bit)
 {
     std::string stack_cfg = "0x400";
     std::string heap_cfg = "0x400";
@@ -374,9 +422,12 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     /* Define stack size */
     os << "\t__stack_size = DEFINED(__stack_size) ? __stack_size : "
 	      << stack_cfg << ";" << std::endl;
+    os << "\tPROVIDE(__stack_size = __stack_size);" << std::endl;
     /* Define heap size */
     os << "\t__heap_size = DEFINED(__heap_size) ? __heap_size : "
 	      << heap_cfg << ";" << std::endl;
+    os << "\tPROVIDE(__metal_boot_hart = " << std::to_string(boot_hart) << ");" << std::endl;
+    os << "\tPROVIDE(__metal_chicken_bit = " << std::to_string(chicken_bit) << ");" << std::endl;
 
     os << std::endl << std::endl;
     /* Define init section */
@@ -435,6 +486,12 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
       os << "\t\t*(.rdata)" << std::endl;
       os << "\t\t*(.rodata .rodata.*)" << std::endl;
       os << "\t\t*(.gnu.linkonce.r.*)" << std::endl;
+      os << "\t\t. = ALIGN(8);" << std::endl;
+      os << "\t\t*(.srodata.cst16)" << std::endl;
+      os << "\t\t*(.srodata.cst8)" << std::endl;
+      os << "\t\t*(.srodata.cst4)" << std::endl;
+      os << "\t\t*(.srodata.cst2)" << std::endl;
+      os << "\t\t*(.srodata .srodata.*)" << std::endl;
       if (scratchpad) {
 	os << "\t} >ram AT>ram :ram" << std::endl;
       } else {
@@ -646,6 +703,12 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
       os << "\t\t*(.rdata)" << std::endl;
       os << "\t\t*(.rodata .rodata.*)" << std::endl;
       os << "\t\t*(.gnu.linkonce.r.*)" << std::endl;
+      os << "\t\t. = ALIGN(8);" << std::endl;
+      os << "\t\t*(.srodata.cst16)" << std::endl;
+      os << "\t\t*(.srodata.cst8)" << std::endl;
+      os << "\t\t*(.srodata.cst4)" << std::endl;
+      os << "\t\t*(.srodata.cst2)" << std::endl;
+      os << "\t\t*(.srodata .srodata.*)" << std::endl;
     }
     os << "\t\t*(.data .data.*)" << std::endl;
     os << "\t\t*(.gnu.linkonce.d.*)" << std::endl;
@@ -653,12 +716,6 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t\tPROVIDE( __global_pointer$ = . + 0x800 );" << std::endl;
     os << "\t\t*(.sdata .sdata.* .sdata2.*)" << std::endl;
     os << "\t\t*(.gnu.linkonce.s.*)" << std::endl;
-    os << "\t\t. = ALIGN(8);" << std::endl;
-    os << "\t\t*(.srodata.cst16)" << std::endl;
-    os << "\t\t*(.srodata.cst8)" << std::endl;
-    os << "\t\t*(.srodata.cst4)" << std::endl;
-    os << "\t\t*(.srodata.cst2)" << std::endl;
-    os << "\t\t*(.srodata .srodata.*)" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram_init" << std::endl;
     } else {
@@ -702,30 +759,19 @@ static void write_linker_sections (fstream &os, bool scratchpad, bool ramrodata,
     os << "\t\tPROVIDE(metal_segment_stack_begin = .);" << std::endl;
     os << "\t\t. = __stack_size;" << std::endl;
     os << "\t\tPROVIDE( _sp = . );" << std::endl;
+    for (int i = 1; i < num_harts; i++) {
+      os << "\t\t. = __stack_size;" << std::endl;
+    }
     os << "\t\tPROVIDE(metal_segment_stack_end = .);" << std::endl;
     os << "\t} >ram AT>ram :ram" << std::endl;
 
     os << std::endl << std::endl;
 
-    /* Define heap section
-     *
-     * For scratchpad mode:
-     *   Customer implementations might not map all of the addressable RAM,
-     *   so we want to put the heap immediately after the rest of memory and
-     *   size it to exactly __heap_size.
-     * For non-scratchpad mode:
-     *   We expect all addresses in RAM to be mapped, so start the heap after
-     *   the rest of the memory contents and extend to the top of RAM.
-     */
     os << "\t.heap :" << std::endl;
     os << "\t{" << std::endl;
     os << "\t\tPROVIDE( metal_segment_heap_target_start = . );" << std::endl;
 
     os << "\t\t. = __heap_size;" << std::endl;
-    if (!scratchpad) {
-      /* If the __heap_size == 0, don't let the heap grow to fill the rest of RAM. */
-      os << "\t\t. = __heap_size == 0 ? 0 : ORIGIN(ram) + LENGTH(ram);" << std::endl;
-    }
 
     os << "\t\tPROVIDE( metal_segment_heap_target_end = . );" << std::endl;;
     os << "\t\tPROVIDE( _heap_end = . );" << std::endl;
@@ -755,6 +801,7 @@ int main (int argc, char* argv[])
   string show;
   string dtb_file;
   string linker_file;
+  string release;
   bool ramrodata = false;
   bool scratchpad = false;
   bool itim = false;
@@ -808,6 +855,10 @@ int main (int argc, char* argv[])
               } else {
 		  show = "all";
               }
+          } else if (arg == "-r") {
+              if (i + 1 < argc) {
+                  release = argv[++i];
+              }
           } else {
               show_usage(argv[0]);
               return 1;
@@ -827,7 +878,7 @@ int main (int argc, char* argv[])
   }
 
   get_dts_attribute("/cpus/cpu@0", "riscv,isa");
-  dts_memory();
+  dts_memory(ramrodata);
 
   /**
    * scratchpad is when we load and run everything from memory, whether it is
@@ -861,10 +912,36 @@ int main (int argc, char* argv[])
         metal_entry = offset;
       });
 
-    write_linker_file(lds);
+    int num_harts = 0;
+    dtb.match(
+      std::regex("cpu"),
+      [&](node n) {
+        num_harts += 1;
+      });
+
+    int boot_hart = 0;
+    dtb.chosen(
+      "metal,boothart",
+      tuple_t<node>(),
+      [&](node n) {
+        boot_hart = std::stoi(n.instance());
+      });
+
+    std::cout << "Found " << num_harts << " harts\n";
+
+    int chicken_bit = 0;
+    string cpucompat;
+    string boothart_str;
+    boothart_str = "/cpus/cpu@" + std::to_string(boot_hart);
+    cpucompat = get_dts_attribute(boothart_str, "compatible");
+    if(cpucompat.find("bullet") != std::string::npos) {
+        chicken_bit = 1;
+    }
+
+    write_linker_file(lds, release);
     write_linker_memory(lds, scratchpad, metal_entry);
     write_linker_phdrs(lds, scratchpad);
-    write_linker_sections(lds, scratchpad, ramrodata, itim);
+    write_linker_sections(lds, num_harts, boot_hart, scratchpad, ramrodata, itim, chicken_bit);
   }
 
   if (!show.empty()) {

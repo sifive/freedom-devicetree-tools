@@ -8,6 +8,8 @@
 /* Generic Devices */
 #include "metal_header/device.h"
 #include "metal_header/fixed_clock.h"
+#include "metal_header/fixed_factor_clock.h"
+#include "metal_header/memory.h"
 #include "metal_header/stdout_path.h"
 
 /* RISC-V Devices */
@@ -44,11 +46,27 @@
 #include <map>
 #include <list>
 #include <string>
+#include <iomanip>
+#include <ctime>
 
 using std::cerr;
 using std::endl;
 using std::fstream;
 using std::string;
+
+static void write_banner(fstream &os, std::string rel_tag)
+{
+  os << "/* Copyright 2019 SiFive, Inc */" << std::endl;
+  os << "/* SPDX-License-Identifier: Apache-2.0 */" << std::endl;
+  os << "/* ----------------------------------- */" << std::endl;
+  if ( !rel_tag.empty() ) {
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    os << "/* [" << rel_tag << "] "
+       << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        */" << std::endl;
+  }
+  os << "/* ----------------------------------- */" << std::endl << std::endl;
+}
 
 static void show_usage(string name)
 {
@@ -70,24 +88,12 @@ void search_replace_all(std::string& str, const std::string& from, const std::st
     }
 }
 
-static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
+static void prepare_devices(const fdt &dtb, fstream &os, std::list<Device *>& devices)
 {
-  std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
-                   [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
-  std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
-                   [](unsigned char c) { return (c == '.') ? '_' : c; });
-
-  search_replace_all(cfg_file, "/", "__");
-
-  os << "#ifndef ASSEMBLY" << std::endl << std::endl;
-
-  os << "#ifndef " << cfg_file << std::endl;
-  os << "#define " << cfg_file << std::endl << std::endl;
-
-  std::list<Device *> devices;
-
   /* Generic Devices */
   devices.push_back(new fixed_clock(os, dtb));
+  devices.push_back(new fixed_factor_clock(os, dtb));
+  devices.push_back(new memory(os, dtb));
   devices.push_back(new stdout_path(os, dtb));
 
   /* RISC-V Devices */
@@ -117,13 +123,43 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
 
   /* FU540-C000 Devices */
   devices.push_back(new sifive_fu540_c000_l2(os, dtb));
+}
+
+static void write_h_file(const fdt &dtb, fstream &os,
+			 std::string h_file, std::string release)
+{
+  std::transform(h_file.begin(), h_file.end(), h_file.begin(),
+                   [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
+  std::transform(h_file.begin(), h_file.end(), h_file.begin(),
+                   [](unsigned char c) { return (c == '.') ? '_' : c; });
+
+  search_replace_all(h_file, "/", "__");
+
+  write_banner(os, release);
+
+  os << "#ifndef ASSEMBLY" << std::endl << std::endl;
+
+  os << "#include <metal/machine/platform.h>" << std::endl << std::endl;
+
+  std::list<Device *> devices;
+
+  prepare_devices(dtb, os, devices);
 
   os << "#ifdef __METAL_MACHINE_MACROS" << std::endl << std::endl;
+
+  os << "#ifndef MACROS_IF_" << h_file << std::endl;
+  os << "#define MACROS_IF_" << h_file << std::endl << std::endl;
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->create_machine_macros();
   }
-  os << std::endl << "#else /* ! __METAL_MACHINE_MACROS */" << std::endl << std::endl;
+  os << std::endl;
+
+  os << "#endif /* MACROS_IF_" << h_file << "*/" << std::endl << std::endl;
+  os << "#else /* ! __METAL_MACHINE_MACROS */" << std::endl << std::endl;
+
+  os << "#ifndef MACROS_ELSE_" << h_file << std::endl;
+  os << "#define MACROS_ELSE_" << h_file << std::endl << std::endl;
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->create_defines();
@@ -141,24 +177,61 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file)
   os << std::endl;
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
-    (*it)->define_structs();
+    (*it)->define_inlines();
   }
   os << std::endl;
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->create_handles();
   }
+
+  os << "#endif /* MACROS_ELSE_" << h_file << "*/" << std::endl << std::endl;
+  os << "#endif /* ! __METAL_MACHINE_MACROS */" << std::endl << std::endl;
+  os << "#endif /* ! ASSEMBLY */" << std::endl;
+}
+
+static void write_i_file(const fdt &dtb, fstream &os,
+			 std::string i_file, std::string release)
+{
+  std::transform(i_file.begin(), i_file.end(), i_file.begin(),
+                   [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
+  std::transform(i_file.begin(), i_file.end(), i_file.begin(),
+                   [](unsigned char c) { return (c == '.') ? '_' : c; });
+
+  search_replace_all(i_file, "/", "__");
+
+  write_banner(os, release);
+
+  os << "#ifndef ASSEMBLY" << std::endl << std::endl;
+
+  os << "#ifndef " << i_file << std::endl;
+  os << "#define " << i_file << std::endl << std::endl;
+
+  os << "#include <metal/machine.h>" << std::endl << std::endl;
+
+  std::list<Device *> devices;
+
+  prepare_devices(dtb, os, devices);
+
+  for(auto it = devices.begin(); it != devices.end(); it++) {
+    (*it)->declare_inlines();
+  }
   os << std::endl;
 
-  os << "#endif /* ! __METAL_MACHINE_MACROS */" << std::endl;
-  os << "#endif /* " << cfg_file << "*/" << std::endl;
+  for(auto it = devices.begin(); it != devices.end(); it++) {
+    (*it)->define_structs();
+  }
+  os << std::endl;
+
+  os << "#endif /* " << i_file << "*/" << std::endl;
   os << "#endif /* ! ASSEMBLY */" << std::endl;
 }
 
 int main (int argc, char* argv[])
 {
   string dtb_file;
-  string config_file;
+  string header_file;
+  string release;
 
   if ((argc < 2) && (argc > 5)) {
       show_usage(argv[0]);
@@ -176,11 +249,15 @@ int main (int argc, char* argv[])
               }
           } else if ((arg == "-o") || (arg == "--output")) {
               if (i + 1 < argc) {
-                  config_file = argv[++i];
+                  header_file = argv[++i];
               } else {
                   std::cerr << "--output option requires file path." << std::endl;
                   show_usage(argv[0]);
                   return 1;
+              }
+          } else if (arg == "-r") {
+              if (i + 1 < argc) {
+                  release = argv[++i];
               }
           } else {
               show_usage(argv[0]);
@@ -197,16 +274,25 @@ int main (int argc, char* argv[])
 
   fdt f(dtb_file);
 
-  if (!config_file.empty()) {
-    std::fstream cfg;
+  if (!header_file.empty()) {
+    string filename = header_file;
+    string inline_file = filename.insert(header_file.find_last_of("."), "-inline");
+    std::fstream h_file;
+    std::fstream i_file;
 
-    cfg.open(config_file, fstream::in | fstream::out | fstream::trunc);
-    if (cfg.is_open() == false) {
-      std::cerr << "Error: Failed to create " << config_file << std::endl;
+    h_file.open(header_file, fstream::in | fstream::out | fstream::trunc);
+    if (h_file.is_open() == false) {
+      std::cerr << "Error: Failed to create " << header_file << std::endl;
+      return 1;
+    }
+    i_file.open(inline_file, fstream::in | fstream::out | fstream::trunc);
+    if (i_file.is_open() == false) {
+      std::cerr << "Error: Failed to create " << inline_file << std::endl;
       return 1;
     }
 
-    write_config_file(f, cfg, config_file);
+    write_h_file(f, h_file, header_file, release);
+    write_i_file(f, i_file, inline_file, release);
   }
 
   return 0;

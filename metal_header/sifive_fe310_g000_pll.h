@@ -23,6 +23,154 @@ class sifive_fe310_g000_pll : public Device {
 	});
     }
 
+    void declare_inlines()
+    {
+      Inline* func;
+      std::list<Inline *> extern_inlines;
+      int count = 0;
+      
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  if (count == 0) {
+	    func = create_inline_dec("pllsel0",
+				     "struct metal_clock *",
+				     "const struct metal_clock *clock");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("pllref",
+				     "struct metal_clock *",
+				     "const struct metal_clock *clock");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("config_base",
+				     "struct __metal_driver_sifive_fe310_g000_prci *",
+				     " ");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("config_offset",
+				     "long",
+				     " ");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("divider_base",
+				     "struct __metal_driver_sifive_fe310_g000_prci *",
+				     "const struct metal_clock *clock");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("divider_offset",
+				     "long",
+				     "const struct metal_clock *clock");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("init_rate",
+				     "long",
+				     " ");
+	    extern_inlines.push_back(func);
+	  }
+          count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- sifive_fe310_g000_pll ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_dec(func, "sifive_fe310_g000_pll");
+	delete func;
+      }
+      os << "\n";
+    }
+
+    void define_inlines()
+    {
+      Inline* func;
+      std::list<Inline *> extern_inlines;
+
+      int count = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  n.named_tuples(
+	    "clock-names", "clocks",
+	    "pllref", tuple_t<node>(), [&](node m) {
+	      std::string value = "(struct metal_clock *)&__metal_dt_"
+		                  + m.handle() + ".clock";
+	      func = create_inline_def("pllref",
+				       "struct metal_clock *",
+				       "empty",
+				       value,
+				       "const struct metal_clock *clock");
+	      extern_inlines.push_back(func);
+	    },
+	    "pllsel0", tuple_t<node>(), [&](node m) {
+	      std::string value = "(struct metal_clock *)&__metal_dt_"
+		                  + m.handle() + ".clock";
+	      func = create_inline_def("pllsel0",
+				       "struct metal_clock *",
+				       "empty",
+				       value,
+				       "const struct metal_clock *clock");
+	      extern_inlines.push_back(func);
+	    });
+
+	  n.named_tuples(
+	    "reg-names", "reg",
+	    "config", tuple_t<node, target_size>(),
+	    [&](node m, target_size offset) {
+	      func = create_inline_def("config_base",
+				       "struct __metal_driver_sifive_fe310_g000_prci *",
+				       "empty",
+				       "(struct __metal_driver_sifive_fe310_g000_prci *)&__metal_dt_" + m.handle(),
+				       " ");
+	      extern_inlines.push_back(func);
+
+	      func = create_inline_def("config_offset",
+				       "long",
+				       "empty",
+                                       platform_define_offset(m, METAL_PLLCFG_LABEL),
+				       " ");
+	      extern_inlines.push_back(func);
+	    },
+	    "divider", tuple_t<node, target_size>(),
+	    [&](node m, target_size offset) {
+	      func = create_inline_def("divider_base",
+				       "struct __metal_driver_sifive_fe310_g000_prci *",
+				       "empty",
+				       "(struct __metal_driver_sifive_fe310_g000_prci *)&__metal_dt_" + m.handle(),
+				       "const struct metal_clock *clock");
+	      extern_inlines.push_back(func);
+
+	      func = create_inline_def("divider_offset",
+				       "long",
+				       "empty",
+                                       platform_define_offset(m, METAL_PLLOUTDIV_LABEL),
+				       "const struct metal_clock *clock");
+	      extern_inlines.push_back(func);
+	    });
+	  if (count == 0) {
+	    int freq = n.get_field<uint32_t>("clock-frequency");
+	    func = create_inline_def("init_rate",
+				     "long",
+				     "empty",
+				     std::to_string(freq),
+				     " ");
+	    extern_inlines.push_back(func);
+	  }
+          count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- sifive_fe310_g000_pll ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_def(func, "sifive_fe310_g000_pll");
+	delete func;
+      }
+      os << "\n";
+    }
+
     void declare_structs()
     {
       dtb.match(
@@ -40,30 +188,7 @@ class sifive_fe310_g000_pll : public Device {
 	[&](node n) {
 	  emit_struct_begin("sifive_fe310_g000_pll", n);
 
-	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_pll");
 	  emit_struct_field("clock.vtable", "&__metal_driver_vtable_sifive_fe310_g000_pll.clock");
-
-	  n.named_tuples(
-	    "clock-names", "clocks",
-	    "pllref", tuple_t<node>(), [&](node base) {
-	    emit_struct_field_node("pllref", base, ".clock");
-	    },
-	    "pllsel0", tuple_t<node>(), [&](node base) {
-	      emit_struct_field_node("pllsel0", base, ".clock");
-	    });
-
-	  n.named_tuples(
-	    "reg-names", "reg",
-	    "config", tuple_t<node, target_size>(), [&](node base, target_size off) {
-	      emit_struct_field_node("config_base", base, "");
-	      emit_struct_field_ts("config_offset", off);
-	    },
-	    "divider", tuple_t<node, target_size>(), [&](node base, target_size off) {
-	      emit_struct_field_node("divider_base", base, "");
-	      emit_struct_field_ts("divider_offset", off);
-	    });
-
-	  emit_struct_field_u32("init_rate", n.get_field<uint32_t>("clock-frequency"));
 
 	  emit_struct_end();
 	});

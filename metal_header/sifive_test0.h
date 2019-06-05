@@ -23,6 +23,87 @@ class sifive_test0 : public Device {
 	});
     }
 
+    void declare_inlines()
+    {
+      Inline* func;
+      std::list<Inline *> extern_inlines;
+      int count = 0;
+      
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  n.named_tuples(
+	    "reg-names", "reg",
+	    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+	      if (count == 0) {
+	        func = create_inline_dec("base",
+	  	  	 	       "unsigned long",
+				       " ");
+	        extern_inlines.push_back(func);
+
+	        func = create_inline_dec("size",
+				       "unsigned long",
+				       " ");
+	        extern_inlines.push_back(func);
+	      }
+	    });
+            count++;
+	  }
+      );
+      os << "\n";
+      os << "/* --------------------- sifive_test0 ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_dec(func, "sifive_test0");
+	delete func;
+      }
+      os << "\n";
+    }
+
+    void define_inlines()
+    {
+      Inline* func;
+      std::list<Inline *> extern_inlines;
+
+      int count = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  n.named_tuples(
+	    "reg-names", "reg",
+	    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+	      if (count == 0) {
+		func = create_inline_def("base",
+					 "unsigned long",
+					 "empty",
+					 std::to_string(base),
+					 " ");
+		extern_inlines.push_back(func);
+
+		func = create_inline_def("size",
+					 "unsigned long",
+					 "empty",
+					 std::to_string(size),
+					 " ");
+		extern_inlines.push_back(func);
+	      }
+	    });
+
+	  count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- sifive_test0 ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_def(func, "sifive_test0");
+	delete func;
+      }
+      os << "\n";
+    }
+
     void declare_structs()
     {
       dtb.match(
@@ -40,15 +121,7 @@ class sifive_test0 : public Device {
 	[&](node n) {
 	  emit_struct_begin("sifive_test0", n);
 
-	  emit_struct_field("vtable", "&__metal_driver_vtable_sifive_test0");
 	  emit_struct_field("shutdown.vtable", "&__metal_driver_vtable_sifive_test0.shutdown");
-
-	  n.named_tuples(
-	    "reg-names", "reg",
-	    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	      emit_struct_field_ta("base", base);
-	      emit_struct_field_ts("size", size);
-	    });
 
 	  emit_struct_end();
 	});

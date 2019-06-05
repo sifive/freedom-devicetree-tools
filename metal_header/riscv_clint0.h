@@ -10,14 +10,41 @@
 
 class riscv_clint0 : public Device {
   public:
+    int num_parents;
+    uint32_t max_interrupts = 0;
+
     riscv_clint0(std::ostream &os, const fdt &dtb)
       : Device(os, dtb, "riscv,clint0")
-    {}
+    {
+      num_parents = 0;
+
+      dtb.match(
+        std::regex("riscv,clint0"),
+        [&](node n) {
+	  n.maybe_tuple_size(
+	    "interrupts-extended", tuple_t<node, uint32_t>(),
+	    [&](){},
+	    [&](int s, node c, uint32_t line) {
+	      num_parents += 1;
+	    });
+        });
+    }
+
+    void create_machine_macros()
+    {
+      dtb.match(
+        std::regex("riscv,clint0"),
+        [&](node n) {
+          emit_def("__METAL_CLINT_NUM_PARENTS", std::to_string(num_parents));
+        });
+
+      os << "#ifndef __METAL_CLINT_NUM_PARENTS\n";
+      os << "#define __METAL_CLINT_NUM_PARENTS 0\n";
+      os << "#endif\n";
+    }
 
     void create_defines()
     {
-      uint32_t max_interrupts = 0;
-
       dtb.match(
 	std::regex(compat_string),
 	[&](node n) {
@@ -31,6 +58,7 @@ class riscv_clint0 : public Device {
 	});
  
       emit_def("METAL_MAX_CLINT_INTERRUPTS", std::to_string(max_interrupts));
+      emit_def("__METAL_CLINT_NUM_PARENTS", std::to_string(num_parents));
     }
 
     void include_headers()
@@ -40,6 +68,176 @@ class riscv_clint0 : public Device {
 	[&](node n) {
 	  emit_include(compat_string);
 	});
+    }
+
+    void declare_inlines()
+    {
+      Inline* func;
+      std::list<Inline *> extern_inlines;
+      int count = 0;
+      
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  if (count == 0) {
+	    func = create_inline_dec("control_base",
+				     "unsigned long",
+				     "struct metal_interrupt *controller");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("control_size",
+				     "unsigned long",
+				     "struct metal_interrupt *controller");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("num_interrupts",
+				     "int",
+				     "struct metal_interrupt *controller");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("interrupt_parents",
+				     "struct metal_interrupt *",
+				     "struct metal_interrupt *controller", "int idx");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_dec("interrupt_lines",
+				     "int",
+				     "struct metal_interrupt *controller", "int idx");
+	    extern_inlines.push_back(func);
+	  }
+          count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- sifive_clint0 ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_dec(func, "sifive_clint0");
+	delete func;
+      }
+      os << "\n";
+    }
+
+    void define_inlines()
+    {
+      Inline* func;
+      Inline* funcl;
+      std::list<Inline *> extern_inlines;
+
+      int count = 0;
+      dtb.match(
+	std::regex(compat_string),
+	[&](node n) {
+	  if (max_interrupts == 0) {
+	    func = create_inline_def("control_base",
+				     "unsigned long",
+				     "empty",
+				     "0",
+				     "struct metal_interrupt *controller");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_def("control_size",
+				     "unsigned long",
+				     "empty",
+				     "0",
+				     "struct metal_interrupt *controller");
+	    extern_inlines.push_back(func);
+
+	    func = create_inline_def("num_interrupts",
+				     "int",
+				     "empty",
+				     "0",
+				     "struct metal_interrupt *controller");
+	    extern_inlines.push_back(func);
+	  } else {
+	    if (count == 0) {
+	      func = create_inline_def("control_base",
+				       "unsigned long",
+				       "(uintptr_t)controller == (uintptr_t)&__metal_dt_" + n.handle(),
+                                       platform_define(n, METAL_BASE_ADDRESS_LABEL),
+				       "struct metal_interrupt *controller");
+	      add_inline_body(func, "else", "0");
+	      extern_inlines.push_back(func);
+
+	      func = create_inline_def("control_size",
+				       "unsigned long",
+				       "(uintptr_t)controller == (uintptr_t)&__metal_dt_" + n.handle(),
+                                       platform_define(n, METAL_SIZE_LABEL),
+				       "struct metal_interrupt *controller");
+	      add_inline_body(func, "else", "0");
+	      extern_inlines.push_back(func);
+
+	      func = create_inline_def("num_interrupts",
+				       "int",
+				       "(uintptr_t)controller == (uintptr_t)&__metal_dt_" + n.handle(),
+				       "METAL_MAX_CLINT_INTERRUPTS",
+				       "struct metal_interrupt *controller");
+	      add_inline_body(func, "else", "0");
+	      extern_inlines.push_back(func);
+	    }
+	  }
+
+	  n.maybe_tuple_index(
+	    "interrupts-extended", tuple_t<node, uint32_t>(),
+	    [&](){
+	      if (count == 0) {
+		func = create_inline_def("interrupt_parents",
+					 "struct metal_interrupt *",
+					 "empty",
+					 "NULL",
+					 "struct metal_interrupt *controller", "int idx");
+		extern_inlines.push_back(func);
+
+		func = create_inline_def("interrupt_lines",
+					 "int",
+					 "empty",
+					 "0",
+					 "struct metal_interrupt *controller", "int idx");
+		extern_inlines.push_back(func);
+	      }
+	    },
+	    [&](int i, node m, uint32_t irline) {
+	      std::string value = "(struct metal_interrupt *)&__metal_dt_"
+		                + m.parent().handle() + "_" + m.handle() + ".controller";
+	      if (i == 0) {
+		func = create_inline_def("interrupt_parents",
+					 "struct metal_interrupt *",
+					 "idx == " + std::to_string(i),
+					 value,
+					 "struct metal_interrupt *controller", "int idx");
+		extern_inlines.push_back(func);
+
+		funcl = create_inline_def("interrupt_lines",
+					 "int",
+					 "idx == " + std::to_string(i),
+					 std::to_string(irline),
+					 "struct metal_interrupt *controller", "int idx");
+		extern_inlines.push_back(funcl);
+	      } else if ((i + 1) == max_interrupts) {
+		add_inline_body(func, "idx == " + std::to_string(i), value);
+		add_inline_body(func, "else", "NULL");
+
+		add_inline_body(funcl, "idx == " + std::to_string(i), std::to_string(irline));
+		add_inline_body(funcl, "else", "0");
+	      } else {
+		add_inline_body(func, "idx == " + std::to_string(i), value);
+		add_inline_body(funcl, "idx == " + std::to_string(i), std::to_string(irline));
+	      }
+	    });
+
+	  count++;
+	}
+      );
+      os << "\n";
+      os << "/* --------------------- sifive_clint0 ------------ */\n";
+      while (!extern_inlines.empty()) {
+	func = extern_inlines.front();
+	extern_inlines.pop_front();
+	emit_inline_def(func, "sifive_clint0");
+	delete func;
+      }
+      os << "\n";
     }
 
     void declare_structs()
@@ -59,29 +257,8 @@ class riscv_clint0 : public Device {
 	[&](node n) {
 	  emit_struct_begin("riscv_clint0", n);
 
-	  emit_struct_field("vtable", "&__metal_driver_vtable_riscv_clint0");
 	  emit_struct_field("controller.vtable", "&__metal_driver_vtable_riscv_clint0.clint_vtable");
-
-	  n.named_tuples(
-	    "reg-names", "reg",
-	    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	      emit_struct_field_ta("control_base", base);
-	      emit_struct_field_ts("control_size", size);
-	    });
-
 	  emit_struct_field("init_done", "0");
-	  emit_struct_field("num_interrupts", "METAL_MAX_CLINT_INTERRUPTS");
-
-	  n.maybe_tuple_size(
-	    "interrupts-extended", tuple_t<node, uint32_t>(),
-	    [&](){
-		emit_struct_field_null("interrupt_parent");
-		emit_struct_field("interrupt_lines[0]", "0");
-	    },
-	    [&](int s, node c, uint32_t line) {
-		emit_struct_container_node_and_array(s, "interrupt_parent", c, ".controller",
-						     "interrupt_lines", line);
-	    });
 
 	  emit_struct_end();
 	});

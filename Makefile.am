@@ -6,6 +6,7 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-openocdcfg-generator \
 		freedom-makeattributes-generator \
 		freedom-metal_header-generator \
+		freedom-bare_header-generator \
 		freedom-zephyrdtsfixup-generator \
 		freedom-metal_specs-generator
 
@@ -17,14 +18,19 @@ freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++
 
 freedom_makeattributes_generator_SOURCES = \
-	freedom-makeattributes-generator.c++
+	freedom-makeattributes-generator.c++ \
+	fdt.c++
 
 freedom_metal_header_generator_SOURCES = \
 	fdt.c++ \
+	header-labels.h \
 	metal_header/freedom-metal_header-generator.c++ \
 	metal_header/device.c++ \
 	metal_header/device.h \
 	metal_header/fixed_clock.h \
+	metal_header/fixed_factor_clock.h \
+	metal_header/inline.h \
+	metal_header/memory.h \
 	metal_header/riscv_clint0.h \
 	metal_header/riscv_cpu.h \
 	metal_header/riscv_cpu_intc.h \
@@ -47,6 +53,35 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_uart0.h \
 	metal_header/stdout_path.h \
 	metal_header/template_device.h
+
+freedom_bare_header_generator_SOURCES = \
+	fdt.c++ \
+	header-labels.h \
+	bare_header/freedom-bare_header-generator.c++ \
+	bare_header/device.c++ \
+	bare_header/device.h \
+	bare_header/fixed_clock.h \
+	bare_header/fixed_factor_clock.h \
+	bare_header/riscv_clint0.h \
+	bare_header/riscv_plic0.h \
+	bare_header/sifive_aon0.h \
+	bare_header/sifive_clic0.h \
+	bare_header/sifive_fe310_g000_hfrosc.h \
+	bare_header/sifive_fe310_g000_hfxosc.h \
+	bare_header/sifive_fe310_g000_prci.h \
+	bare_header/sifive_fe310_g000_pll.h \
+	bare_header/sifive_fu540_c000_l2.h \
+	bare_header/sifive_global_external_interrupts0.h \
+	bare_header/sifive_gpio0.h \
+	bare_header/sifive_gpio_buttons.h \
+	bare_header/sifive_gpio_leds.h \
+	bare_header/sifive_gpio_switches.h \
+	bare_header/sifive_i2c0.h \
+	bare_header/sifive_local_external_interrupts0.h \
+	bare_header/sifive_pwm0.h \
+	bare_header/sifive_spi0.h \
+	bare_header/sifive_test0.h \
+	bare_header/sifive_uart0.h
 
 freedom_zephyrdtsfixup_generator_SOURCES = \
 	freedom-zephyrdtsfixup-generator.c++ \

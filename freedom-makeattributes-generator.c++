@@ -11,6 +11,8 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
+#include <iomanip>
+#include <ctime>
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -19,6 +21,7 @@ extern "C"{
 }
 #endif
 #include "multilib.h++"
+#include <fdt.h++>
 
 using std::cout;
 using std::endl;
@@ -48,6 +51,20 @@ memory::memory (std::string mtype, std::string alias, std::string name,
   mem_base = base;
   mem_start = start;
   mem_length = length;
+}
+
+static void write_banner(fstream &os, std::string rel_tag)
+{
+  os << "# Copyright 2019 SiFive, Inc #" << std::endl;
+  os << "# SPDX-License-Identifier: Apache-2.0 #" << std::endl;
+  os << "# ----------------------------------- #" << std::endl;
+  if ( !rel_tag.empty() ) {
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    os << "# [" << rel_tag << "] "
+       << std::put_time(&tm, "%d-%m-%Y %H-%M-%S") << "        #" << std::endl;
+  }
+  os << "# ----------------------------------- #" << std::endl << std::endl;
 }
 
 static char *dts_blob;
@@ -165,6 +182,7 @@ static string get_dts_attribute (const string path, const string tag)
     node = fdt_path_offset(dts_blob, path.c_str());
     if (node < 0) return "";
     value = (const char *)fdt_getprop(dts_blob, node, tag.c_str(), &len);
+    if (!value) return "";
     std::cout << string(value) << std::endl;
     return string(value);
 }
@@ -223,13 +241,30 @@ static void show_dts_attributes (void)
     get_dts_attribute("/soc/serial@20000000", "compatible");
 }
 
-static void write_config_file (fstream &os, std::string board)
+static void write_config_file (fstream &os, std::string board, std::string release)
 {
     string isa;
+    string cpucompat;
+    string mmutype;
     string serial;
+    string boothart_str;
 
-    isa = arch2arch(get_dts_attribute("/cpus/cpu@0", "riscv,isa"));
+    write_banner(os, release);
+
+    // Get the CPU compatible string
+    auto dtb = fdt((const uint8_t *)dts_blob);
+    int boot_hart = 0;
+    dtb.chosen(
+      "metal,boothart",
+      tuple_t<node>(),
+      [&](node n) {
+        boot_hart = std::stoi(n.instance());
+      });
+    boothart_str = "/cpus/cpu@" + std::to_string(boot_hart);
+
+    isa = arch2arch(get_dts_attribute(boothart_str, "riscv,isa"));
     std::size_t found = isa.find("rv64");
+
     os << "RISCV_ARCH=" << isa << std::endl;
     os << "RISCV_ABI=" << arch2abi(isa) << std::endl;
     if (found != std::string::npos) {
@@ -237,22 +272,60 @@ static void write_config_file (fstream &os, std::string board)
     } else {
         os << "RISCV_CMODEL=medlow" << std::endl;
     }
+
+    cpucompat = get_dts_attribute(boothart_str, "compatible");
+    // Append SIFIVE series
+    if(cpucompat.find("bullet") != std::string::npos) {
+        os << "RISCV_SERIES=sifive-7-series" << std::endl;
+    } else if(cpucompat.find("caboose") != std::string::npos) {
+        os << "RISCV_SERIES=sifive-2-series" << std::endl;
+    } else if(cpucompat.find("rocket") != std::string::npos) {
+        if (found != std::string::npos) {
+            os << "RISCV_SERIES=sifive-5-series" << std::endl;
+        } else {
+            os << "RISCV_SERIES=sifive-3-series" << std::endl;
+        }
+    }
     os << std::endl;
 
-    if (board.compare("rtl") == 0) {
-        if (found != std::string::npos) {
+    // Get the mmu-type property
+    mmutype = get_dts_attribute("/cpus/cpu@0", "mmu-type");
+    if (mmutype == "") {
+      // If CPU 0 doesn't have mmu-type, make sure that CPU 1 (if it exists)
+      // also doesn't. This is needed for U54-MC, where CPU 0 is the S51 hart.
+      mmutype = get_dts_attribute("/cpus/cpu@1", "mmu-type");
+    }
+
+    if (board.find("rtl") != std::string::npos) {
+	if(mmutype != "") {
+	    // U54 and U54-MC need mem width 128
+            os << "COREIP_MEM_WIDTH=128" << std::endl;
+	} else if(cpucompat.find("bullet") != std::string::npos) {
+	    // E76 has mem width 64
+            os << "COREIP_MEM_WIDTH=64" << std::endl;
+	} else if (isa.find("rv64") != std::string::npos) {
+	    // 64-bit designs by default have mem width 64
             os << "COREIP_MEM_WIDTH=64" << std::endl;
         } else {
+	    // 32-bit designs by default have mem width 32
             os << "COREIP_MEM_WIDTH=32" << std::endl;
         }
         os << std::endl;
         os << "TARGET_TAGS=rtl" << std::endl;
-    } else if (board.compare("arty") == 0) {
+        os << "TARGET_DHRY_ITERS=2000" << std::endl;
+        os << "TARGET_CORE_ITERS=5" << std::endl;
+    } else if (board.find("arty") != std::string::npos) {
         os << "TARGET_TAGS=fpga openocd" << std::endl;
-    } else if (board.compare("hifive1-revb") == 0) {
+        os << "TARGET_DHRY_ITERS=20000000" << std::endl;
+        os << "TARGET_CORE_ITERS=5000" << std::endl;
+    } else if (board.find("hifive1-revb") != std::string::npos) {
         os << "TARGET_TAGS=board jlink" << std::endl;
+        os << "TARGET_DHRY_ITERS=20000000" << std::endl;
+        os << "TARGET_CORE_ITERS=5000" << std::endl;
     } else {
         os << "TARGET_TAGS=board openocd" << std::endl;
+        os << "TARGET_DHRY_ITERS=20000000" << std::endl;
+        os << "TARGET_CORE_ITERS=5000" << std::endl;
     }
 }
 
@@ -261,7 +334,7 @@ static void show_usage(string name)
   std::cerr << "Usage: " << name << " <option(s)>\n"
 	    << "Options:\n"
 	    << "\t-h,--help\t\t\tShow this help message\n"
-	    << "\t-b,--board <eg. rtl | arty | hifive1>\t\tSpecify board type\n"
+	    << "\t-b,--board <eg. rtl | arty | hifive>\t\tSpecify board type\n"
 	    << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
 	    << "\t-o,--output <eg. openocd.cfg>\t\tGenerate openocd config file\n"
 	    << "\t-s,--show \t\tShow openocd config file on std-output\n"
@@ -274,6 +347,7 @@ int main (int argc, char* argv[])
   string board = "arty";;
   string dtb_file;
   string config_file;
+  string release;
 
   if ((argc < 2) && (argc > 5)) {
       show_usage(argv[0]);
@@ -284,10 +358,12 @@ int main (int argc, char* argv[])
           if ((arg == "-b") || (arg == "--board")) {
               if (i + 1 < argc) {
                   board = argv[++i];
-		  if ((board.compare("rtl") != 0) &&
-		      (board.compare("arty") != 0) &&
-		      (board.compare("hifive1") != 0)) {
-		    std::cerr << "Possible options are <rtl | arty | hifive1>."
+		  if ((board.find("rtl")  != std::string::npos) ||
+		      (board.find("arty") != std::string::npos) ||
+		      (board.find("hifive") != std::string::npos)) {
+		    std::cout << "Board type given is " << board << std::endl;
+                  } else {
+		    std::cerr << "Possible options are <rtl | arty | hifive>."
 			      << std::endl;
 		    return 1;
 		  }
@@ -307,6 +383,10 @@ int main (int argc, char* argv[])
                   std::cerr << "--output option requires file path." << std::endl;
                   show_usage(argv[0]);
                   return 1;
+              }
+          } else if (arg == "-r") {
+              if (i + 1 < argc) {
+                  release = argv[++i];
               }
           } else if ((arg == "-s") || (arg == "--show")) {
 	      show = true;
@@ -339,7 +419,7 @@ int main (int argc, char* argv[])
       return 1;
     }
 
-    write_config_file(cfg, board);
+    write_config_file(cfg, board, release);
   }
 
   if (show) {
