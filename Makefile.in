@@ -633,6 +633,12 @@ AM_TESTS_ENVIRONMENT = \
   export SOURCE_DIR=$(abspath $(srcdir)); \
   export WORK_DIR=$(abspath .);
 
+#TESTS      += tests/e31-eval-ldscript.bash
+#TESTS      += tests/e31-eval-makeattributes.bash
+#TESTS      += tests/e34-eval-ldscript.bash
+#TESTS      += tests/e34-eval-makeattributes.bash
+#TESTS      += tests/e31-memory-makeattributes.bash
+#TESTS      += tests/e31-ranges-ldscript.bash
 TESTS = tests/e31-arty-ldscript.bash tests/e31-arty-openocd.bash \
 	tests/e31-arty-makeattributes.bash \
 	tests/e31-arty-metal_header.bash tests/e51-arty-ldscript.bash \
@@ -646,8 +652,7 @@ TESTS = tests/e31-arty-ldscript.bash tests/e31-arty-openocd.bash \
 	tests/hifive1-makeattributes.bash \
 	tests/hifive1-metal_header.bash \
 	tests/hifive1-zephyrdtsfixup.bash \
-	tests/hifive1-metal_specs.bash tests/e31-eval-ldscript.bash \
-	tests/e31-eval-openocd.bash tests/e31-eval-makeattributes.bash \
+	tests/hifive1-metal_specs.bash tests/e31-eval-openocd.bash \
 	tests/e31-eval-metal_header.bash \
 	tests/multi-e31-arty-ldscript.bash \
 	tests/multi-e31-arty-openocd.bash \
@@ -655,15 +660,12 @@ TESTS = tests/e31-arty-ldscript.bash tests/e31-arty-openocd.bash \
 	tests/multi-e31-arty-metal_header.bash \
 	tests/e31-bigmem-ldscript.bash tests/e31-bigmem-openocd.bash \
 	tests/e31-bigmem-makeattributes.bash \
-	tests/e31-bigmem-metal_header.bash \
-	tests/e34-eval-ldscript.bash tests/e34-eval-openocd.bash \
-	tests/e34-eval-makeattributes.bash \
+	tests/e31-bigmem-metal_header.bash tests/e34-eval-openocd.bash \
 	tests/e34-eval-metal_header.bash \
 	tests/e34-eval-metal_specs.bash tests/e31-memory-ldscript.bash \
 	tests/e31-memory-openocd.bash \
-	tests/e31-memory-makeattributes.bash \
 	tests/e31-memory-metal_header.bash \
-	tests/e31-ranges-ldscript.bash tests/e31-ranges-openocd.bash \
+	tests/e31-ranges-openocd.bash \
 	tests/e31-ranges-makeattributes.bash \
 	tests/e31-ranges-metal_header.bash
 EXTRA_DIST = tests/e31-arty.dts tests/e51-arty.dts \
@@ -1163,23 +1165,9 @@ tests/hifive1-metal_specs.bash.log: tests/hifive1-metal_specs.bash
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-eval-ldscript.bash.log: tests/e31-eval-ldscript.bash
-	@p='tests/e31-eval-ldscript.bash'; \
-	b='tests/e31-eval-ldscript.bash'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 tests/e31-eval-openocd.bash.log: tests/e31-eval-openocd.bash
 	@p='tests/e31-eval-openocd.bash'; \
 	b='tests/e31-eval-openocd.bash'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-eval-makeattributes.bash.log: tests/e31-eval-makeattributes.bash
-	@p='tests/e31-eval-makeattributes.bash'; \
-	b='tests/e31-eval-makeattributes.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1247,23 +1235,9 @@ tests/e31-bigmem-metal_header.bash.log: tests/e31-bigmem-metal_header.bash
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e34-eval-ldscript.bash.log: tests/e34-eval-ldscript.bash
-	@p='tests/e34-eval-ldscript.bash'; \
-	b='tests/e34-eval-ldscript.bash'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 tests/e34-eval-openocd.bash.log: tests/e34-eval-openocd.bash
 	@p='tests/e34-eval-openocd.bash'; \
 	b='tests/e34-eval-openocd.bash'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e34-eval-makeattributes.bash.log: tests/e34-eval-makeattributes.bash
-	@p='tests/e34-eval-makeattributes.bash'; \
-	b='tests/e34-eval-makeattributes.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1296,23 +1270,9 @@ tests/e31-memory-openocd.bash.log: tests/e31-memory-openocd.bash
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-memory-makeattributes.bash.log: tests/e31-memory-makeattributes.bash
-	@p='tests/e31-memory-makeattributes.bash'; \
-	b='tests/e31-memory-makeattributes.bash'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 tests/e31-memory-metal_header.bash.log: tests/e31-memory-metal_header.bash
 	@p='tests/e31-memory-metal_header.bash'; \
 	b='tests/e31-memory-metal_header.bash'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-ranges-ldscript.bash.log: tests/e31-ranges-ldscript.bash
-	@p='tests/e31-ranges-ldscript.bash'; \
-	b='tests/e31-ranges-ldscript.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

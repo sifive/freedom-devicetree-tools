@@ -34,23 +34,23 @@ public:
   std::string mem_type;
   std::string mem_alias;
   std::string mem_name;
-  int mem_base;
-  int mem_start;
-  int mem_length;
+  uint64_t mem_start;
+  uint64_t mem_length;
+  uint32_t mem_port_width;
 
   memory() {}
-  memory(std::string, std::string, std::string, int, int, int);
+  memory(std::string, std::string, std::string, uint64_t, uint64_t, uint32_t);
 };
 
 memory::memory (std::string mtype, std::string alias, std::string name,
-		int base, int start, int length)
+		uint64_t start, uint64_t length, uint32_t port_width)
 {
   mem_type = mtype;
   mem_alias = alias;
   mem_name = name;
-  mem_base = base;
   mem_start = start;
   mem_length = length;
+  mem_port_width = port_width;
 }
 
 static void write_banner(fstream &os, std::string rel_tag)
@@ -187,50 +187,202 @@ static string get_dts_attribute (const string path, const string tag)
     return string(value);
 }
 
-static void dts_memory (void)
+static void memory_port_width ()
 {
-    int offset, depth = 0;
-
     if (!dts_blob)
         return;
 
-    std::cout << __FUNCTION__ << std::endl;
+    int testram_count = 0;
+    int memory_count = 0;
+    int ahb_periph_count = 0;
+    int apb_periph_count = 0;
+    int axi4_periph_count = 0;
+    int tl_periph_count = 0;
+    int ahb_sys_count = 0;
+    int apb_sys_count = 0;
+    int axi4_sys_count = 0;
+    int tl_sys_count = 0;
+    uint32_t port_width = 0;
 
-    offset = fdt_path_offset(dts_blob, "/soc");
-    for (offset = fdt_next_node(dts_blob, offset, &depth);
-	 offset >= 0 && depth >= 0;
-	 offset = fdt_next_node(dts_blob, offset, &depth)) {
-        const char *nodep;
-        const char *regnamep, *s;
-	int regnamelen;
+    auto dtb = fdt((const uint8_t *)dts_blob);
+    dtb.match(
+        std::regex("memory"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for memory, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "reg", tuple_t<target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr base, target_size size) {
+                    if (memory_count == 0)
+                        dts_memory_list.push_back(memory("mem", "memory", "memory", base, size, port_width));
+                    memory_count++;
+                });
+        },
+        std::regex("sifive,testram0"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,testram0, default to 32bits width!" << std::endl;
+            }
+            n.named_tuples(
+                "reg-names", "reg",
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    if (testram_count == 0)
+                        dts_memory_list.push_back(memory("mem", "testram", "sifive,testram0", base, size, port_width));
+                    testram_count++;
+                });
+        },
+        std::regex("sifive,ahb-periph-port"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,ahb-periph-port, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (ahb_periph_count == 0)
+                        dts_memory_list.push_back(memory("mem", "periph_ram", "sifive,ahb-periph-port", src, len, port_width));
 
-        nodep = fdt_get_name(dts_blob, offset, NULL);
-	regnamep = (const char *)fdt_getprop(dts_blob, offset, "reg-names", &regnamelen);
-	if (regnamelen > 0) {
-	    const char *regp;
-	    int reglen, regidx;
-	    s = regnamep;
-	    regidx = 0;
-	    do {
-	        long base = 0;
-		std::vector<std::string> splices = split(string(nodep), '@');
-		regp = (const char *)fdt_getprop(dts_blob, offset, "reg", &reglen);
-		if (reglen > 0) {
-		    const fdt32_t *cell = (const fdt32_t *)regp;
-		    base = std::stol(splices[1], nullptr, 16);
-		    dts_memory_list.push_back(memory(s, splices[0], splices[0],
-						     base,
-						     fdt32_to_cpu(cell[regidx]),
-						     fdt32_to_cpu(cell[regidx + 1]))
-					      );
-		}
-		s += strlen(regnamep) + 1;
-		regidx += 2;
-	    } while (s < regnamep + regnamelen);
-	}
-    }
-    alias_memory("dtim", "ram");
-    alias_memory("spi", "flash");
+                    ahb_periph_count++;
+                });
+        },
+        std::regex("sifive,apb-periph-port"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,apb-periph-port, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (apb_periph_count == 0)
+                        dts_memory_list.push_back(memory("mem", "periph_ram", "sifive,apb-periph-port", src, len, port_width));
+
+                    apb_periph_count++;
+                });
+        },
+        std::regex("sifive,axi4-periph-port"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,axi4-periph-port, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (axi4_periph_count == 0)
+                        dts_memory_list.push_back(memory("mem", "periph_ram", "sifive,axi4-periph-port", src, len, port_width));
+
+                    axi4_periph_count++;
+                });
+        },
+        std::regex("sifive,tl-periph-port"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,tl-periph-port, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (tl_periph_count == 0)
+                        dts_memory_list.push_back(memory("mem", "periph_ram", "sifive,tl-periph-port", src, len, port_width));
+
+                    tl_periph_count++;
+                });
+        },
+        std::regex("sifive,ahb-sys-port"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,ahb-sys-port, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (ahb_sys_count == 0)
+                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,ahb-sys-port", src, len, port_width));
+
+                    ahb_sys_count++;
+                });
+        },
+        std::regex("sifive,apb-sys-port"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,apb-sys-port, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (apb_sys_count == 0)
+                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,apb-sys-port", src, len, port_width));
+
+                    apb_sys_count++;
+                });
+        },
+        std::regex("sifive,axi4-sys-port"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,axi4-sys-port, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (axi4_sys_count == 0)
+                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,axi4-sys-port", src, len, port_width));
+
+                    axi4_sys_count++;
+                });
+        },
+        std::regex("sifive,tl-sys-port"), [&](node n) {
+            auto name = n.name();
+            if(n.field_exists("sifive,port-width-bytes")) {
+                port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+            } else {
+                port_width = 32;
+                std::cout << "No port-width found for sifive,tl-sys-port, default to 32bits width!" << std::endl;
+            }
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (tl_sys_count == 0)
+                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,tl-sys-port", src, len, port_width));
+
+                    tl_sys_count++;
+                });
+        });
 }
 
 static void show_dts_attributes (void)
@@ -239,6 +391,65 @@ static void show_dts_attributes (void)
     std::cout << std::endl << std::endl;
     get_dts_attribute("/cpus/cpu@0", "riscv,isa");
     get_dts_attribute("/soc/serial@20000000", "compatible");
+}
+
+static void write_coreip_memory_width (fstream &os)
+{
+    uint32_t port_width = 0;
+
+    /* Periph memory has first preference */
+    for (auto entry : dts_memory_list) {
+      std::cout << entry.mem_alias << " " << entry.mem_name << " "
+                << std::to_string(entry.mem_port_width) << " " << __FUNCTION__ << std::endl;
+      if (entry.mem_alias.compare("periph_ram") == 0) {
+        /* AHB Periph memory has first preferences, then the following orders */
+        if (entry.mem_name.compare("sifive,ahb-periph-port") == 0) {
+            port_width = entry.mem_port_width;
+            break;
+        }
+        if (entry.mem_name.compare("sifive,apb-periph-port") == 0) {
+            port_width = entry.mem_port_width;
+            break;
+        }
+        if (entry.mem_name.compare("sifive,axi4-periph-port") == 0) {
+            port_width = entry.mem_port_width;
+            break;
+        }
+        if (entry.mem_name.compare("sifive,tl-periph-port") == 0) {
+            port_width = entry.mem_port_width;
+            break;
+        }
+      }
+    }
+    if (port_width == 0) {
+      /* Follows by Sys memory, second preference */
+      for (auto entry : dts_memory_list) {
+        if (entry.mem_alias.compare("sys_ram") == 0) {
+          /* AHB Sys memory has first preferences, then the following orders */
+          if (entry.mem_name.compare("sifive,ahb-sys-port") == 0) {
+              port_width = entry.mem_port_width;
+              break;
+          }
+          if (entry.mem_name.compare("sifive,apb-sys-port") == 0) {
+              port_width = entry.mem_port_width;
+              break;
+          }
+          if (entry.mem_name.compare("sifive,axi4-sys-port") == 0) {
+              port_width = entry.mem_port_width;
+              break;
+          }
+          if (entry.mem_name.compare("sifive,tl-sys-port") == 0) {
+              port_width = entry.mem_port_width;
+              break;
+          }
+        }
+      }
+    }
+    /* Memory is the last and default choice */
+    if (port_width == 0) {
+      port_width = 32;
+    }
+    os << "COREIP_MEM_WIDTH=" << std::to_string(port_width) << std::endl;
 }
 
 static void write_config_file (fstream &os, std::string board, std::string release)
@@ -297,19 +508,7 @@ static void write_config_file (fstream &os, std::string board, std::string relea
     }
 
     if (board.find("rtl") != std::string::npos) {
-	if(mmutype != "") {
-	    // U54 and U54-MC need mem width 128
-            os << "COREIP_MEM_WIDTH=128" << std::endl;
-	} else if(cpucompat.find("bullet") != std::string::npos) {
-	    // E76 has mem width 64
-            os << "COREIP_MEM_WIDTH=64" << std::endl;
-	} else if (isa.find("rv64") != std::string::npos) {
-	    // 64-bit designs by default have mem width 64
-            os << "COREIP_MEM_WIDTH=64" << std::endl;
-        } else {
-	    // 32-bit designs by default have mem width 32
-            os << "COREIP_MEM_WIDTH=32" << std::endl;
-        }
+        write_coreip_memory_width(os);
         os << std::endl;
         os << "TARGET_TAGS=rtl" << std::endl;
         os << "TARGET_DHRY_ITERS=2000" << std::endl;
@@ -408,7 +607,7 @@ int main (int argc, char* argv[])
       return 1;
   }
 
-  dts_memory();
+  memory_port_width();
 
   if (!config_file.empty()) {
     std::fstream cfg;
