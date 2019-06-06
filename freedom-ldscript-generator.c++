@@ -217,11 +217,28 @@ static void dts_memory (bool ramrodata)
     int testram_count = 0;
     int spi_count = 0;
     int memory_count = 0;
-    int periph_count = 0;
-    int sys_count = 0;
+    int ahb_periph_count = 0;
+    int apb_periph_count = 0;
+    int axi4_periph_count = 0;
+    int tl_periph_count = 0;
+    int ahb_sys_count = 0;
+    int apb_sys_count = 0;
+    int axi4_sys_count = 0;
+    int tl_sys_count = 0;
+    int cpu_count = 0;
+    int dcache_size = 0;
 
     auto dtb = fdt((const uint8_t *)dts_blob);
     dtb.match(
+        std::regex("cpu"), [&](node n) {
+            auto name = n.name();
+            /* Get dcache-size, 0 if not present */
+            n.maybe_tuple(
+                "d-cache-size", tuple_t<uint32_t>(),
+                [&]() { dcache_size = 0; },
+                [&](uint32_t num) { dcache_size = num; });
+            cpu_count++;
+        },
         std::regex("memory"), [&](node n) {
             auto name = n.name();
             n.maybe_tuple(
@@ -263,28 +280,100 @@ static void dts_memory (bool ramrodata)
                     testram_count++;
                 });
         },
-        std::regex("sifive,periph-port"), [&](node n) {
+        std::regex("sifive,ahb-periph-port"), [&](node n) {
             auto name = n.name();
             n.maybe_tuple(
                 "ranges", tuple_t<target_addr, target_addr, target_size>(),
                 [&]() {},
                 [&](target_addr src, target_addr dest, target_size len) {
-                    if (periph_count == 0)
-                        dts_memory_list.push_back(memory("mem", "periph_ram", "sifive,periph-port", src, len));
+                    if (ahb_periph_count == 0)
+                        dts_memory_list.push_back(memory("mem", "ahb_periph_ram", "sifive,ahb-periph-port", src, len));
 
-                    periph_count++;
+                    ahb_periph_count++;
                 });
         },
-        std::regex("sifive,sys-port"), [&](node n) {
+        std::regex("sifive,apb-periph-port"), [&](node n) {
             auto name = n.name();
             n.maybe_tuple(
                 "ranges", tuple_t<target_addr, target_addr, target_size>(),
                 [&]() {},
                 [&](target_addr src, target_addr dest, target_size len) {
-                    if (sys_count == 0)
-                        dts_memory_list.push_back(memory("mem", "sys_ram", "sifive,sys-port", src, len));
+                    if (apb_periph_count == 0)
+                        dts_memory_list.push_back(memory("mem", "apb_periph_ram", "sifive,apb-periph-port", src, len));
 
-                    sys_count++;
+                    apb_periph_count++;
+                });
+        },
+        std::regex("sifive,axi4-periph-port"), [&](node n) {
+            auto name = n.name();
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (axi4_periph_count == 0)
+                        dts_memory_list.push_back(memory("mem", "axi4_periph_ram", "sifive,axi4-periph-port", src, len));
+
+                    axi4_periph_count++;
+                });
+        },
+        std::regex("sifive,tl-periph-port"), [&](node n) {
+            auto name = n.name();
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (tl_periph_count == 0)
+                        dts_memory_list.push_back(memory("mem", "tl_periph_ram", "sifive,tl-periph-port", src, len));
+
+                    tl_periph_count++;
+                });
+        },
+        std::regex("sifive,ahb-sys-port"), [&](node n) {
+            auto name = n.name();
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (ahb_sys_count == 0)
+                        dts_memory_list.push_back(memory("mem", "ahb_sys_ram", "sifive,ahb-sys-port", src, len));
+
+                    ahb_sys_count++;
+                });
+        },
+        std::regex("sifive,apb-sys-port"), [&](node n) {
+            auto name = n.name();
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (apb_sys_count == 0)
+                        dts_memory_list.push_back(memory("mem", "apb_sys_ram", "sifive,apb-sys-port", src, len));
+
+                    apb_sys_count++;
+                });
+        },
+        std::regex("sifive,axi4-sys-port"), [&](node n) {
+            auto name = n.name();
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (axi4_sys_count == 0)
+                        dts_memory_list.push_back(memory("mem", "axi4_sys_ram", "sifive,axi4-sys-port", src, len));
+
+                    axi4_sys_count++;
+                });
+        },
+        std::regex("sifive,tl-sys-port"), [&](node n) {
+            auto name = n.name();
+            n.maybe_tuple(
+                "ranges", tuple_t<target_addr, target_addr, target_size>(),
+                [&]() {},
+                [&](target_addr src, target_addr dest, target_size len) {
+                    if (tl_sys_count == 0)
+                        dts_memory_list.push_back(memory("mem", "tl_sys_ram", "sifive,tl-sys-port", src, len));
+
+                    tl_sys_count++;
                 });
         },
         std::regex("sifive,sram0"), [&](node n) {
@@ -309,8 +398,120 @@ static void dts_memory (bool ramrodata)
                 });
         });
 
-    if (testram_count > 0) {
-    	if (sram_count > 0) {
+    if (ahb_periph_count > 0) {
+        if (sram_count > 1) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+            alias_memory("ahb_periph_ram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("ahb_periph_ram", "flash");
+        } else if (dcache_size > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("ahb_periph_ram", "flash");
+        } else {
+            alias_memory("ahb_periph_ram", "ram");
+        }
+    } else if (apb_periph_count > 0) {
+        if (sram_count > 1) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+            alias_memory("apb_periph_ram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("apb_periph_ram", "flash");
+        } else if (dcache_size > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("apb_periph_ram", "flash");
+        } else {
+            alias_memory("apb_periph_ram", "ram");
+        }
+    } else if (axi4_periph_count > 0) {
+        if (sram_count > 1) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+            alias_memory("axi4_periph_ram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("axi4_periph_ram", "flash");
+        } else if (dcache_size > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("axi4_periph_ram", "flash");
+        } else {
+            alias_memory("axi4_periph_ram", "ram");
+        }
+    } else if (tl_periph_count > 0) {
+        if (sram_count > 1) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+            alias_memory("tl_periph_ram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("tl_periph_ram", "flash");
+        } else if (dcache_size > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("tl_periph_ram", "flash");
+        } else {
+            alias_memory("tl_periph_ram", "ram");
+        }
+    } else if (ahb_sys_count > 0) {
+        if (sram_count > 1) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+            alias_memory("ahb_sys_ram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("ahb_sys_ram", "flash");
+        } else if (dcache_size > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("ahb_sys_ram", "flash");
+        } else {
+            alias_memory("ahb_sys_ram", "ram");
+        }
+    } else if (apb_sys_count > 0) {
+        if (sram_count > 1) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+            alias_memory("apb_sys_ram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("apb_sys_ram", "flash");
+        } else if (dcache_size > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("apb_sys_ram", "flash");
+        } else {
+            alias_memory("apb_sys_ram", "ram");
+        }
+    } else if (axi4_sys_count > 0) {
+        if (sram_count > 1) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+            alias_memory("axi4_sys_ram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("axi4_sys_ram", "flash");
+        } else if (dcache_size > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("axi4_sys_ram", "flash");
+        } else {
+            alias_memory("axi4_sys_ram", "ram");
+        }
+    } else if (tl_sys_count > 0) {
+        if (sram_count > 1) {
+            alias_memory("sram0", "ram");
+            alias_memory("sram1", "itim");
+            alias_memory("tl_sys_ram", "flash");
+        } else if (dtim_count > 0) {
+            alias_memory("dtim", "ram");
+            alias_memory("tl_sys_ram", "flash");
+        } else if (dcache_size > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("tl_sys_ram", "flash");
+        } else {
+            alias_memory("tl_sys_ram", "ram");
+        }
+    } else if (testram_count > 0) {
+    	if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
 	    alias_memory("testram", "flash");
@@ -325,11 +526,7 @@ static void dts_memory (bool ramrodata)
     	if (spi_count > 0) {
             alias_memory("spi", "flash");
         }
-    } else if (periph_count > 0)
-        alias_memory("periph_ram", "ram");
-    else if (sys_count > 0)
-        alias_memory("sys_ram", "ram");
-    else if (sram_count > 0) {
+    } else if (sram_count > 0) {
         if (sram_count == 1 && ramrodata) {
             split_sram("sram0");
         }
