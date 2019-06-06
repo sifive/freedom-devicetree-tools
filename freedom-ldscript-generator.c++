@@ -530,13 +530,13 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     }
 
     os << std::endl << std::endl;
-    /* Define finit_array section */
-    os << "\t.finit_array \t\t:" << std::endl;
+    /* Define fini_array section */
+    os << "\t.fini_array \t\t:" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\tPROVIDE_HIDDEN (__finit_array_start = .);" << std::endl;
+    os << "\t\tPROVIDE_HIDDEN (__fini_array_start = .);" << std::endl;
     os << "\t\tKEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))" << std::endl;
     os << "\t\tKEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))" << std::endl;
-    os << "\t\tPROVIDE_HIDDEN (__finit_array_end = .);" << std::endl;
+    os << "\t\tPROVIDE_HIDDEN (__fini_array_end = .);" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram" << std::endl;
     } else {
