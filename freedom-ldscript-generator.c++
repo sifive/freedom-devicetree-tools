@@ -398,7 +398,12 @@ static void dts_memory (bool ramrodata)
                 });
         });
 
-    if (ahb_periph_count > 0) {
+    if (memory_count > 0) {
+        alias_memory("memory", "ram");
+    	if (spi_count > 0) {
+            alias_memory("spi", "flash");
+        }
+    } else if (ahb_periph_count > 0) {
         if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
@@ -520,11 +525,6 @@ static void dts_memory (bool ramrodata)
             alias_memory("testram", "flash");
         } else {
             alias_memory("testram", "ram");
-        }
-    } else if (memory_count > 0) {
-        alias_memory("memory", "ram");
-    	if (spi_count > 0) {
-            alias_memory("spi", "flash");
         }
     } else if (sram_count > 0) {
         if (sram_count == 1 && ramrodata) {
