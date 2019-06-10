@@ -72,6 +72,21 @@ static void show_usage(string name)
 	    << endl;
 }
 
+/* Splits a string into a list of strings on character c */
+std::list<std::string> split_string(std::string& str, char c)
+{
+  std::list<std::string> parts;
+
+  std::istringstream stream(str);
+
+  std::string substr;
+  while (std::getline(stream, substr, c)) {
+    parts.push_back(substr);
+  }
+
+  return parts;
+}
+
 void search_replace_all(std::string& str, const std::string& from, const std::string& to) {
     if (from.empty() || (from.compare(to) == 0))
         return;
@@ -82,15 +97,34 @@ void search_replace_all(std::string& str, const std::string& from, const std::st
     }
 }
 
+void uppercase_string(std::string& str)
+{
+  std::transform(str.begin(), str.end(), str.begin(),
+    [](unsigned char c) -> char {
+      return toupper(c);
+    });
+}
+
+void format_config_file_name(std::string& cfg_file)
+{
+  /* Isolate the name of the file and its containing folder */
+  auto parts = split_string(cfg_file, '/');
+  while (parts.size() > 2) {
+    parts.pop_front();
+  }
+
+  /* Format the file path into an #define */
+  search_replace_all(cfg_file, "-", "_");
+  search_replace_all(cfg_file, ".", "_");
+  search_replace_all(cfg_file, "/", "__");
+
+  uppercase_string(cfg_file);
+}
+
 static void write_config_file(const fdt &dtb, fstream &os,
 			      std::string cfg_file, std::string release)
 {
-  std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
-                   [](unsigned char c) { return (c == '-') ? '_' : toupper(c); });
-  std::transform(cfg_file.begin(), cfg_file.end(), cfg_file.begin(),
-                   [](unsigned char c) { return (c == '.') ? '_' : c; });
-
-  search_replace_all(cfg_file, "/", "__");
+  format_config_file_name(cfg_file);
 
   write_banner(os, release);
 
