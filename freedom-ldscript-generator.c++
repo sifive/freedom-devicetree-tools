@@ -399,7 +399,10 @@ static void dts_memory (bool ramrodata)
         });
 
     if (ahb_periph_count > 0) {
-        if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("ahb_periph_ram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
             alias_memory("ahb_periph_ram", "flash");
@@ -413,7 +416,10 @@ static void dts_memory (bool ramrodata)
             alias_memory("ahb_periph_ram", "ram");
         }
     } else if (apb_periph_count > 0) {
-        if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("apb_periph_ram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
             alias_memory("apb_periph_ram", "flash");
@@ -427,7 +433,10 @@ static void dts_memory (bool ramrodata)
             alias_memory("apb_periph_ram", "ram");
         }
     } else if (axi4_periph_count > 0) {
-        if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("axi4_periph_ram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
             alias_memory("axi4_periph_ram", "flash");
@@ -441,7 +450,10 @@ static void dts_memory (bool ramrodata)
             alias_memory("axi4_periph_ram", "ram");
         }
     } else if (tl_periph_count > 0) {
-        if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("tl_periph_ram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
             alias_memory("tl_periph_ram", "flash");
@@ -455,7 +467,10 @@ static void dts_memory (bool ramrodata)
             alias_memory("tl_periph_ram", "ram");
         }
     } else if (ahb_sys_count > 0) {
-        if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("ahb_sys_ram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
             alias_memory("ahb_sys_ram", "flash");
@@ -469,7 +484,10 @@ static void dts_memory (bool ramrodata)
             alias_memory("ahb_sys_ram", "ram");
         }
     } else if (apb_sys_count > 0) {
-        if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("apb_sys_ram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
             alias_memory("apb_sys_ram", "flash");
@@ -483,7 +501,10 @@ static void dts_memory (bool ramrodata)
             alias_memory("apb_sys_ram", "ram");
         }
     } else if (axi4_sys_count > 0) {
-        if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("axi4_sys_ram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
             alias_memory("axi4_sys_ram", "flash");
@@ -497,7 +518,10 @@ static void dts_memory (bool ramrodata)
             alias_memory("axi4_sys_ram", "ram");
         }
     } else if (tl_sys_count > 0) {
-        if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("tl_sys_ram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
             alias_memory("tl_sys_ram", "flash");
@@ -511,7 +535,10 @@ static void dts_memory (bool ramrodata)
             alias_memory("tl_sys_ram", "ram");
         }
     } else if (testram_count > 0) {
-    	if (sram_count > 1) {
+        if (memory_count > 0) {
+            alias_memory("memory", "ram");
+            alias_memory("testram", "flash");
+        } else if (sram_count > 1) {
             alias_memory("sram0", "ram");
             alias_memory("sram1", "itim");
 	    alias_memory("testram", "flash");
