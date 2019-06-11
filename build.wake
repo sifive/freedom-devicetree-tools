@@ -20,7 +20,7 @@ global def freedomDevicetreeToolsInstallDir = "build/{here}"
 
 global def freedomDevicetreeToolsPath = "{installDir}/bin"
 
-global def freedomDevicetreeToolsInstall Unit =
+global target freedomDevicetreeToolsInstall Unit =
   def wrapperScript = source "{here}/scripts/autoconf_wrapper"
   def runDir = here
   def cmdline =
