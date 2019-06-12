@@ -102,6 +102,67 @@ static void alias_memory (std::string from, std::string to)
   }
 }
 
+/* Helper functions for extracting the number of address cells and size
+ * cells for a node */
+
+static uint64_t get_address_cells(const node &n) {
+  if(n.field_exists("#address-cells")) {
+    return n.get_field<uint32_t>("#address-cells");
+  } else {
+    /* The node::num_addr_cells() method gets the address cells of the parent
+     * node */
+    return n.num_addr_cells();
+  }
+}
+
+static uint64_t get_size_cells(const node &n) {
+  if(n.field_exists("#size-cells")) {
+    return n.get_field<uint32_t>("#size-cells");
+  } else {
+    /* The node::num_size_cells() method gets the address cells of the parent
+     * node */
+    return n.num_size_cells();
+  }
+}
+
+/* Helper functions for getting the child address and size from a ranges property */
+
+static target_addr get_memory_ranges_address(const node &n) {
+  int child_addr_cells = get_address_cells(n);
+
+  auto cells = n.get_fields<uint32_t>("ranges");
+
+  if (child_addr_cells == 1) {
+    return cells.at(0);
+  } else if (child_addr_cells == 2) {
+    return cells.at(1);
+  } else {
+    std::cerr << "Node " << n.handle() << " has unsupported number of address cells " <<
+      std::to_string(child_addr_cells) << std::endl;
+  }
+
+  return 0;
+}
+
+static target_size get_memory_ranges_size(const node &n) {
+  int child_addr_cells = get_address_cells(n);
+  int parent_addr_cells = get_address_cells(n.parent());
+  int child_size_cells = get_size_cells(n);
+
+  auto cells = n.get_fields<uint32_t>("ranges");
+
+  if (child_size_cells == 1) {
+    return cells.at(child_addr_cells + parent_addr_cells);
+  } else if (child_size_cells == 2) {
+    return cells.at(child_addr_cells + parent_addr_cells + 1);
+  } else {
+    std::cerr << "Node " << n.handle() << " has unsupported number of size cells " <<
+      std::to_string(child_size_cells) << std::endl;
+  }
+
+  return cells.back();
+}
+
 static void split_sram (std::string sram_orig)
 {
   std::vector<memory>::iterator it;
@@ -281,100 +342,84 @@ static void dts_memory (bool ramrodata)
                 });
         },
         std::regex("sifive,ahb-periph-port"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (ahb_periph_count == 0)
-                        dts_memory_list.push_back(memory("mem", "ahb_periph_ram", "sifive,ahb-periph-port", src, len));
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (ahb_periph_count == 0)
+                    dts_memory_list.push_back(memory("mem", "ahb_periph_ram", "sifive,ahb-periph-port", address, size));
 
-                    ahb_periph_count++;
-                });
+                ahb_periph_count++;
+            }
         },
         std::regex("sifive,apb-periph-port"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (apb_periph_count == 0)
-                        dts_memory_list.push_back(memory("mem", "apb_periph_ram", "sifive,apb-periph-port", src, len));
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (apb_periph_count == 0)
+                    dts_memory_list.push_back(memory("mem", "apb_periph_ram", "sifive,apb-periph-port", address, size));
 
-                    apb_periph_count++;
-                });
+                apb_periph_count++;
+            }
         },
         std::regex("sifive,axi4-periph-port"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (axi4_periph_count == 0)
-                        dts_memory_list.push_back(memory("mem", "axi4_periph_ram", "sifive,axi4-periph-port", src, len));
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (axi4_periph_count == 0)
+                    dts_memory_list.push_back(memory("mem", "axi4_periph_ram", "sifive,axi4-periph-port", address, size));
 
-                    axi4_periph_count++;
-                });
+                axi4_periph_count++;
+            }
         },
         std::regex("sifive,tl-periph-port"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (tl_periph_count == 0)
-                        dts_memory_list.push_back(memory("mem", "tl_periph_ram", "sifive,tl-periph-port", src, len));
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (tl_periph_count == 0)
+                    dts_memory_list.push_back(memory("mem", "tl_periph_ram", "sifive,tl-periph-port", address, size));
 
-                    tl_periph_count++;
-                });
+                tl_periph_count++;
+            }
         },
         std::regex("sifive,ahb-sys-port"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (ahb_sys_count == 0)
-                        dts_memory_list.push_back(memory("mem", "ahb_sys_ram", "sifive,ahb-sys-port", src, len));
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (ahb_sys_count == 0)
+                    dts_memory_list.push_back(memory("mem", "ahb_sys_ram", "sifive,ahb-sys-port", address, size));
 
-                    ahb_sys_count++;
-                });
+                ahb_sys_count++;
+            }
         },
         std::regex("sifive,apb-sys-port"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (apb_sys_count == 0)
-                        dts_memory_list.push_back(memory("mem", "apb_sys_ram", "sifive,apb-sys-port", src, len));
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (apb_sys_count == 0)
+                    dts_memory_list.push_back(memory("mem", "apb_sys_ram", "sifive,apb-sys-port", address, size));
 
-                    apb_sys_count++;
-                });
+                apb_sys_count++;
+            }
         },
         std::regex("sifive,axi4-sys-port"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (axi4_sys_count == 0)
-                        dts_memory_list.push_back(memory("mem", "axi4_sys_ram", "sifive,axi4-sys-port", src, len));
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (axi4_sys_count == 0)
+                    dts_memory_list.push_back(memory("mem", "axi4_sys_ram", "sifive,axi4-sys-port", address, size));
 
-                    axi4_sys_count++;
-                });
+                axi4_sys_count++;
+            }
         },
         std::regex("sifive,tl-sys-port"), [&](node n) {
-            auto name = n.name();
-            n.maybe_tuple(
-                "ranges", tuple_t<target_addr, target_addr, target_size>(),
-                [&]() {},
-                [&](target_addr src, target_addr dest, target_size len) {
-                    if (tl_sys_count == 0)
-                        dts_memory_list.push_back(memory("mem", "tl_sys_ram", "sifive,tl-sys-port", src, len));
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (tl_sys_count == 0)
+                    dts_memory_list.push_back(memory("mem", "tl_sys_ram", "sifive,tl-sys-port", address, size));
 
-                    tl_sys_count++;
-                });
+                tl_sys_count++;
+            }
         },
         std::regex("sifive,sram0"), [&](node n) {
             auto name = n.name();
