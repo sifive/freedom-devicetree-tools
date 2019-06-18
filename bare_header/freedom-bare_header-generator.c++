@@ -7,6 +7,7 @@
 
 /* STL */
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <map>
 #include <list>
