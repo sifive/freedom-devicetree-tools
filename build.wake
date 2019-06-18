@@ -15,20 +15,20 @@ def doJob cmdline inputs =
   | runJob
   | getJobOutputs
 
-def installDir = "build/{here}"
+def installDir = simplify "build/{here}"
 global def freedomDevicetreeToolsInstallDir = "build/{here}"
 
 global def freedomDevicetreeToolsPath = "{installDir}/bin"
 
 global target freedomDevicetreeToolsInstall Unit =
-  def wrapperScript = source "{here}/scripts/autoconf_wrapper"
+  def wrapperScript = source "{here}/scripts/autoconf_wrapper".simplify
   def runDir = here
   def cmdline =
     relative runDir wrapperScript.getPathName,
     "--configure-args=",
     "--install-dir={relative runDir installDir}",
     Nil
-  def inputs = mkdir installDir, sources here `.*`
+  def inputs = mkdir installDir, sources here `.*\.(c|c\+\+|cpp|h|h\+\+|hpp)`
   def foutputs _ = files installDir `.*`
 
   makePlan cmdline inputs
@@ -50,6 +50,7 @@ global def freedom_metal_header_generator   _ = makeTool "freedom-metal_header-g
 global def freedom_metal_specs_generator    _ = makeTool "freedom-metal_specs-generator"
 global def freedom_openocdcfg_generator     _ = makeTool "freedom-openocdcfg-generator"
 global def freedom_zephyrdtsfixup_generator _ = makeTool "freedom-zephyrdtsfixup-generator"
+global def freedom_bare_header_generator    _ = makeTool "freedom-bare_header-generator"
 
 
 ### Linker Script Generator ###
@@ -91,6 +92,10 @@ tuple FreedomMetalHeaderGeneratorOptions =
   global DTBFile:    Path
   global OutputFile: String
 
+tuple FreedomMetalHeaderGeneratorOutputs =
+  global Header:       Path
+  global InlineHeader: Path
+
 global def makeFreedomMetalHeaderGeneratorOptions dtbFile outputFile =
   FreedomMetalHeaderGeneratorOptions dtbFile outputFile
 
@@ -98,6 +103,38 @@ global def runFreedomMetalHeaderGenerator options =
   def tool = freedom_metal_header_generator Unit
   def dtbFile = options.getFreedomMetalHeaderGeneratorOptionsDTBFile
   def outputFile = options.getFreedomMetalHeaderGeneratorOptionsOutputFile
+  def cmdline =
+    tool.getPathName,
+    "-d", dtbFile.getPathName,
+    "-o", outputFile,
+    Nil
+  def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
+  def outputs = makePlan cmdline inputs | runJob | getJobOutputs
+
+  def get file =
+    outputs
+    | filter (file ==* _.getPathName)
+    | head
+    | getOrElse "{tool.getPathName}: failed to produce {file}".makeError.makeBadPath
+
+  def inlineHeaderFile = replace `\.h$` "-inline.h" outputFile
+
+  FreedomMetalHeaderGeneratorOutputs
+  "{outputFile}".get
+  inlineHeaderFile.get
+
+
+tuple FreedomBareHeaderGeneratorOptions =
+  global DTBFile:    Path
+  global OutputFile: String
+
+global def makeFreedomBareHeaderGeneratorOptions dtbFile outputFile =
+  FreedomBareHeaderGeneratorOptions dtbFile outputFile
+
+global def runFreedomBareHeaderGenerator options =
+  def tool = freedom_bare_header_generator Unit
+  def dtbFile = options.getFreedomBareHeaderGeneratorOptionsDTBFile
+  def outputFile = options.getFreedomBareHeaderGeneratorOptionsOutputFile
   def cmdline =
     tool.getPathName,
     "-d", dtbFile.getPathName,
@@ -150,13 +187,11 @@ global def runFreedomMakeAttributesGenerator options =
     Fail fail = Fail fail
 
 tuple FreedomBSP =
-  LinkerScript_: Path
-  Header_:       Path
-  Attributes_:   FreedomMakeAttributes
-
-global def getFreedomBSPLinkerScript = getFreedomBSPLinkerScript_
-global def getFreedomBSPHeader       = getFreedomBSPHeader_
-global def getFreedomBSPAttributes   = getFreedomBSPAttributes_
+  global LinkerScript:   Path
+  global Header:         Path
+  global InlineHeader:   Path
+  global PlatformHeader: Path
+  global Attributes:     FreedomMakeAttributes
 
 global def makeFreedomBSP testDTS prefix =
   def testDTB = dtsTodtb testDTS "{prefix}.dtb"
@@ -168,10 +203,21 @@ global def makeFreedomBSP testDTS prefix =
     makeFreedomMetalHeaderGeneratorOptions testDTB "{prefix}.h"
     | runFreedomMetalHeaderGenerator
 
+  def platformHeader =
+    makeFreedomBareHeaderGeneratorOptions testDTB "{prefix}-platform.h"
+    | runFreedomBareHeaderGenerator
+
   def attributesResult =
     makeFreedomMakeAttributesGeneratorOptions testDTB "{prefix}.conf"
     | runFreedomMakeAttributesGenerator
 
-  match ldScript.getPathError header.getPathError attributesResult
-    None None (Pass attributes) = Pass (FreedomBSP ldScript header attributes)
-    _ _ _ = Fail (Triple ldScript header attributesResult)
+  match attributesResult
+    Fail e = Fail e
+    Pass attributes = Pass (
+      FreedomBSP
+      ldScript
+      header.getFreedomMetalHeaderGeneratorOutputsHeader
+      header.getFreedomMetalHeaderGeneratorOutputsInlineHeader
+      platformHeader
+      attributes
+    )
