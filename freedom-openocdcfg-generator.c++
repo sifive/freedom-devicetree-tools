@@ -208,7 +208,32 @@ static void dts_memory (void)
 	    } while (s < regnamep + regnamelen);
 	}
     }
-    alias_memory("dtim", "ram");
+    
+    int memory_count = 0;
+    int sram_count = 0;
+    int dtim_count = 0;
+
+    for (auto it = dts_memory_list.begin(); it != dts_memory_list.end(); ++it) {
+      if (it->mem_alias.find("memory") != std::string::npos) {
+	memory_count += 1;
+      } else if (it->mem_alias.find("sram") != std::string::npos) {
+	sram_count += 1;
+      } else if (it->mem_alias.find("dtim") != std::string::npos) {
+	dtim_count += 1;
+      }
+    }
+
+    if (memory_count > 0) {
+      alias_memory("memory", "ram");
+    } else if (sram_count > 1) {
+      alias_memory("sram0", "ram");
+    } else if (dtim_count > 0) {
+      alias_memory("dtim", "ram");
+    } else {
+      std::cerr << "Unable to find a suitable memory for RAM" << std::endl;
+      exit(1);
+    }
+
     alias_memory("spi", "flash");
 }
 
