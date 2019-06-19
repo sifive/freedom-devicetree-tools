@@ -281,7 +281,7 @@ static void write_config_file (fstream &os, std::string board)
       os << "ftdi_layout_signal LED -data 0x0800" << std::endl << std::endl;
     }
     os << "set _CHIPNAME riscv" << std::endl;
-    os << "jtag newtap $_CHIPNAME cpu -irlen 5 -expected-id 0xFEEBBEEF" << std::endl << std::endl;
+    os << "jtag newtap $_CHIPNAME cpu -irlen 5" << std::endl << std::endl;
 
     os << "set _TARGETNAME $_CHIPNAME.cpu" << std::endl;
     os << "target create $_TARGETNAME.0 riscv -chain-position $_TARGETNAME" << std::endl;
