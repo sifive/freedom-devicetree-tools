@@ -82,7 +82,7 @@ static void alias_memory (std::string from, std::string to)
   std::vector<memory>::iterator it;
 
   for (it = dts_memory_list.begin(); it != dts_memory_list.end(); ++it) {
-    if (it->mem_alias.compare(from) == 0) {
+    if (it->mem_alias.find(from) != std::string::npos) {
       it->mem_alias = to;
       std::cout << "alias " << from << " to " << it->mem_alias << std::endl;
       break;
@@ -226,7 +226,7 @@ static void dts_memory (void)
     if (memory_count > 0) {
       alias_memory("memory", "ram");
     } else if (sram_count > 1) {
-      alias_memory("sram0", "ram");
+      alias_memory("sram", "ram");
     } else if (dtim_count > 0) {
       alias_memory("dtim", "ram");
     } else {
@@ -285,17 +285,31 @@ static void write_config_file (fstream &os, std::string board)
 
     os << "set _TARGETNAME $_CHIPNAME.cpu" << std::endl;
     os << "target create $_TARGETNAME.0 riscv -chain-position $_TARGETNAME" << std::endl;
-    mem_found = find_memory("dtim", "mem", spi_mem);
-    os << "$_TARGETNAME.0 configure -work-area-phys 0x"
-       << std::hex << (mem_found ? spi_mem.mem_start : 0) << std::dec;
-    os << " -work-area-size 10000 -work-area-backup 1" << std::endl << std::endl;
 
+    /* Define work area in RAM */
+    if (has_memory("ram")) {
+      for (auto entry : dts_memory_list) {
+	if (entry.mem_alias.compare("ram") == 0) {
+	  os << "$_TARGETNAME.0 configure " <<
+	        "-work-area-phys 0x" << std::hex << entry.mem_start << std::dec <<
+	        " -work-area-size " << entry.mem_length <<
+		" -work-area-backup 1" << std::endl << std::endl;
+	  break;
+	}
+      }
+    } else {
+      os << "$_TARGETNAME.0 configure -work-area-phys 0x0" <<
+            " -work-area-size 10000 -work-area-backup 1" << std::endl << std::endl;
+    }
+
+    /* Define the SPI flash */
     mem_found = find_memory("spi", "mem", spi_mem);
     cntrl_found =find_memory("spi", "control", spi_cntrl);
     os << "flash bank spi0 fespi 0x"
        << std::hex << (mem_found ? spi_mem.mem_start : 0);
     os << " 0 0 0 $_TARGETNAME.0 0x"
        << (cntrl_found ? spi_cntrl.mem_base : 0) << std::dec << std::endl;
+
     os << "init" << std::endl;
     os << "if {[ info exists pulse_srst]} {" << std::endl;
     os << "\tftdi_set_signal nSRST 0" << std::endl;
