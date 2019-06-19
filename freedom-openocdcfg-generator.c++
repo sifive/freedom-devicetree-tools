@@ -44,24 +44,10 @@ memory::memory (std::string mtype, std::string alias, std::string name, uint64_t
 static char *dts_blob;
 static std::vector<memory> dts_memory_list;
 
-static bool find_memory (std::string mem, std::string mtype, memory &object)
+static bool has_memory(std::string mem)
 {
   for (auto entry : dts_memory_list) {
-    if ((entry.mem_name.compare(mem) == 0)
-	&&
-	(entry.mem_type.compare(mtype) == 0)) {
-      std::cout << "found " << mem << std::endl;
-      object = entry;
-      return true;
-    }
-  }
-  return false;
-}
-
-static bool has_memory (std::string mem)
-{
-  for (auto entry : dts_memory_list) {
-    if (entry.mem_alias.compare(mem) == 0) {
+    if (entry.mem_alias.find(mem) == std::string::npos) {
       std::cout << "found " << mem << std::endl;
       return true;
     }
@@ -69,7 +55,7 @@ static bool has_memory (std::string mem)
   return false;
 }
 
-static void alias_memory (std::string from, std::string to)
+static void alias_memory(std::string from, std::string to)
 {
   std::vector<memory>::iterator it;
 
@@ -77,7 +63,6 @@ static void alias_memory (std::string from, std::string to)
     if (it->mem_alias.find(from) != std::string::npos) {
       it->mem_alias = to;
       std::cout << "alias " << from << " to " << it->mem_alias << std::endl;
-      break;
     }
   }
 }
@@ -225,7 +210,8 @@ static void dts_memory (void)
     int itim_count = 0;
     int sram_count = 0;
     int testram_count = 0;
-    int spi_count = 0;
+    int spi_mem_count = 0;
+    int spi_control_count = 0;
     int memory_count = 0;
     int ahb_periph_count = 0;
     int apb_periph_count = 0;
@@ -373,11 +359,15 @@ static void dts_memory (void)
             auto name = n.name();
             n.named_tuples(
                 "reg-names", "reg",
-                "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {},
+                "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    if (spi_control_count == 0)
+                        dts_memory_list.push_back(memory("control", "spi", "sifive,spi0", base, size));
+                    spi_control_count++;
+                },
                 "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-                    if (spi_count == 0)
+                    if (spi_mem_count == 0)
                         dts_memory_list.push_back(memory("mem", "spi", "sifive,spi0", base, size));
-                    spi_count++;
+                    spi_mem_count++;
                 });
         });
     
@@ -412,11 +402,6 @@ static void show_dts_memory (void)
 
 static void write_config_file (fstream &os, std::string board)
 {
-    bool mem_found;
-    bool cntrl_found;
-    memory spi_mem;
-    memory spi_cntrl;
-
     os << "#" << __FUNCTION__ << std::endl;
     os << "# JTAG adapter setup" << std::endl;
     os << "adapter_khz     10000" << std::endl << std::endl;
@@ -450,7 +435,7 @@ static void write_config_file (fstream &os, std::string board)
 	if (entry.mem_alias.compare("ram") == 0) {
 	  os << "$_TARGETNAME.0 configure " <<
 	        "-work-area-phys 0x" << std::hex << entry.mem_start << std::dec <<
-	        " -work-area-size " << entry.mem_length <<
+	        " -work-area-size " << (entry.mem_length < 10000 ? entry.mem_length : 10000) <<
 		" -work-area-backup 1" << std::endl << std::endl;
 	  break;
 	}
@@ -461,12 +446,28 @@ static void write_config_file (fstream &os, std::string board)
     }
 
     /* Define the SPI flash */
-    mem_found = find_memory("spi", "mem", spi_mem);
-    cntrl_found =find_memory("spi", "control", spi_cntrl);
-    os << "flash bank spi0 fespi 0x"
-       << std::hex << (mem_found ? spi_mem.mem_start : 0);
-    os << " 0 0 0 $_TARGETNAME.0 0x"
-       << (cntrl_found ? spi_cntrl.mem_start : 0) << std::dec << std::endl;
+    if (has_memory("flash")) {
+      bool mem_found = false;
+      bool cntrl_found = false;
+      memory spi_mem;
+      memory spi_cntrl;
+
+      for ( auto entry : dts_memory_list) {
+        if (entry.mem_alias.compare("flash") == 0) {
+          if (entry.mem_type.compare("mem") == 0 && !mem_found) {
+            spi_mem = entry;
+            mem_found = true;
+          } else if (entry.mem_type.compare("control") == 0 && !cntrl_found) {
+            spi_cntrl = entry;
+            cntrl_found = true;
+          }
+        }
+      }
+      os << "flash bank spi0 fespi 0x"
+         << std::hex << (mem_found ? spi_mem.mem_start : 0);
+      os << " 0 0 0 $_TARGETNAME.0 0x"
+         << (cntrl_found ? spi_cntrl.mem_start : 0) << std::dec << std::endl;
+    }
 
     os << "init" << std::endl;
     os << "if {[ info exists pulse_srst]} {" << std::endl;
