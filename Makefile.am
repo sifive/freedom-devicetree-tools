@@ -15,7 +15,8 @@ freedom_ldscript_generator_SOURCES = \
 	fdt.c++
 
 freedom_openocdcfg_generator_SOURCES = \
-	freedom-openocdcfg-generator.c++
+	freedom-openocdcfg-generator.c++ \
+	fdt.c++
 
 freedom_makeattributes_generator_SOURCES = \
 	freedom-makeattributes-generator.c++ \

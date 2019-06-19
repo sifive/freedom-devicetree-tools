@@ -11,13 +11,8 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
-#ifdef __cplusplus
-extern "C"{
-#endif
-#include <libfdt.h>
-#ifdef __cplusplus
-}
-#endif
+
+#include <fdt.h++>
 
 using std::cout;
 using std::endl;
@@ -30,21 +25,18 @@ public:
   std::string mem_type;
   std::string mem_alias;
   std::string mem_name;
-  int mem_base;
-  int mem_start;
-  int mem_length;
+  uint64_t mem_start;
+  uint64_t mem_length;
 
   memory() {}
-  memory(std::string, std::string, std::string, int, int, int);
+  memory(std::string, std::string, std::string, uint64_t, uint64_t);
 };
 
-memory::memory (std::string mtype, std::string alias, std::string name,
-		int base, int start, int length)
+memory::memory (std::string mtype, std::string alias, std::string name, uint64_t start, uint64_t length)
 {
   mem_type = mtype;
   mem_alias = alias;
   mem_name = name;
-  mem_base = base;
   mem_start = start;
   mem_length = length;
 }
@@ -88,6 +80,67 @@ static void alias_memory (std::string from, std::string to)
       break;
     }
   }
+}
+
+/* Helper functions for extracting the number of address cells and size
+ * cells for a node */
+
+static uint64_t get_address_cells(const node &n) {
+  if(n.field_exists("#address-cells")) {
+    return n.get_field<uint32_t>("#address-cells");
+  } else {
+    /* The node::num_addr_cells() method gets the address cells of the parent
+     * node */
+    return n.num_addr_cells();
+  }
+}
+
+static uint64_t get_size_cells(const node &n) {
+  if(n.field_exists("#size-cells")) {
+    return n.get_field<uint32_t>("#size-cells");
+  } else {
+    /* The node::num_size_cells() method gets the address cells of the parent
+     * node */
+    return n.num_size_cells();
+  }
+}
+
+/* Helper functions for getting the child address and size from a ranges property */
+
+static target_addr get_memory_ranges_address(const node &n) {
+  int child_addr_cells = get_address_cells(n);
+
+  auto cells = n.get_fields<uint32_t>("ranges");
+
+  if (child_addr_cells == 1) {
+    return cells.at(0);
+  } else if (child_addr_cells == 2) {
+    return cells.at(1);
+  } else {
+    std::cerr << "Node " << n.handle() << " has unsupported number of address cells " <<
+      std::to_string(child_addr_cells) << std::endl;
+  }
+
+  return 0;
+}
+
+static target_size get_memory_ranges_size(const node &n) {
+  int child_addr_cells = get_address_cells(n);
+  int parent_addr_cells = get_address_cells(n.parent());
+  int child_size_cells = get_size_cells(n);
+
+  auto cells = n.get_fields<uint32_t>("ranges");
+
+  if (child_size_cells == 1) {
+    return cells.at(child_addr_cells + parent_addr_cells);
+  } else if (child_size_cells == 2) {
+    return cells.at(child_addr_cells + parent_addr_cells + 1);
+  } else {
+    std::cerr << "Node " << n.handle() << " has unsupported number of size cells " <<
+      std::to_string(child_size_cells) << std::endl;
+  }
+
+  return cells.back();
 }
 
 template<typename Out>
@@ -168,61 +221,166 @@ static void get_dts_attribute (const string path, const string tag)
 
 static void dts_memory (void)
 {
-    int offset, depth = 0;
-
-    if (!dts_blob)
-        return;
-
-    std::cout << __FUNCTION__ << std::endl;
-
-    offset = fdt_path_offset(dts_blob, "/soc");
-    for (offset = fdt_next_node(dts_blob, offset, &depth);
-	 offset >= 0 && depth >= 0;
-	 offset = fdt_next_node(dts_blob, offset, &depth)) {
-        const char *nodep;
-        const char *regnamep, *s;
-	int regnamelen;
-
-        nodep = fdt_get_name(dts_blob, offset, NULL);
-	regnamep = (const char *)fdt_getprop(dts_blob, offset, "reg-names", &regnamelen);
-	if (regnamelen > 0) {
-	    const char *regp;
-	    int reglen, regidx;
-	    s = regnamep;
-	    regidx = 0;
-	    do {
-	        long base = 0;
-		std::vector<std::string> splices = split(string(nodep), '@');
-		regp = (const char *)fdt_getprop(dts_blob, offset, "reg", &reglen);
-		if (reglen > 0) {
-		    const fdt32_t *cell = (const fdt32_t *)regp;
-		    base = std::stol(splices[1], nullptr, 16);
-		    dts_memory_list.push_back(memory(s, splices[0], splices[0],
-						     base,
-						     fdt32_to_cpu(cell[regidx]),
-						     fdt32_to_cpu(cell[regidx + 1]))
-					      );
-		}
-		s += strlen(regnamep) + 1;
-		regidx += 2;
-	    } while (s < regnamep + regnamelen);
-	}
-    }
-    
-    int memory_count = 0;
-    int sram_count = 0;
     int dtim_count = 0;
+    int itim_count = 0;
+    int sram_count = 0;
+    int testram_count = 0;
+    int spi_count = 0;
+    int memory_count = 0;
+    int ahb_periph_count = 0;
+    int apb_periph_count = 0;
+    int axi4_periph_count = 0;
+    int tl_periph_count = 0;
+    int ahb_sys_count = 0;
+    int apb_sys_count = 0;
+    int axi4_sys_count = 0;
+    int tl_sys_count = 0;
 
-    for (auto it = dts_memory_list.begin(); it != dts_memory_list.end(); ++it) {
-      if (it->mem_alias.find("memory") != std::string::npos) {
-	memory_count += 1;
-      } else if (it->mem_alias.find("sram") != std::string::npos) {
-	sram_count += 1;
-      } else if (it->mem_alias.find("dtim") != std::string::npos) {
-	dtim_count += 1;
-      }
-    }
+    auto dtb = fdt((const uint8_t *)dts_blob);
+    dtb.match(
+        std::regex("memory"), [&](node n) {
+            auto name = n.name();
+            n.maybe_tuple(
+                "reg", tuple_t<target_addr, target_size>(),
+                [&]() {},
+		[&](target_addr base, target_size size) {
+                    if (memory_count == 0)
+                        dts_memory_list.push_back(memory("mem", "memory", "memory", base, size));
+                    memory_count++;
+                });
+        },
+        std::regex("sifive,dtim0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    if (dtim_count == 0)
+                        dts_memory_list.push_back(memory("mem", "dtim", "sifive,dtim0", base, size));
+                    dtim_count++;
+                });
+        },
+        std::regex("sifive,itim0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    if (itim_count == 0)
+                        dts_memory_list.push_back(memory("mem", "itim", "sifive,itim0", base, size));
+                    itim_count++;
+                });
+        },
+        std::regex("sifive,testram0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    if (testram_count == 0)
+                        dts_memory_list.push_back(memory("mem", "testram", "sifive,testram0", base, size));
+                    testram_count++;
+                });
+        },
+        std::regex("sifive,ahb-periph-port"), [&](node n) {
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (ahb_periph_count == 0)
+                    dts_memory_list.push_back(memory("mem", "ahb_periph_ram", "sifive,ahb-periph-port", address, size));
 
+                ahb_periph_count++;
+            }
+        },
+        std::regex("sifive,apb-periph-port"), [&](node n) {
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (apb_periph_count == 0)
+                    dts_memory_list.push_back(memory("mem", "apb_periph_ram", "sifive,apb-periph-port", address, size));
+
+                apb_periph_count++;
+            }
+        },
+        std::regex("sifive,axi4-periph-port"), [&](node n) {
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (axi4_periph_count == 0)
+                    dts_memory_list.push_back(memory("mem", "axi4_periph_ram", "sifive,axi4-periph-port", address, size));
+
+                axi4_periph_count++;
+            }
+        },
+        std::regex("sifive,tl-periph-port"), [&](node n) {
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (tl_periph_count == 0)
+                    dts_memory_list.push_back(memory("mem", "tl_periph_ram", "sifive,tl-periph-port", address, size));
+
+                tl_periph_count++;
+            }
+        },
+        std::regex("sifive,ahb-sys-port"), [&](node n) {
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (ahb_sys_count == 0)
+                    dts_memory_list.push_back(memory("mem", "ahb_sys_ram", "sifive,ahb-sys-port", address, size));
+
+                ahb_sys_count++;
+            }
+        },
+        std::regex("sifive,apb-sys-port"), [&](node n) {
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (apb_sys_count == 0)
+                    dts_memory_list.push_back(memory("mem", "apb_sys_ram", "sifive,apb-sys-port", address, size));
+
+                apb_sys_count++;
+            }
+        },
+        std::regex("sifive,axi4-sys-port"), [&](node n) {
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (axi4_sys_count == 0)
+                    dts_memory_list.push_back(memory("mem", "axi4_sys_ram", "sifive,axi4-sys-port", address, size));
+
+                axi4_sys_count++;
+            }
+        },
+        std::regex("sifive,tl-sys-port"), [&](node n) {
+            if (n.field_exists("ranges")) {
+              target_addr address = get_memory_ranges_address(n);
+              target_size size = get_memory_ranges_size(n);
+                if (tl_sys_count == 0)
+                    dts_memory_list.push_back(memory("mem", "tl_sys_ram", "sifive,tl-sys-port", address, size));
+
+                tl_sys_count++;
+            }
+        },
+        std::regex("sifive,sram0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+		  dts_memory_list.push_back(memory("mem", "sram" + std::to_string(sram_count),
+						 "sifive,sram0", base, size));
+                  sram_count++;
+                });
+        },
+        std::regex("sifive,spi0"), [&](node n) {
+            auto name = n.name();
+            n.named_tuples(
+                "reg-names", "reg",
+                "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {},
+                "mem", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
+                    if (spi_count == 0)
+                        dts_memory_list.push_back(memory("mem", "spi", "sifive,spi0", base, size));
+                    spi_count++;
+                });
+        });
+    
     if (memory_count > 0) {
       alias_memory("memory", "ram");
     } else if (sram_count > 1) {
@@ -308,7 +466,7 @@ static void write_config_file (fstream &os, std::string board)
     os << "flash bank spi0 fespi 0x"
        << std::hex << (mem_found ? spi_mem.mem_start : 0);
     os << " 0 0 0 $_TARGETNAME.0 0x"
-       << (cntrl_found ? spi_cntrl.mem_base : 0) << std::dec << std::endl;
+       << (cntrl_found ? spi_cntrl.mem_start : 0) << std::dec << std::endl;
 
     os << "init" << std::endl;
     os << "if {[ info exists pulse_srst]} {" << std::endl;

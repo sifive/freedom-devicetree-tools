@@ -141,7 +141,7 @@ freedom_metal_specs_generator_OBJECTS =  \
 	$(am_freedom_metal_specs_generator_OBJECTS)
 freedom_metal_specs_generator_LDADD = $(LDADD)
 am_freedom_openocdcfg_generator_OBJECTS =  \
-	freedom-openocdcfg-generator.$(OBJEXT)
+	freedom-openocdcfg-generator.$(OBJEXT) fdt.$(OBJEXT)
 freedom_openocdcfg_generator_OBJECTS =  \
 	$(am_freedom_openocdcfg_generator_OBJECTS)
 freedom_openocdcfg_generator_LDADD = $(LDADD)
@@ -553,7 +553,8 @@ freedom_ldscript_generator_SOURCES = \
 	fdt.c++
 
 freedom_openocdcfg_generator_SOURCES = \
-	freedom-openocdcfg-generator.c++
+	freedom-openocdcfg-generator.c++ \
+	fdt.c++
 
 freedom_makeattributes_generator_SOURCES = \
 	freedom-makeattributes-generator.c++ \
