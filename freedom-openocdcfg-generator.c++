@@ -407,7 +407,7 @@ static void write_config_file (fstream &os, std::string board)
     os << "adapter_khz     10000" << std::endl << std::endl;
 
     os << "interface ftdi" << std::endl;
-    if (board.compare("hifive1") == 0) {
+    if (board.compare("hifive") == 0) {
       os << "ftdi_device_desc \"Dual RS232-HS\"" << std::endl;
       os << "ftdi_vid_pid 0x0403 0x6010" << std::endl << std::endl;
 
@@ -509,9 +509,9 @@ int main (int argc, char* argv[])
           if ((arg == "-b") || (arg == "--board")) {
               if (i + 1 < argc) {
                   board = argv[++i];
-		  if ((board.compare("arty") != 0) &&
-		      (board.compare("hifive1") != 0)) {
-		    std::cerr << "Possible options are <arty | hifive1>."
+		  if ((board.find("arty") != string::npos) &&
+		      (board.find("hifive") != string::npos)) {
+		    std::cerr << "Possible options are <arty | hifive>."
 			      << std::endl;
 		    return 1;
 		  }
