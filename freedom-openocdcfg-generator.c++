@@ -373,7 +373,7 @@ static void dts_memory (void)
     
     if (memory_count > 0) {
       alias_memory("memory", "ram");
-    } else if (sram_count > 1) {
+    } else if (sram_count > 0) {
       alias_memory("sram", "ram");
     } else if (dtim_count > 0) {
       alias_memory("dtim", "ram");
