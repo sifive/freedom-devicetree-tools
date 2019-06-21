@@ -407,7 +407,7 @@ static void write_config_file (fstream &os, std::string board)
     os << "adapter_khz     10000" << std::endl << std::endl;
 
     os << "interface ftdi" << std::endl;
-    if (board.compare("hifive") == 0) {
+    if (board.find("hifive") != string::npos) {
       os << "ftdi_device_desc \"Dual RS232-HS\"" << std::endl;
       os << "ftdi_vid_pid 0x0403 0x6010" << std::endl << std::endl;
 
