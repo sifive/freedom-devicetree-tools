@@ -41,7 +41,7 @@ class fixed_clock : public Device {
 	  if (count == 0) {
 	    func = create_inline_dec("rate",
 				     "unsigned long",
-				     "struct metal_clock *clock");
+				     "const struct metal_clock *clock");
 	    extern_inlines.push_back(func);
 	  }
           count++;
@@ -72,7 +72,7 @@ class fixed_clock : public Device {
 				     "unsigned long",
 				     "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 				     platform_define(n, METAL_CLOCK_FREQUENCY_LABEL),
-				     "struct metal_clock *clock");
+				     "const struct metal_clock *clock");
 	    extern_inlines.push_back(func);
 	  }
 	  if (count > 0) {
