@@ -7,6 +7,7 @@
 std::string arch2arch(std::string arch)
 {
     if (arch == "rv32e")      return "rv32e";
+    if (arch == "rv32ea")     return "rv32e";
     if (arch == "rv32ec")     return "rv32ec";
     if (arch == "rv32em")     return "rv32em";
     if (arch == "rv32ema")    return "rv32em";
@@ -15,6 +16,7 @@ std::string arch2arch(std::string arch)
     if (arch == "rv32emafc")  return "rv32emafc";
     if (arch == "rv32emafdc") return "rv32emafdc";
     if (arch == "rv32i")      return "rv32i";
+    if (arch == "rv32ia")     return "rv32i";
     if (arch == "rv32ic")     return "rv32ic";
     if (arch == "rv32im")     return "rv32im";
     if (arch == "rv32ima")    return "rv32im";
@@ -24,6 +26,7 @@ std::string arch2arch(std::string arch)
     if (arch == "rv32imafc")  return "rv32imafc";
     if (arch == "rv32imafdc") return "rv32imafdc";
     if (arch == "rv64i")      return "rv64i";
+    if (arch == "rv64ia")     return "rv64i";
     if (arch == "rv64ic")     return "rv64ic";
     if (arch == "rv64im")     return "rv64im";
     if (arch == "rv64ima")    return "rv64im";
@@ -45,6 +48,7 @@ std::string arch2arch(std::string arch)
 std::string arch2abi(std::string arch)
 {
     if (arch == "rv32e")      return "ilp32e";
+    if (arch == "rv32ea")     return "ilp32e";
     if (arch == "rv32ec")     return "ilp32e";
     if (arch == "rv32em")     return "ilp32e";
     if (arch == "rv32ema")    return "ilp32e";
@@ -53,6 +57,7 @@ std::string arch2abi(std::string arch)
     if (arch == "rv32emafc")  return "ilp32f";
     if (arch == "rv32emafdc") return "ilp32d";
     if (arch == "rv32i")      return "ilp32";
+    if (arch == "rv32ia")     return "ilp32";
     if (arch == "rv32ic")     return "ilp32";
     if (arch == "rv32im")     return "ilp32";
     if (arch == "rv32ima")    return "ilp32";
@@ -62,6 +67,7 @@ std::string arch2abi(std::string arch)
     if (arch == "rv32imafc")  return "ilp32f";
     if (arch == "rv32imafdc") return "ilp32d";
     if (arch == "rv64i")      return "lp64";
+    if (arch == "rv64ia")     return "lp64";
     if (arch == "rv64ic")     return "lp64";
     if (arch == "rv64im")     return "lp64";
     if (arch == "rv64ima")    return "lp64";
