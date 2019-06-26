@@ -11,6 +11,7 @@ std::string arch2arch(std::string arch)
     if (arch == "rv32ec")     return "rv32ec";
     if (arch == "rv32em")     return "rv32em";
     if (arch == "rv32ema")    return "rv32em";
+    if (arch == "rv32emc")    return "rv32em";
     if (arch == "rv32eac")    return "rv32eac";
     if (arch == "rv32emac")   return "rv32emac";
     if (arch == "rv32emafc")  return "rv32emafc";
@@ -52,6 +53,7 @@ std::string arch2abi(std::string arch)
     if (arch == "rv32ec")     return "ilp32e";
     if (arch == "rv32em")     return "ilp32e";
     if (arch == "rv32ema")    return "ilp32e";
+    if (arch == "rv32emc")    return "ilp32e";
     if (arch == "rv32eac")    return "ilp32e";
     if (arch == "rv32emac")   return "ilp32e";
     if (arch == "rv32emafc")  return "ilp32f";
