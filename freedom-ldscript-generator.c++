@@ -769,7 +769,7 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     }
 
     os << std::endl << std::endl;
-    os << "\t. = ALIGN(4);" << std::endl;
+    os << "\t. = ALIGN(8);" << std::endl;
 
     os << std::endl << std::endl;
     /* Define preinit_array section */
@@ -859,7 +859,7 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     /* Define litimalign section */
     os << "\t.litimalign \t\t:" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\t. = ALIGN(4);" << std::endl;
+    os << "\t\t. = ALIGN(8);" << std::endl;
     os << "\t\tPROVIDE( metal_segment_itim_source_start = . );" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram" << std::endl;
@@ -871,7 +871,7 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     /* Define ditimalign section */
     os << "\t.ditimalign \t\t:" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\t. = ALIGN(4);" << std::endl;
+    os << "\t\t. = ALIGN(8);" << std::endl;
     os << "\t\tPROVIDE( metal_segment_itim_target_start = . );" << std::endl;
     if (itim || has_memory("itim")) {
       if (scratchpad) {
@@ -914,7 +914,6 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
 
     os << std::endl << std::endl;
     /* Define end labels */
-    os << "\t. = ALIGN(8);" << std::endl;
     os << "\tPROVIDE( metal_segment_itim_target_end = . );" << std::endl;
 
     if (ramrodata) {
@@ -943,7 +942,7 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     /* Define lalign section */
     os << "\t.lalign \t\t:" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\t. = ALIGN(4);" << std::endl;
+    os << "\t\t. = ALIGN(8);" << std::endl;
     os << "\t\tPROVIDE( _data_lma = . );" << std::endl;
     os << "\t\tPROVIDE( metal_segment_data_source_start = . );" << std::endl;
     if (scratchpad) {
@@ -956,7 +955,7 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     /* Define dalign section */
     os << "\t.dalign \t\t:" << std::endl;
     os << "\t{" << std::endl;
-    os << "\t\t. = ALIGN(4);" << std::endl;
+    os << "\t\t. = ALIGN(8);" << std::endl;
     os << "\t\tPROVIDE( metal_segment_data_target_start = . );" << std::endl;
     if (scratchpad) {
       os << "\t} >ram AT>ram :ram_init" << std::endl;
@@ -993,7 +992,6 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
 
     os << std::endl << std::endl;
     /* Define some more end.. labels */
-    os << "\t. = ALIGN(4);" << std::endl;
     os << "\tPROVIDE( _edata = . );" << std::endl;
     os << "\tPROVIDE( edata = . );" << std::endl;
     os << "\tPROVIDE( metal_segment_data_target_end = . );" << std::endl;
@@ -1011,12 +1009,10 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     os << "\t\t*(.bss .bss.*)" << std::endl;
     os << "\t\t*(.gnu.linkonce.b.*)" << std::endl;
     os << "\t\t*(COMMON)" << std::endl;
-    os << "\t\t. = ALIGN(4);" << std::endl;
     os << "\t} >ram AT>ram :ram" << std::endl;
 
     os << std::endl << std::endl;
     /* Define end labels */
-    os << "\t. = ALIGN(8);" << std::endl;
     os << "\tPROVIDE( _end = . );" << std::endl;
     os << "\tPROVIDE( end = . );" << std::endl;
     os << "\tPROVIDE( metal_segment_bss_target_end = . );" << std::endl;
