@@ -100,7 +100,7 @@ static target_addr get_memory_ranges_address(const node &n) {
   if (child_addr_cells == 1) {
     return cells.at(0);
   } else if (child_addr_cells == 2) {
-    return cells.at(1);
+    return ( (target_addr) cells.at(0) << 32) + (target_addr) cells.at(1);
   } else {
     std::cerr << "Node " << n.handle() << " has unsupported number of address cells " <<
       std::to_string(child_addr_cells) << std::endl;
@@ -119,7 +119,7 @@ static target_size get_memory_ranges_size(const node &n) {
   if (child_size_cells == 1) {
     return cells.at(child_addr_cells + parent_addr_cells);
   } else if (child_size_cells == 2) {
-    return cells.at(child_addr_cells + parent_addr_cells + 1);
+    return ( (target_addr) cells.at(child_addr_cells + parent_addr_cells) << 32) + (target_addr) cells.at(child_addr_cells + parent_addr_cells + 1);
   } else {
     std::cerr << "Node " << n.handle() << " has unsupported number of size cells " <<
       std::to_string(child_size_cells) << std::endl;
