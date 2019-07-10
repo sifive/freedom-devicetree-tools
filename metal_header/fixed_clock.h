@@ -60,7 +60,7 @@ class fixed_clock : public Device {
 
     void define_inlines()
     {
-      Inline* func;
+      Inline* rate_func;
       std::list<Inline *> extern_inlines;
 
       int count = 0;
@@ -68,28 +68,32 @@ class fixed_clock : public Device {
 	std::regex(compat_string),
 	[&](node n) {
 	  if (count == 0) {
-	    func = create_inline_def("rate",
-				     "unsigned long",
-				     "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
-				     platform_define(n, METAL_CLOCK_FREQUENCY_LABEL),
-				     "const struct metal_clock *clock");
-	    extern_inlines.push_back(func);
+	    rate_func = create_inline_def("rate",
+				          "unsigned long",
+				          "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
+				          platform_define(n, METAL_CLOCK_FREQUENCY_LABEL),
+				          "const struct metal_clock *clock");
 	  }
 	  if (count > 0) {
-	    add_inline_body(func,
+	    add_inline_body(rate_func,
 			    "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 			    platform_define(n, METAL_CLOCK_FREQUENCY_LABEL));
 	  }
 	  if ((count + 1) == num_clocks) {
-	    add_inline_body(func, "else", "0");
+	    add_inline_body(rate_func, "else", "0");
 	  }
 	  count++;
 	}
       );
+
+      if (count > 0) {
+	extern_inlines.push_back(rate_func);
+      }
+
       os << "\n";
       os << "/* --------------------- fixed_clock ------------ */\n";
       while (!extern_inlines.empty()) {
-	func = extern_inlines.front();
+	Inline *func = extern_inlines.front();
 	extern_inlines.pop_front();
 	emit_inline_def(func, "fixed_clock");
 	delete func;
