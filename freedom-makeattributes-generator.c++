@@ -187,6 +187,22 @@ static string get_dts_attribute (const string path, const string tag)
     return string(value);
 }
 
+static bool dcache_dts_attribute_present (const string tag)
+{   
+    auto dtb = fdt((const uint8_t *)dts_blob);
+    bool found = false;
+    dtb.match(
+        std::regex("cpu"), [&](node n) {
+            auto name = n.name();
+            if (n.field_exists("d-cache-size") && (name.compare(tag) == 0)) {
+                std::cout << "dcache available on " << tag << std::endl;
+                found = true;
+            }
+        }
+    );
+    return found;
+}
+
 static void memory_port_width ()
 {
     if (!dts_blob)
@@ -505,6 +521,12 @@ static void write_config_file (fstream &os, std::string board, std::string relea
       // If CPU 0 doesn't have mmu-type, make sure that CPU 1 (if it exists)
       // also doesn't. This is needed for U54-MC, where CPU 0 is the S51 hart.
       mmutype = get_dts_attribute("/cpus/cpu@1", "mmu-type");
+    }
+
+    if (dcache_dts_attribute_present("cpu@" + std::to_string(boot_hart))) {
+        os << "DCACHE_PRESENT=true" << std::endl;
+    } else {
+        os << "DCACHE_PRESENT=false" << std::endl;
     }
 
     if (board.find("rtl") != std::string::npos) {
