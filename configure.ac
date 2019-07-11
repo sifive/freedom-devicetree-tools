@@ -7,7 +7,7 @@ AC_INIT([freedom-devicetree-tools], [m4_esyscmd_s([./scripts/git-version])], [bs
 AC_CONFIG_MACRO_DIR([m4])
 
 # Initializes automake, disabling maintainer mode
-AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
 AM_MAINTAINER_MODE([disable])
 
 # Looks up the key toolchain programs that are used when building libsifive,
