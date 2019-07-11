@@ -2,43 +2,43 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
 /* DeviceTree Library */
-#include "fdt.h++"
-#include "libfdt.h++"
+#include <fdt.h++>
+#include <libfdt.h++>
 
 /* Generic Devices */
-#include "metal_header/device.h"
-#include "metal_header/fixed_clock.h"
-#include "metal_header/fixed_factor_clock.h"
-#include "metal_header/memory.h"
-#include "metal_header/stdout_path.h"
+#include <device.h>
+#include <fixed_clock.h>
+#include <fixed_factor_clock.h>
+#include <memory.h>
+#include <stdout_path.h>
 
-/* RISC-V Devices */
-#include "metal_header/riscv_clint0.h"
-#include "metal_header/riscv_cpu.h"
-#include "metal_header/riscv_cpu_intc.h"
-#include "metal_header/riscv_plic0.h"
-#include "metal_header/riscv_pmp.h"
+/** RISC-V Devices */
+#include <riscv_clint0.h>
+#include <riscv_cpu.h>
+#include <riscv_cpu_intc.h>
+#include <riscv_plic0.h>
+#include <riscv_pmp.h>
 
 /* SiFive Blocks */
-#include "metal_header/sifive_clic0.h"
-#include "metal_header/sifive_local_external_interrupts0.h"
-#include "metal_header/sifive_global_external_interrupts0.h"
-#include "metal_header/sifive_gpio0.h"
-#include "metal_header/sifive_gpio_button.h"
-#include "metal_header/sifive_gpio_led.h"
-#include "metal_header/sifive_gpio_switch.h"
-#include "metal_header/sifive_spi0.h"
-#include "metal_header/sifive_test0.h"
-#include "metal_header/sifive_uart0.h"
+#include <sifive_clic0.h>
+#include <sifive_local_external_interrupts0.h>
+#include <sifive_global_external_interrupts0.h>
+#include <sifive_gpio0.h>
+#include <sifive_gpio_button.h>
+#include <sifive_gpio_led.h>
+#include <sifive_gpio_switch.h>
+#include <sifive_spi0.h>
+#include <sifive_test0.h>
+#include <sifive_uart0.h>
 
 /* FE310-G000 Devices */
-#include "metal_header/sifive_fe310_g000_hfrosc.h"
-#include "metal_header/sifive_fe310_g000_hfxosc.h"
-#include "metal_header/sifive_fe310_g000_pll.h"
-#include "metal_header/sifive_fe310_g000_prci.h"
+#include <sifive_fe310_g000_hfrosc.h>
+#include <sifive_fe310_g000_hfxosc.h>
+#include <sifive_fe310_g000_pll.h>
+#include <sifive_fe310_g000_prci.h>
 
 /* FU540-C000 Devices */
-#include "metal_header/sifive_fu540_c000_l2.h"
+#include <sifive_fu540_c000_l2.h>
 
 /* STL */
 #include <fstream>
