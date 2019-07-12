@@ -197,6 +197,16 @@ class riscv_cpu : public Device {
     {
       emit_def("__METAL_DT_MAX_HARTS", std::to_string(num_cpus));
 
+      dtb.match(
+          std::regex(compat_string),
+          [&](node n) {
+              auto name = n.name();
+              if (n.field_exists("d-cache-size")) {
+                  emit_def("__METAL_" + n.handle_cap() + "_DCACHE_HANDLE", std::to_string(1));
+              }
+          }
+      );
+
       emit_struct_pointer_begin("cpu", "__metal_cpu_table", "[]");
       for(int i = 0; i < num_cpus; i++) {
 	emit_struct_pointer_element("cpu", i, "",
