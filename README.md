@@ -40,6 +40,7 @@ The following packages are necessary to build from a tarball
 
 * `build-essential`
 * `libfdt-dev`
+* `device-tree-compiler`
 
 Additionally, the following packages are necessary to build from git
 sources:
@@ -47,8 +48,3 @@ sources:
 * `autoconf`
 * `automake`
 * `git`
-
-If you're planning on running the test cases, then you'll also need the
-following programs
-
-* `device-tree-compiler`
