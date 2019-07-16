@@ -30,6 +30,7 @@
 #include <sifive_spi0.h>
 #include <sifive_test0.h>
 #include <sifive_uart0.h>
+#include <sifive_wdog0.h>
 
 /* FE310-G000 Devices */
 #include <sifive_fe310_g000_hfrosc.h>
@@ -154,6 +155,7 @@ static void prepare_devices(const fdt &dtb, fstream &os, std::list<Device *>& de
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
+  devices.push_back(new sifive_wdog0(os, dtb));
 
   /* FE310-G000 Devices */
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
