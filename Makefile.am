@@ -7,7 +7,6 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-makeattributes-generator \
 		freedom-metal_header-generator \
 		freedom-bare_header-generator \
-		freedom-zephyrdtsfixup-generator \
 		freedom-metal_specs-generator
 
 freedom_ldscript_generator_SOURCES = \
@@ -84,10 +83,6 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_test0.h \
 	bare_header/sifive_uart0.h
 
-freedom_zephyrdtsfixup_generator_SOURCES = \
-	freedom-zephyrdtsfixup-generator.c++ \
-	fdt.c++
-
 freedom_metal_specs_generator_SOURCES = \
 	freedom-metal_specs-generator.c++ \
 	fdt.c++
@@ -117,7 +112,6 @@ TESTS      += tests/hifive1-ldscript.bash
 TESTS      += tests/hifive1-openocd.bash
 TESTS      += tests/hifive1-makeattributes.bash
 TESTS      += tests/hifive1-metal_header.bash
-TESTS      += tests/hifive1-zephyrdtsfixup.bash
 TESTS      += tests/hifive1-metal_specs.bash
 EXTRA_DIST += tests/hifive1.dts
 #TESTS      += tests/e31-eval-ldscript.bash

@@ -94,7 +94,6 @@ bin_PROGRAMS = freedom-ldscript-generator$(EXEEXT) \
 	freedom-makeattributes-generator$(EXEEXT) \
 	freedom-metal_header-generator$(EXEEXT) \
 	freedom-bare_header-generator$(EXEEXT) \
-	freedom-zephyrdtsfixup-generator$(EXEEXT) \
 	freedom-metal_specs-generator$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -145,11 +144,6 @@ am_freedom_openocdcfg_generator_OBJECTS =  \
 freedom_openocdcfg_generator_OBJECTS =  \
 	$(am_freedom_openocdcfg_generator_OBJECTS)
 freedom_openocdcfg_generator_LDADD = $(LDADD)
-am_freedom_zephyrdtsfixup_generator_OBJECTS =  \
-	freedom-zephyrdtsfixup-generator.$(OBJEXT) fdt.$(OBJEXT)
-freedom_zephyrdtsfixup_generator_OBJECTS =  \
-	$(am_freedom_zephyrdtsfixup_generator_OBJECTS)
-freedom_zephyrdtsfixup_generator_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -196,15 +190,13 @@ SOURCES = $(freedom_bare_header_generator_SOURCES) \
 	$(freedom_makeattributes_generator_SOURCES) \
 	$(freedom_metal_header_generator_SOURCES) \
 	$(freedom_metal_specs_generator_SOURCES) \
-	$(freedom_openocdcfg_generator_SOURCES) \
-	$(freedom_zephyrdtsfixup_generator_SOURCES)
+	$(freedom_openocdcfg_generator_SOURCES)
 DIST_SOURCES = $(freedom_bare_header_generator_SOURCES) \
 	$(freedom_ldscript_generator_SOURCES) \
 	$(freedom_makeattributes_generator_SOURCES) \
 	$(freedom_metal_header_generator_SOURCES) \
 	$(freedom_metal_specs_generator_SOURCES) \
-	$(freedom_openocdcfg_generator_SOURCES) \
-	$(freedom_zephyrdtsfixup_generator_SOURCES)
+	$(freedom_openocdcfg_generator_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -622,10 +614,6 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_test0.h \
 	bare_header/sifive_uart0.h
 
-freedom_zephyrdtsfixup_generator_SOURCES = \
-	freedom-zephyrdtsfixup-generator.c++ \
-	fdt.c++
-
 freedom_metal_specs_generator_SOURCES = \
 	freedom-metal_specs-generator.c++ \
 	fdt.c++
@@ -651,10 +639,8 @@ TESTS = tests/e31-arty-ldscript.bash tests/e31-arty-openocd.bash \
 	tests/qemu-sifive_e-32-metal_header.bash \
 	tests/hifive1-ldscript.bash tests/hifive1-openocd.bash \
 	tests/hifive1-makeattributes.bash \
-	tests/hifive1-metal_header.bash \
-	tests/hifive1-zephyrdtsfixup.bash \
-	tests/hifive1-metal_specs.bash tests/e31-eval-openocd.bash \
-	tests/e31-eval-metal_header.bash \
+	tests/hifive1-metal_header.bash tests/hifive1-metal_specs.bash \
+	tests/e31-eval-openocd.bash tests/e31-eval-metal_header.bash \
 	tests/multi-e31-arty-ldscript.bash \
 	tests/multi-e31-arty-openocd.bash \
 	tests/multi-e31-arty-makeattributes.bash \
@@ -801,10 +787,6 @@ freedom-openocdcfg-generator$(EXEEXT): $(freedom_openocdcfg_generator_OBJECTS) $
 	@rm -f freedom-openocdcfg-generator$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(freedom_openocdcfg_generator_OBJECTS) $(freedom_openocdcfg_generator_LDADD) $(LIBS)
 
-freedom-zephyrdtsfixup-generator$(EXEEXT): $(freedom_zephyrdtsfixup_generator_OBJECTS) $(freedom_zephyrdtsfixup_generator_DEPENDENCIES) $(EXTRA_freedom_zephyrdtsfixup_generator_DEPENDENCIES) 
-	@rm -f freedom-zephyrdtsfixup-generator$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(freedom_zephyrdtsfixup_generator_OBJECTS) $(freedom_zephyrdtsfixup_generator_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f bare_header/*.$(OBJEXT)
@@ -818,7 +800,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom-makeattributes-generator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom-metal_specs-generator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom-openocdcfg-generator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom-zephyrdtsfixup-generator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@bare_header/$(DEPDIR)/device.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@bare_header/$(DEPDIR)/freedom-bare_header-generator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/device.Po@am__quote@
@@ -1148,13 +1129,6 @@ tests/hifive1-makeattributes.bash.log: tests/hifive1-makeattributes.bash
 tests/hifive1-metal_header.bash.log: tests/hifive1-metal_header.bash
 	@p='tests/hifive1-metal_header.bash'; \
 	b='tests/hifive1-metal_header.bash'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/hifive1-zephyrdtsfixup.bash.log: tests/hifive1-zephyrdtsfixup.bash
-	@p='tests/hifive1-zephyrdtsfixup.bash'; \
-	b='tests/hifive1-zephyrdtsfixup.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
