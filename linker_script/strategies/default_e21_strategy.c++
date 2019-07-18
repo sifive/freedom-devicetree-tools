@@ -55,7 +55,7 @@ LinkerScript DefaultE21Strategy::create_layout(const fdt &dtb, list<Memory> avai
   }
 
   /* Generate the layouts */
-  print_chosen_strategy("DefaultE21Strategy", link_strategy, ram_memory, rom_memory, itim_memory);
+  print_chosen_strategy(dtb, "DefaultE21Strategy", link_strategy, ram_memory, rom_memory, itim_memory);
 
   switch (link_strategy) {
   default:

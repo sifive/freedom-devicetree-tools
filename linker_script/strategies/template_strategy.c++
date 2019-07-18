@@ -43,7 +43,7 @@ LinkerScript TemplateStrategy::create_layout(const fdt &dtb, list<Memory> availa
   }
 
   /* Generate the layouts */
-  print_chosen_strategy("TemplateStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
+  print_chosen_strategy(dtb, "TemplateStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
 
   switch (link_strategy) {
   default:

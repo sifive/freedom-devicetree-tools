@@ -96,9 +96,9 @@ LinkerScript ChosenStrategy::create_layout(const fdt &dtb, list<Memory> availabl
   /* Generate the layouts */
 
   if (has_itim) {
-    print_chosen_strategy("ChosenStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
+    print_chosen_strategy(dtb, "ChosenStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
   } else {
-    print_chosen_strategy("ChosenStrategy", link_strategy, ram_memory, rom_memory, ram_memory);
+    print_chosen_strategy(dtb, "ChosenStrategy", link_strategy, ram_memory, rom_memory, ram_memory);
   }
 
   switch (link_strategy) {
