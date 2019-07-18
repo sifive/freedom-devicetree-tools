@@ -16,6 +16,12 @@ using std::regex;
 using std::setw;
 using std::string;
 
+/* TestRam Compatible Strings
+ *
+ * Devices which match these strings are potential candidates for being the
+ * reset vector in RTL simulation. They are kept in order corresponding to the
+ * heuristic for reset vector selection
+ */
 static list<string> testram_compats = {
   "sifive,ahb-periph-port",
   "sifive,apb-periph-port",

@@ -132,27 +132,37 @@ int main (int argc, char* argv[])
     }
   };
 
+  /* Memory Devices Compatible Strings
+   *
+   * These are the devices to extract from the DeviceTree to consider in
+   * map strategies. The list is in no particular order (sorted alphabetically
+   * for readability).
+   *
+   * A sister list is maintained in linker_script/map_strategy.c++ which
+   * defines the set of devices which should be considered for reset vector
+   * identification in RTL simulation.
+   */
   list<string> memory_devices = {
+    "memory",
+    "sifive,ahb-mem-port",
+    "sifive,ahb-periph-port",
+    "sifive,ahb-sys-port",
+    "sifive,apb-mem-port",
+    "sifive,apb-periph-port",
+    "sifive,apb-sys-port",
+    "sifive,axi4-mem-port",
+    "sifive,axi4-periph-port",
+    "sifive,axi4-sys-port",
     "sifive,dtim0",
     "sifive,itim0",
+    "sifive,mem-port",
+    "sifive,periph-port",
     "sifive,spi0",
     "sifive,sram0",
-    "memory",
-    "sifive,axi4-periph-port",
-    "sifive,ahb-periph-port",
-    "sifive,apb-periph-port",
-    "sifive,tl-periph-port",
-    "sifive,axi4-sys-port",
-    "sifive,ahb-sys-port",
-    "sifive,apb-sys-port",
-    "sifive,tl-sys-port",
-    "sifive,axi4-mem-port",
-    "sifive,ahb-mem-port",
-    "sifive,apb-mem-port",
-    "sifive,tl-mem-port",
-    "sifive,periph-port",
     "sifive,sys-port",
-    "sifive,mem-port",
+    "sifive,tl-mem-port",
+    "sifive,tl-periph-port",
+    "sifive,tl-sys-port",
   };
   list<Memory> memories;
 
