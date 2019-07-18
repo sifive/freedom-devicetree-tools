@@ -20,7 +20,7 @@ LinkerScript DefaultE20Strategy::create_layout(const fdt &dtb, list<Memory> avai
   rom_memory.attributes = "wxa!ri";
 
   /* Generate the layouts */
-  print_chosen_strategy("DefaultE20Strategy", link_strategy, rom_memory, rom_memory, rom_memory);
+  print_chosen_strategy(dtb, "DefaultE20Strategy", link_strategy, rom_memory, rom_memory, rom_memory);
 
   switch (link_strategy) {
   default:

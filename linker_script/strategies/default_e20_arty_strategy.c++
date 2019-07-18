@@ -43,7 +43,7 @@ LinkerScript DefaultE20ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
   }
 
   /* Generate the layouts */
-  print_chosen_strategy("DefaultE20ArtyStrategy", link_strategy, ram_memory, rom_memory, ram_memory);
+  print_chosen_strategy(dtb, "DefaultE20ArtyStrategy", link_strategy, ram_memory, rom_memory, ram_memory);
 
   switch (link_strategy) {
   default:

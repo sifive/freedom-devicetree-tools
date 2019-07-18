@@ -6,6 +6,7 @@
 /freedom-openocdcfg-generator
 /freedom-makeattributes-generator
 /freedom-zephyrdtsfixup-generator
+/ldscript_cmodel_unit
 *.o
 *.swp
 .deps

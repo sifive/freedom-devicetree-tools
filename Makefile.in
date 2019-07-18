@@ -95,6 +95,34 @@ bin_PROGRAMS = freedom-ldscript-generator$(EXEEXT) \
 	freedom-metal_header-generator$(EXEEXT) \
 	freedom-bare_header-generator$(EXEEXT) \
 	freedom-metal_specs-generator$(EXEEXT)
+TESTS = ldscript_cmodel_unit$(EXEEXT) tests/e31-arty-ldscript.bash \
+	tests/e31-arty-openocd.bash tests/e31-arty-makeattributes.bash \
+	tests/e31-arty-metal_header.bash tests/e51-arty-ldscript.bash \
+	tests/e51-arty-openocd.bash tests/e51-arty-makeattributes.bash \
+	tests/e51-arty-metal_header.bash \
+	tests/qemu-sifive_e-32-ldscript.bash \
+	tests/qemu-sifive_e-32-openocd.bash \
+	tests/qemu-sifive_e-32-makeattributes.bash \
+	tests/qemu-sifive_e-32-metal_header.bash \
+	tests/hifive1-ldscript.bash tests/hifive1-openocd.bash \
+	tests/hifive1-makeattributes.bash \
+	tests/hifive1-metal_header.bash tests/hifive1-metal_specs.bash \
+	tests/e31-eval-openocd.bash tests/e31-eval-metal_header.bash \
+	tests/multi-e31-arty-ldscript.bash \
+	tests/multi-e31-arty-openocd.bash \
+	tests/multi-e31-arty-makeattributes.bash \
+	tests/multi-e31-arty-metal_header.bash \
+	tests/e31-bigmem-ldscript.bash tests/e31-bigmem-openocd.bash \
+	tests/e31-bigmem-makeattributes.bash \
+	tests/e31-bigmem-metal_header.bash tests/e34-eval-openocd.bash \
+	tests/e34-eval-metal_header.bash \
+	tests/e34-eval-metal_specs.bash tests/e31-memory-ldscript.bash \
+	tests/e31-memory-openocd.bash \
+	tests/e31-memory-metal_header.bash \
+	tests/e31-ranges-openocd.bash \
+	tests/e31-ranges-makeattributes.bash \
+	tests/e31-ranges-metal_header.bash
+check_PROGRAMS = ldscript_cmodel_unit$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_compile_stdcxx.m4 \
@@ -118,9 +146,7 @@ am_freedom_bare_header_generator_OBJECTS = fdt.$(OBJEXT) \
 freedom_bare_header_generator_OBJECTS =  \
 	$(am_freedom_bare_header_generator_OBJECTS)
 freedom_bare_header_generator_LDADD = $(LDADD)
-am_freedom_ldscript_generator_OBJECTS =  \
-	freedom_ldscript_generator-fdt.$(OBJEXT) \
-	linker_script/freedom_ldscript_generator-freedom-ldscript-generator.$(OBJEXT) \
+am__objects_1 = freedom_ldscript_generator-fdt.$(OBJEXT) \
 	linker_script/layouts/freedom_ldscript_generator-default_layout.$(OBJEXT) \
 	linker_script/layouts/freedom_ldscript_generator-ramrodata_layout.$(OBJEXT) \
 	linker_script/layouts/freedom_ldscript_generator-scratchpad_layout.$(OBJEXT) \
@@ -147,6 +173,8 @@ am_freedom_ldscript_generator_OBJECTS =  \
 	linker_script/freedom_ldscript_generator-ranges.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-section.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-section_group.$(OBJEXT)
+am_freedom_ldscript_generator_OBJECTS = linker_script/freedom_ldscript_generator-freedom-ldscript-generator.$(OBJEXT) \
+	$(am__objects_1)
 freedom_ldscript_generator_OBJECTS =  \
 	$(am_freedom_ldscript_generator_OBJECTS)
 freedom_ldscript_generator_LDADD = $(LDADD)
@@ -171,6 +199,37 @@ am_freedom_openocdcfg_generator_OBJECTS =  \
 freedom_openocdcfg_generator_OBJECTS =  \
 	$(am_freedom_openocdcfg_generator_OBJECTS)
 freedom_openocdcfg_generator_LDADD = $(LDADD)
+am__objects_2 = ldscript_cmodel_unit-fdt.$(OBJEXT) \
+	linker_script/layouts/ldscript_cmodel_unit-default_layout.$(OBJEXT) \
+	linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.$(OBJEXT) \
+	linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.$(OBJEXT) \
+	linker_script/sections/ldscript_cmodel_unit-constants_group.$(OBJEXT) \
+	linker_script/sections/ldscript_cmodel_unit-ctors_group.$(OBJEXT) \
+	linker_script/sections/ldscript_cmodel_unit-data_group.$(OBJEXT) \
+	linker_script/sections/ldscript_cmodel_unit-itim_group.$(OBJEXT) \
+	linker_script/sections/ldscript_cmodel_unit-rodata_group.$(OBJEXT) \
+	linker_script/sections/ldscript_cmodel_unit-text_group.$(OBJEXT) \
+	linker_script/sections/ldscript_cmodel_unit-uninit_group.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.$(OBJEXT) \
+	linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.$(OBJEXT) \
+	linker_script/ldscript_cmodel_unit-linker_script.$(OBJEXT) \
+	linker_script/ldscript_cmodel_unit-map_strategy.$(OBJEXT) \
+	linker_script/ldscript_cmodel_unit-memory.$(OBJEXT) \
+	linker_script/ldscript_cmodel_unit-phdr.$(OBJEXT) \
+	linker_script/ldscript_cmodel_unit-ranges.$(OBJEXT) \
+	linker_script/ldscript_cmodel_unit-section.$(OBJEXT) \
+	linker_script/ldscript_cmodel_unit-section_group.$(OBJEXT)
+am_ldscript_cmodel_unit_OBJECTS = linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.$(OBJEXT) \
+	$(am__objects_2)
+ldscript_cmodel_unit_OBJECTS = $(am_ldscript_cmodel_unit_OBJECTS)
+ldscript_cmodel_unit_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -221,13 +280,15 @@ SOURCES = $(freedom_bare_header_generator_SOURCES) \
 	$(freedom_makeattributes_generator_SOURCES) \
 	$(freedom_metal_header_generator_SOURCES) \
 	$(freedom_metal_specs_generator_SOURCES) \
-	$(freedom_openocdcfg_generator_SOURCES)
+	$(freedom_openocdcfg_generator_SOURCES) \
+	$(ldscript_cmodel_unit_SOURCES)
 DIST_SOURCES = $(freedom_bare_header_generator_SOURCES) \
 	$(freedom_ldscript_generator_SOURCES) \
 	$(freedom_makeattributes_generator_SOURCES) \
 	$(freedom_metal_header_generator_SOURCES) \
 	$(freedom_metal_specs_generator_SOURCES) \
-	$(freedom_openocdcfg_generator_SOURCES)
+	$(freedom_openocdcfg_generator_SOURCES) \
+	$(ldscript_cmodel_unit_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -572,9 +633,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 freedom_ldscript_generator_CPPFLAGS = -I$(srcdir)/linker_script
-freedom_ldscript_generator_SOURCES = \
+ldscript_generator_shared_sources = \
 	fdt.c++ \
-	linker_script/freedom-ldscript-generator.c++ \
 	linker_script/layouts/default_layout.c++ \
 	linker_script/layouts/default_layout.h \
 	linker_script/layouts/ramrodata_layout.c++ \
@@ -627,6 +687,10 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/section.h \
 	linker_script/section_group.c++ \
 	linker_script/section_group.h
+
+freedom_ldscript_generator_SOURCES = \
+	linker_script/freedom-ldscript-generator.c++ \
+	$(ldscript_generator_shared_sources)
 
 freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++ \
@@ -706,45 +770,17 @@ AM_TESTS_ENVIRONMENT = \
   export SOURCE_DIR=$(abspath $(srcdir)); \
   export WORK_DIR=$(abspath .);
 
-#TESTS      += tests/e31-eval-ldscript.bash
-#TESTS      += tests/e31-eval-makeattributes.bash
-#TESTS      += tests/e34-eval-ldscript.bash
-#TESTS      += tests/e34-eval-makeattributes.bash
-#TESTS      += tests/e31-memory-makeattributes.bash
-#TESTS      += tests/e31-ranges-ldscript.bash
-TESTS = tests/e31-arty-ldscript.bash tests/e31-arty-openocd.bash \
-	tests/e31-arty-makeattributes.bash \
-	tests/e31-arty-metal_header.bash tests/e51-arty-ldscript.bash \
-	tests/e51-arty-openocd.bash tests/e51-arty-makeattributes.bash \
-	tests/e51-arty-metal_header.bash \
-	tests/qemu-sifive_e-32-ldscript.bash \
-	tests/qemu-sifive_e-32-openocd.bash \
-	tests/qemu-sifive_e-32-makeattributes.bash \
-	tests/qemu-sifive_e-32-metal_header.bash \
-	tests/hifive1-ldscript.bash tests/hifive1-openocd.bash \
-	tests/hifive1-makeattributes.bash \
-	tests/hifive1-metal_header.bash tests/hifive1-metal_specs.bash \
-	tests/e31-eval-openocd.bash tests/e31-eval-metal_header.bash \
-	tests/multi-e31-arty-ldscript.bash \
-	tests/multi-e31-arty-openocd.bash \
-	tests/multi-e31-arty-makeattributes.bash \
-	tests/multi-e31-arty-metal_header.bash \
-	tests/e31-bigmem-ldscript.bash tests/e31-bigmem-openocd.bash \
-	tests/e31-bigmem-makeattributes.bash \
-	tests/e31-bigmem-metal_header.bash tests/e34-eval-openocd.bash \
-	tests/e34-eval-metal_header.bash \
-	tests/e34-eval-metal_specs.bash tests/e31-memory-ldscript.bash \
-	tests/e31-memory-openocd.bash \
-	tests/e31-memory-metal_header.bash \
-	tests/e31-ranges-openocd.bash \
-	tests/e31-ranges-makeattributes.bash \
-	tests/e31-ranges-metal_header.bash
-EXTRA_DIST = tests/e31-arty.dts tests/e51-arty.dts \
-	tests/qemu-sifive_e-32.dts tests/hifive1.dts \
-	tests/e31-eval.dts tests/multi-e31-arty.dts \
+EXTRA_DIST = linker_script/test/blank_rv64.dtb tests/e31-arty.dts \
+	tests/e51-arty.dts tests/qemu-sifive_e-32.dts \
+	tests/hifive1.dts tests/e31-eval.dts tests/multi-e31-arty.dts \
 	tests/e31-bigmem.dts tests/e34-eval.dts tests/e31-memory.dts \
 	tests/e31-ranges.dts $(TESTS) README.md fdt.h++ libfdt.h++ \
 	multilib.h++
+ldscript_cmodel_unit_SOURCES = \
+	linker_script/test/ldscript_cmodel_unit.c++ \
+	$(ldscript_generator_shared_sources)
+
+ldscript_cmodel_unit_CPPFLAGS = -I$(srcdir)/linker_script
 all: all-am
 
 .SUFFIXES:
@@ -824,6 +860,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 bare_header/$(am__dirstamp):
 	@$(MKDIR_P) bare_header
 	@: > bare_header/$(am__dirstamp)
@@ -975,6 +1014,97 @@ freedom-metal_specs-generator$(EXEEXT): $(freedom_metal_specs_generator_OBJECTS)
 freedom-openocdcfg-generator$(EXEEXT): $(freedom_openocdcfg_generator_OBJECTS) $(freedom_openocdcfg_generator_DEPENDENCIES) $(EXTRA_freedom_openocdcfg_generator_DEPENDENCIES) 
 	@rm -f freedom-openocdcfg-generator$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(freedom_openocdcfg_generator_OBJECTS) $(freedom_openocdcfg_generator_LDADD) $(LIBS)
+linker_script/test/$(am__dirstamp):
+	@$(MKDIR_P) linker_script/test
+	@: > linker_script/test/$(am__dirstamp)
+linker_script/test/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) linker_script/test/$(DEPDIR)
+	@: > linker_script/test/$(DEPDIR)/$(am__dirstamp)
+linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.$(OBJEXT):  \
+	linker_script/test/$(am__dirstamp) \
+	linker_script/test/$(DEPDIR)/$(am__dirstamp)
+linker_script/layouts/ldscript_cmodel_unit-default_layout.$(OBJEXT):  \
+	linker_script/layouts/$(am__dirstamp) \
+	linker_script/layouts/$(DEPDIR)/$(am__dirstamp)
+linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.$(OBJEXT):  \
+	linker_script/layouts/$(am__dirstamp) \
+	linker_script/layouts/$(DEPDIR)/$(am__dirstamp)
+linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.$(OBJEXT):  \
+	linker_script/layouts/$(am__dirstamp) \
+	linker_script/layouts/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/ldscript_cmodel_unit-constants_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/ldscript_cmodel_unit-ctors_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/ldscript_cmodel_unit-data_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/ldscript_cmodel_unit-itim_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/ldscript_cmodel_unit-rodata_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/ldscript_cmodel_unit-text_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/ldscript_cmodel_unit-uninit_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/ldscript_cmodel_unit-linker_script.$(OBJEXT):  \
+	linker_script/$(am__dirstamp) \
+	linker_script/$(DEPDIR)/$(am__dirstamp)
+linker_script/ldscript_cmodel_unit-map_strategy.$(OBJEXT):  \
+	linker_script/$(am__dirstamp) \
+	linker_script/$(DEPDIR)/$(am__dirstamp)
+linker_script/ldscript_cmodel_unit-memory.$(OBJEXT):  \
+	linker_script/$(am__dirstamp) \
+	linker_script/$(DEPDIR)/$(am__dirstamp)
+linker_script/ldscript_cmodel_unit-phdr.$(OBJEXT):  \
+	linker_script/$(am__dirstamp) \
+	linker_script/$(DEPDIR)/$(am__dirstamp)
+linker_script/ldscript_cmodel_unit-ranges.$(OBJEXT):  \
+	linker_script/$(am__dirstamp) \
+	linker_script/$(DEPDIR)/$(am__dirstamp)
+linker_script/ldscript_cmodel_unit-section.$(OBJEXT):  \
+	linker_script/$(am__dirstamp) \
+	linker_script/$(DEPDIR)/$(am__dirstamp)
+linker_script/ldscript_cmodel_unit-section_group.$(OBJEXT):  \
+	linker_script/$(am__dirstamp) \
+	linker_script/$(DEPDIR)/$(am__dirstamp)
+
+ldscript_cmodel_unit$(EXEEXT): $(ldscript_cmodel_unit_OBJECTS) $(ldscript_cmodel_unit_DEPENDENCIES) $(EXTRA_ldscript_cmodel_unit_DEPENDENCIES) 
+	@rm -f ldscript_cmodel_unit$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(ldscript_cmodel_unit_OBJECTS) $(ldscript_cmodel_unit_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -983,6 +1113,7 @@ mostlyclean-compile:
 	-rm -f linker_script/layouts/*.$(OBJEXT)
 	-rm -f linker_script/sections/*.$(OBJEXT)
 	-rm -f linker_script/strategies/*.$(OBJEXT)
+	-rm -f linker_script/test/*.$(OBJEXT)
 	-rm -f metal_header/*.$(OBJEXT)
 
 distclean-compile:
@@ -993,6 +1124,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom-metal_specs-generator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom-openocdcfg-generator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom_ldscript_generator-fdt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ldscript_cmodel_unit-fdt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@bare_header/$(DEPDIR)/device.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@bare_header/$(DEPDIR)/freedom-bare_header-generator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/freedom_ldscript_generator-freedom-ldscript-generator.Po@am__quote@
@@ -1003,9 +1135,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/freedom_ldscript_generator-ranges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/freedom_ldscript_generator-section.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/freedom_ldscript_generator-section_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/ldscript_cmodel_unit-linker_script.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/ldscript_cmodel_unit-map_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/ldscript_cmodel_unit-memory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/ldscript_cmodel_unit-phdr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/ldscript_cmodel_unit-ranges.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/ldscript_cmodel_unit-section.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/$(DEPDIR)/ldscript_cmodel_unit-section_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/layouts/$(DEPDIR)/freedom_ldscript_generator-default_layout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/layouts/$(DEPDIR)/freedom_ldscript_generator-ramrodata_layout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/layouts/$(DEPDIR)/freedom_ldscript_generator-scratchpad_layout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-default_layout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-ramrodata_layout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-scratchpad_layout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-constants_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-ctors_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-data_group.Po@am__quote@
@@ -1013,6 +1155,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-rodata_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-text_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-uninit_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-constants_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-ctors_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-data_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-itim_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-rodata_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-text_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-uninit_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-chosen_strategy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_arty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_strategy.Po@am__quote@
@@ -1022,6 +1171,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_strategy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-chosen_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_arty.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_arty_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_arty_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_arty.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/test/$(DEPDIR)/ldscript_cmodel_unit-ldscript_cmodel_unit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/device.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom-metal_header-generator.Po@am__quote@
 
@@ -1041,20 +1200,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-freedom_ldscript_generator-fdt.o: fdt.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freedom_ldscript_generator-fdt.o -MD -MP -MF $(DEPDIR)/freedom_ldscript_generator-fdt.Tpo -c -o freedom_ldscript_generator-fdt.o `test -f 'fdt.c++' || echo '$(srcdir)/'`fdt.c++
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freedom_ldscript_generator-fdt.Tpo $(DEPDIR)/freedom_ldscript_generator-fdt.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fdt.c++' object='freedom_ldscript_generator-fdt.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freedom_ldscript_generator-fdt.o `test -f 'fdt.c++' || echo '$(srcdir)/'`fdt.c++
-
-freedom_ldscript_generator-fdt.obj: fdt.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freedom_ldscript_generator-fdt.obj -MD -MP -MF $(DEPDIR)/freedom_ldscript_generator-fdt.Tpo -c -o freedom_ldscript_generator-fdt.obj `if test -f 'fdt.c++'; then $(CYGPATH_W) 'fdt.c++'; else $(CYGPATH_W) '$(srcdir)/fdt.c++'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freedom_ldscript_generator-fdt.Tpo $(DEPDIR)/freedom_ldscript_generator-fdt.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fdt.c++' object='freedom_ldscript_generator-fdt.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freedom_ldscript_generator-fdt.obj `if test -f 'fdt.c++'; then $(CYGPATH_W) 'fdt.c++'; else $(CYGPATH_W) '$(srcdir)/fdt.c++'; fi`
-
 linker_script/freedom_ldscript_generator-freedom-ldscript-generator.o: linker_script/freedom-ldscript-generator.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/freedom_ldscript_generator-freedom-ldscript-generator.o -MD -MP -MF linker_script/$(DEPDIR)/freedom_ldscript_generator-freedom-ldscript-generator.Tpo -c -o linker_script/freedom_ldscript_generator-freedom-ldscript-generator.o `test -f 'linker_script/freedom-ldscript-generator.c++' || echo '$(srcdir)/'`linker_script/freedom-ldscript-generator.c++
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/freedom_ldscript_generator-freedom-ldscript-generator.Tpo linker_script/$(DEPDIR)/freedom_ldscript_generator-freedom-ldscript-generator.Po
@@ -1068,6 +1213,20 @@ linker_script/freedom_ldscript_generator-freedom-ldscript-generator.obj: linker_
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/freedom-ldscript-generator.c++' object='linker_script/freedom_ldscript_generator-freedom-ldscript-generator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/freedom_ldscript_generator-freedom-ldscript-generator.obj `if test -f 'linker_script/freedom-ldscript-generator.c++'; then $(CYGPATH_W) 'linker_script/freedom-ldscript-generator.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/freedom-ldscript-generator.c++'; fi`
+
+freedom_ldscript_generator-fdt.o: fdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freedom_ldscript_generator-fdt.o -MD -MP -MF $(DEPDIR)/freedom_ldscript_generator-fdt.Tpo -c -o freedom_ldscript_generator-fdt.o `test -f 'fdt.c++' || echo '$(srcdir)/'`fdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freedom_ldscript_generator-fdt.Tpo $(DEPDIR)/freedom_ldscript_generator-fdt.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fdt.c++' object='freedom_ldscript_generator-fdt.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freedom_ldscript_generator-fdt.o `test -f 'fdt.c++' || echo '$(srcdir)/'`fdt.c++
+
+freedom_ldscript_generator-fdt.obj: fdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freedom_ldscript_generator-fdt.obj -MD -MP -MF $(DEPDIR)/freedom_ldscript_generator-fdt.Tpo -c -o freedom_ldscript_generator-fdt.obj `if test -f 'fdt.c++'; then $(CYGPATH_W) 'fdt.c++'; else $(CYGPATH_W) '$(srcdir)/fdt.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freedom_ldscript_generator-fdt.Tpo $(DEPDIR)/freedom_ldscript_generator-fdt.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fdt.c++' object='freedom_ldscript_generator-fdt.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freedom_ldscript_generator-fdt.obj `if test -f 'fdt.c++'; then $(CYGPATH_W) 'fdt.c++'; else $(CYGPATH_W) '$(srcdir)/fdt.c++'; fi`
 
 linker_script/layouts/freedom_ldscript_generator-default_layout.o: linker_script/layouts/default_layout.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/layouts/freedom_ldscript_generator-default_layout.o -MD -MP -MF linker_script/layouts/$(DEPDIR)/freedom_ldscript_generator-default_layout.Tpo -c -o linker_script/layouts/freedom_ldscript_generator-default_layout.o `test -f 'linker_script/layouts/default_layout.c++' || echo '$(srcdir)/'`linker_script/layouts/default_layout.c++
@@ -1433,6 +1592,398 @@ linker_script/freedom_ldscript_generator-section_group.obj: linker_script/sectio
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/freedom_ldscript_generator-section_group.obj `if test -f 'linker_script/section_group.c++'; then $(CYGPATH_W) 'linker_script/section_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/section_group.c++'; fi`
 
+linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.o: linker_script/test/ldscript_cmodel_unit.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.o -MD -MP -MF linker_script/test/$(DEPDIR)/ldscript_cmodel_unit-ldscript_cmodel_unit.Tpo -c -o linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.o `test -f 'linker_script/test/ldscript_cmodel_unit.c++' || echo '$(srcdir)/'`linker_script/test/ldscript_cmodel_unit.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/test/$(DEPDIR)/ldscript_cmodel_unit-ldscript_cmodel_unit.Tpo linker_script/test/$(DEPDIR)/ldscript_cmodel_unit-ldscript_cmodel_unit.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/test/ldscript_cmodel_unit.c++' object='linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.o `test -f 'linker_script/test/ldscript_cmodel_unit.c++' || echo '$(srcdir)/'`linker_script/test/ldscript_cmodel_unit.c++
+
+linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.obj: linker_script/test/ldscript_cmodel_unit.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.obj -MD -MP -MF linker_script/test/$(DEPDIR)/ldscript_cmodel_unit-ldscript_cmodel_unit.Tpo -c -o linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.obj `if test -f 'linker_script/test/ldscript_cmodel_unit.c++'; then $(CYGPATH_W) 'linker_script/test/ldscript_cmodel_unit.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/test/ldscript_cmodel_unit.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/test/$(DEPDIR)/ldscript_cmodel_unit-ldscript_cmodel_unit.Tpo linker_script/test/$(DEPDIR)/ldscript_cmodel_unit-ldscript_cmodel_unit.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/test/ldscript_cmodel_unit.c++' object='linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/test/ldscript_cmodel_unit-ldscript_cmodel_unit.obj `if test -f 'linker_script/test/ldscript_cmodel_unit.c++'; then $(CYGPATH_W) 'linker_script/test/ldscript_cmodel_unit.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/test/ldscript_cmodel_unit.c++'; fi`
+
+ldscript_cmodel_unit-fdt.o: fdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ldscript_cmodel_unit-fdt.o -MD -MP -MF $(DEPDIR)/ldscript_cmodel_unit-fdt.Tpo -c -o ldscript_cmodel_unit-fdt.o `test -f 'fdt.c++' || echo '$(srcdir)/'`fdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ldscript_cmodel_unit-fdt.Tpo $(DEPDIR)/ldscript_cmodel_unit-fdt.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fdt.c++' object='ldscript_cmodel_unit-fdt.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ldscript_cmodel_unit-fdt.o `test -f 'fdt.c++' || echo '$(srcdir)/'`fdt.c++
+
+ldscript_cmodel_unit-fdt.obj: fdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ldscript_cmodel_unit-fdt.obj -MD -MP -MF $(DEPDIR)/ldscript_cmodel_unit-fdt.Tpo -c -o ldscript_cmodel_unit-fdt.obj `if test -f 'fdt.c++'; then $(CYGPATH_W) 'fdt.c++'; else $(CYGPATH_W) '$(srcdir)/fdt.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ldscript_cmodel_unit-fdt.Tpo $(DEPDIR)/ldscript_cmodel_unit-fdt.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fdt.c++' object='ldscript_cmodel_unit-fdt.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ldscript_cmodel_unit-fdt.obj `if test -f 'fdt.c++'; then $(CYGPATH_W) 'fdt.c++'; else $(CYGPATH_W) '$(srcdir)/fdt.c++'; fi`
+
+linker_script/layouts/ldscript_cmodel_unit-default_layout.o: linker_script/layouts/default_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/layouts/ldscript_cmodel_unit-default_layout.o -MD -MP -MF linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-default_layout.Tpo -c -o linker_script/layouts/ldscript_cmodel_unit-default_layout.o `test -f 'linker_script/layouts/default_layout.c++' || echo '$(srcdir)/'`linker_script/layouts/default_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-default_layout.Tpo linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-default_layout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/layouts/default_layout.c++' object='linker_script/layouts/ldscript_cmodel_unit-default_layout.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/layouts/ldscript_cmodel_unit-default_layout.o `test -f 'linker_script/layouts/default_layout.c++' || echo '$(srcdir)/'`linker_script/layouts/default_layout.c++
+
+linker_script/layouts/ldscript_cmodel_unit-default_layout.obj: linker_script/layouts/default_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/layouts/ldscript_cmodel_unit-default_layout.obj -MD -MP -MF linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-default_layout.Tpo -c -o linker_script/layouts/ldscript_cmodel_unit-default_layout.obj `if test -f 'linker_script/layouts/default_layout.c++'; then $(CYGPATH_W) 'linker_script/layouts/default_layout.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/layouts/default_layout.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-default_layout.Tpo linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-default_layout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/layouts/default_layout.c++' object='linker_script/layouts/ldscript_cmodel_unit-default_layout.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/layouts/ldscript_cmodel_unit-default_layout.obj `if test -f 'linker_script/layouts/default_layout.c++'; then $(CYGPATH_W) 'linker_script/layouts/default_layout.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/layouts/default_layout.c++'; fi`
+
+linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.o: linker_script/layouts/ramrodata_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.o -MD -MP -MF linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-ramrodata_layout.Tpo -c -o linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.o `test -f 'linker_script/layouts/ramrodata_layout.c++' || echo '$(srcdir)/'`linker_script/layouts/ramrodata_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-ramrodata_layout.Tpo linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-ramrodata_layout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/layouts/ramrodata_layout.c++' object='linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.o `test -f 'linker_script/layouts/ramrodata_layout.c++' || echo '$(srcdir)/'`linker_script/layouts/ramrodata_layout.c++
+
+linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.obj: linker_script/layouts/ramrodata_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.obj -MD -MP -MF linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-ramrodata_layout.Tpo -c -o linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.obj `if test -f 'linker_script/layouts/ramrodata_layout.c++'; then $(CYGPATH_W) 'linker_script/layouts/ramrodata_layout.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/layouts/ramrodata_layout.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-ramrodata_layout.Tpo linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-ramrodata_layout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/layouts/ramrodata_layout.c++' object='linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/layouts/ldscript_cmodel_unit-ramrodata_layout.obj `if test -f 'linker_script/layouts/ramrodata_layout.c++'; then $(CYGPATH_W) 'linker_script/layouts/ramrodata_layout.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/layouts/ramrodata_layout.c++'; fi`
+
+linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.o: linker_script/layouts/scratchpad_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.o -MD -MP -MF linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-scratchpad_layout.Tpo -c -o linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.o `test -f 'linker_script/layouts/scratchpad_layout.c++' || echo '$(srcdir)/'`linker_script/layouts/scratchpad_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-scratchpad_layout.Tpo linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-scratchpad_layout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/layouts/scratchpad_layout.c++' object='linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.o `test -f 'linker_script/layouts/scratchpad_layout.c++' || echo '$(srcdir)/'`linker_script/layouts/scratchpad_layout.c++
+
+linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.obj: linker_script/layouts/scratchpad_layout.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.obj -MD -MP -MF linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-scratchpad_layout.Tpo -c -o linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.obj `if test -f 'linker_script/layouts/scratchpad_layout.c++'; then $(CYGPATH_W) 'linker_script/layouts/scratchpad_layout.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/layouts/scratchpad_layout.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-scratchpad_layout.Tpo linker_script/layouts/$(DEPDIR)/ldscript_cmodel_unit-scratchpad_layout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/layouts/scratchpad_layout.c++' object='linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/layouts/ldscript_cmodel_unit-scratchpad_layout.obj `if test -f 'linker_script/layouts/scratchpad_layout.c++'; then $(CYGPATH_W) 'linker_script/layouts/scratchpad_layout.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/layouts/scratchpad_layout.c++'; fi`
+
+linker_script/sections/ldscript_cmodel_unit-constants_group.o: linker_script/sections/constants_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-constants_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-constants_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-constants_group.o `test -f 'linker_script/sections/constants_group.c++' || echo '$(srcdir)/'`linker_script/sections/constants_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-constants_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-constants_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/constants_group.c++' object='linker_script/sections/ldscript_cmodel_unit-constants_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-constants_group.o `test -f 'linker_script/sections/constants_group.c++' || echo '$(srcdir)/'`linker_script/sections/constants_group.c++
+
+linker_script/sections/ldscript_cmodel_unit-constants_group.obj: linker_script/sections/constants_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-constants_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-constants_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-constants_group.obj `if test -f 'linker_script/sections/constants_group.c++'; then $(CYGPATH_W) 'linker_script/sections/constants_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/constants_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-constants_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-constants_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/constants_group.c++' object='linker_script/sections/ldscript_cmodel_unit-constants_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-constants_group.obj `if test -f 'linker_script/sections/constants_group.c++'; then $(CYGPATH_W) 'linker_script/sections/constants_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/constants_group.c++'; fi`
+
+linker_script/sections/ldscript_cmodel_unit-ctors_group.o: linker_script/sections/ctors_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-ctors_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-ctors_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-ctors_group.o `test -f 'linker_script/sections/ctors_group.c++' || echo '$(srcdir)/'`linker_script/sections/ctors_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-ctors_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-ctors_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/ctors_group.c++' object='linker_script/sections/ldscript_cmodel_unit-ctors_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-ctors_group.o `test -f 'linker_script/sections/ctors_group.c++' || echo '$(srcdir)/'`linker_script/sections/ctors_group.c++
+
+linker_script/sections/ldscript_cmodel_unit-ctors_group.obj: linker_script/sections/ctors_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-ctors_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-ctors_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-ctors_group.obj `if test -f 'linker_script/sections/ctors_group.c++'; then $(CYGPATH_W) 'linker_script/sections/ctors_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/ctors_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-ctors_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-ctors_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/ctors_group.c++' object='linker_script/sections/ldscript_cmodel_unit-ctors_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-ctors_group.obj `if test -f 'linker_script/sections/ctors_group.c++'; then $(CYGPATH_W) 'linker_script/sections/ctors_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/ctors_group.c++'; fi`
+
+linker_script/sections/ldscript_cmodel_unit-data_group.o: linker_script/sections/data_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-data_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-data_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-data_group.o `test -f 'linker_script/sections/data_group.c++' || echo '$(srcdir)/'`linker_script/sections/data_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-data_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-data_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/data_group.c++' object='linker_script/sections/ldscript_cmodel_unit-data_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-data_group.o `test -f 'linker_script/sections/data_group.c++' || echo '$(srcdir)/'`linker_script/sections/data_group.c++
+
+linker_script/sections/ldscript_cmodel_unit-data_group.obj: linker_script/sections/data_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-data_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-data_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-data_group.obj `if test -f 'linker_script/sections/data_group.c++'; then $(CYGPATH_W) 'linker_script/sections/data_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/data_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-data_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-data_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/data_group.c++' object='linker_script/sections/ldscript_cmodel_unit-data_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-data_group.obj `if test -f 'linker_script/sections/data_group.c++'; then $(CYGPATH_W) 'linker_script/sections/data_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/data_group.c++'; fi`
+
+linker_script/sections/ldscript_cmodel_unit-itim_group.o: linker_script/sections/itim_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-itim_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-itim_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-itim_group.o `test -f 'linker_script/sections/itim_group.c++' || echo '$(srcdir)/'`linker_script/sections/itim_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-itim_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-itim_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/itim_group.c++' object='linker_script/sections/ldscript_cmodel_unit-itim_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-itim_group.o `test -f 'linker_script/sections/itim_group.c++' || echo '$(srcdir)/'`linker_script/sections/itim_group.c++
+
+linker_script/sections/ldscript_cmodel_unit-itim_group.obj: linker_script/sections/itim_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-itim_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-itim_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-itim_group.obj `if test -f 'linker_script/sections/itim_group.c++'; then $(CYGPATH_W) 'linker_script/sections/itim_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/itim_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-itim_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-itim_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/itim_group.c++' object='linker_script/sections/ldscript_cmodel_unit-itim_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-itim_group.obj `if test -f 'linker_script/sections/itim_group.c++'; then $(CYGPATH_W) 'linker_script/sections/itim_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/itim_group.c++'; fi`
+
+linker_script/sections/ldscript_cmodel_unit-rodata_group.o: linker_script/sections/rodata_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-rodata_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-rodata_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-rodata_group.o `test -f 'linker_script/sections/rodata_group.c++' || echo '$(srcdir)/'`linker_script/sections/rodata_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-rodata_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-rodata_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/rodata_group.c++' object='linker_script/sections/ldscript_cmodel_unit-rodata_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-rodata_group.o `test -f 'linker_script/sections/rodata_group.c++' || echo '$(srcdir)/'`linker_script/sections/rodata_group.c++
+
+linker_script/sections/ldscript_cmodel_unit-rodata_group.obj: linker_script/sections/rodata_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-rodata_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-rodata_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-rodata_group.obj `if test -f 'linker_script/sections/rodata_group.c++'; then $(CYGPATH_W) 'linker_script/sections/rodata_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/rodata_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-rodata_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-rodata_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/rodata_group.c++' object='linker_script/sections/ldscript_cmodel_unit-rodata_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-rodata_group.obj `if test -f 'linker_script/sections/rodata_group.c++'; then $(CYGPATH_W) 'linker_script/sections/rodata_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/rodata_group.c++'; fi`
+
+linker_script/sections/ldscript_cmodel_unit-text_group.o: linker_script/sections/text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-text_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-text_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-text_group.o `test -f 'linker_script/sections/text_group.c++' || echo '$(srcdir)/'`linker_script/sections/text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-text_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-text_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/text_group.c++' object='linker_script/sections/ldscript_cmodel_unit-text_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-text_group.o `test -f 'linker_script/sections/text_group.c++' || echo '$(srcdir)/'`linker_script/sections/text_group.c++
+
+linker_script/sections/ldscript_cmodel_unit-text_group.obj: linker_script/sections/text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-text_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-text_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-text_group.obj `if test -f 'linker_script/sections/text_group.c++'; then $(CYGPATH_W) 'linker_script/sections/text_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/text_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-text_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-text_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/text_group.c++' object='linker_script/sections/ldscript_cmodel_unit-text_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-text_group.obj `if test -f 'linker_script/sections/text_group.c++'; then $(CYGPATH_W) 'linker_script/sections/text_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/text_group.c++'; fi`
+
+linker_script/sections/ldscript_cmodel_unit-uninit_group.o: linker_script/sections/uninit_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-uninit_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-uninit_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-uninit_group.o `test -f 'linker_script/sections/uninit_group.c++' || echo '$(srcdir)/'`linker_script/sections/uninit_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-uninit_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-uninit_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/uninit_group.c++' object='linker_script/sections/ldscript_cmodel_unit-uninit_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-uninit_group.o `test -f 'linker_script/sections/uninit_group.c++' || echo '$(srcdir)/'`linker_script/sections/uninit_group.c++
+
+linker_script/sections/ldscript_cmodel_unit-uninit_group.obj: linker_script/sections/uninit_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/ldscript_cmodel_unit-uninit_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-uninit_group.Tpo -c -o linker_script/sections/ldscript_cmodel_unit-uninit_group.obj `if test -f 'linker_script/sections/uninit_group.c++'; then $(CYGPATH_W) 'linker_script/sections/uninit_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/uninit_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-uninit_group.Tpo linker_script/sections/$(DEPDIR)/ldscript_cmodel_unit-uninit_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/uninit_group.c++' object='linker_script/sections/ldscript_cmodel_unit-uninit_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/ldscript_cmodel_unit-uninit_group.obj `if test -f 'linker_script/sections/uninit_group.c++'; then $(CYGPATH_W) 'linker_script/sections/uninit_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/uninit_group.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.o: linker_script/strategies/chosen_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-chosen_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.o `test -f 'linker_script/strategies/chosen_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/chosen_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-chosen_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-chosen_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/chosen_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.o `test -f 'linker_script/strategies/chosen_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/chosen_strategy.c++
+
+linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.obj: linker_script/strategies/chosen_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-chosen_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.obj `if test -f 'linker_script/strategies/chosen_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/chosen_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/chosen_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-chosen_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-chosen_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/chosen_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-chosen_strategy.obj `if test -f 'linker_script/strategies/chosen_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/chosen_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/chosen_strategy.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.o: linker_script/strategies/default_bullet_arty.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_arty.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.o `test -f 'linker_script/strategies/default_bullet_arty.c++' || echo '$(srcdir)/'`linker_script/strategies/default_bullet_arty.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_arty.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_arty.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_bullet_arty.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.o `test -f 'linker_script/strategies/default_bullet_arty.c++' || echo '$(srcdir)/'`linker_script/strategies/default_bullet_arty.c++
+
+linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.obj: linker_script/strategies/default_bullet_arty.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_arty.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.obj `if test -f 'linker_script/strategies/default_bullet_arty.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_bullet_arty.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_bullet_arty.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_arty.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_arty.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_bullet_arty.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_bullet_arty.obj `if test -f 'linker_script/strategies/default_bullet_arty.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_bullet_arty.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_bullet_arty.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.o: linker_script/strategies/default_bullet_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.o `test -f 'linker_script/strategies/default_bullet_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_bullet_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_bullet_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.o `test -f 'linker_script/strategies/default_bullet_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_bullet_strategy.c++
+
+linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.obj: linker_script/strategies/default_bullet_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.obj `if test -f 'linker_script/strategies/default_bullet_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_bullet_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_bullet_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_bullet_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_bullet_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_bullet_strategy.obj `if test -f 'linker_script/strategies/default_bullet_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_bullet_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_bullet_strategy.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.o: linker_script/strategies/default_e20_arty_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_arty_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.o `test -f 'linker_script/strategies/default_e20_arty_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e20_arty_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_arty_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_arty_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e20_arty_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.o `test -f 'linker_script/strategies/default_e20_arty_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e20_arty_strategy.c++
+
+linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.obj: linker_script/strategies/default_e20_arty_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_arty_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.obj `if test -f 'linker_script/strategies/default_e20_arty_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e20_arty_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e20_arty_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_arty_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_arty_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e20_arty_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_e20_arty_strategy.obj `if test -f 'linker_script/strategies/default_e20_arty_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e20_arty_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e20_arty_strategy.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.o: linker_script/strategies/default_e20_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.o `test -f 'linker_script/strategies/default_e20_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e20_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e20_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.o `test -f 'linker_script/strategies/default_e20_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e20_strategy.c++
+
+linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.obj: linker_script/strategies/default_e20_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.obj `if test -f 'linker_script/strategies/default_e20_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e20_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e20_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e20_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e20_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_e20_strategy.obj `if test -f 'linker_script/strategies/default_e20_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e20_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e20_strategy.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.o: linker_script/strategies/default_e21_arty_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_arty_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.o `test -f 'linker_script/strategies/default_e21_arty_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e21_arty_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_arty_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_arty_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e21_arty_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.o `test -f 'linker_script/strategies/default_e21_arty_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e21_arty_strategy.c++
+
+linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.obj: linker_script/strategies/default_e21_arty_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_arty_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.obj `if test -f 'linker_script/strategies/default_e21_arty_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e21_arty_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e21_arty_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_arty_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_arty_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e21_arty_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_e21_arty_strategy.obj `if test -f 'linker_script/strategies/default_e21_arty_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e21_arty_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e21_arty_strategy.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.o: linker_script/strategies/default_e21_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.o `test -f 'linker_script/strategies/default_e21_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e21_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e21_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.o `test -f 'linker_script/strategies/default_e21_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e21_strategy.c++
+
+linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.obj: linker_script/strategies/default_e21_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.obj `if test -f 'linker_script/strategies/default_e21_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e21_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e21_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_e21_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e21_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_e21_strategy.obj `if test -f 'linker_script/strategies/default_e21_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e21_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e21_strategy.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.o: linker_script/strategies/default_rocket_arty.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_arty.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.o `test -f 'linker_script/strategies/default_rocket_arty.c++' || echo '$(srcdir)/'`linker_script/strategies/default_rocket_arty.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_arty.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_arty.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_rocket_arty.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.o `test -f 'linker_script/strategies/default_rocket_arty.c++' || echo '$(srcdir)/'`linker_script/strategies/default_rocket_arty.c++
+
+linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.obj: linker_script/strategies/default_rocket_arty.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_arty.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.obj `if test -f 'linker_script/strategies/default_rocket_arty.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_rocket_arty.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_rocket_arty.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_arty.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_arty.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_rocket_arty.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_rocket_arty.obj `if test -f 'linker_script/strategies/default_rocket_arty.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_rocket_arty.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_rocket_arty.c++'; fi`
+
+linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.o: linker_script/strategies/default_rocket_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.o `test -f 'linker_script/strategies/default_rocket_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_rocket_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_rocket_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.o `test -f 'linker_script/strategies/default_rocket_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_rocket_strategy.c++
+
+linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.obj: linker_script/strategies/default_rocket_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_strategy.Tpo -c -o linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.obj `if test -f 'linker_script/strategies/default_rocket_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_rocket_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_rocket_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_strategy.Tpo linker_script/strategies/$(DEPDIR)/ldscript_cmodel_unit-default_rocket_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_rocket_strategy.c++' object='linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/ldscript_cmodel_unit-default_rocket_strategy.obj `if test -f 'linker_script/strategies/default_rocket_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_rocket_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_rocket_strategy.c++'; fi`
+
+linker_script/ldscript_cmodel_unit-linker_script.o: linker_script/linker_script.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-linker_script.o -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-linker_script.Tpo -c -o linker_script/ldscript_cmodel_unit-linker_script.o `test -f 'linker_script/linker_script.c++' || echo '$(srcdir)/'`linker_script/linker_script.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-linker_script.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-linker_script.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/linker_script.c++' object='linker_script/ldscript_cmodel_unit-linker_script.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-linker_script.o `test -f 'linker_script/linker_script.c++' || echo '$(srcdir)/'`linker_script/linker_script.c++
+
+linker_script/ldscript_cmodel_unit-linker_script.obj: linker_script/linker_script.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-linker_script.obj -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-linker_script.Tpo -c -o linker_script/ldscript_cmodel_unit-linker_script.obj `if test -f 'linker_script/linker_script.c++'; then $(CYGPATH_W) 'linker_script/linker_script.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/linker_script.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-linker_script.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-linker_script.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/linker_script.c++' object='linker_script/ldscript_cmodel_unit-linker_script.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-linker_script.obj `if test -f 'linker_script/linker_script.c++'; then $(CYGPATH_W) 'linker_script/linker_script.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/linker_script.c++'; fi`
+
+linker_script/ldscript_cmodel_unit-map_strategy.o: linker_script/map_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-map_strategy.o -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-map_strategy.Tpo -c -o linker_script/ldscript_cmodel_unit-map_strategy.o `test -f 'linker_script/map_strategy.c++' || echo '$(srcdir)/'`linker_script/map_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-map_strategy.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-map_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/map_strategy.c++' object='linker_script/ldscript_cmodel_unit-map_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-map_strategy.o `test -f 'linker_script/map_strategy.c++' || echo '$(srcdir)/'`linker_script/map_strategy.c++
+
+linker_script/ldscript_cmodel_unit-map_strategy.obj: linker_script/map_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-map_strategy.obj -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-map_strategy.Tpo -c -o linker_script/ldscript_cmodel_unit-map_strategy.obj `if test -f 'linker_script/map_strategy.c++'; then $(CYGPATH_W) 'linker_script/map_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/map_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-map_strategy.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-map_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/map_strategy.c++' object='linker_script/ldscript_cmodel_unit-map_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-map_strategy.obj `if test -f 'linker_script/map_strategy.c++'; then $(CYGPATH_W) 'linker_script/map_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/map_strategy.c++'; fi`
+
+linker_script/ldscript_cmodel_unit-memory.o: linker_script/memory.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-memory.o -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-memory.Tpo -c -o linker_script/ldscript_cmodel_unit-memory.o `test -f 'linker_script/memory.c++' || echo '$(srcdir)/'`linker_script/memory.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-memory.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-memory.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/memory.c++' object='linker_script/ldscript_cmodel_unit-memory.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-memory.o `test -f 'linker_script/memory.c++' || echo '$(srcdir)/'`linker_script/memory.c++
+
+linker_script/ldscript_cmodel_unit-memory.obj: linker_script/memory.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-memory.obj -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-memory.Tpo -c -o linker_script/ldscript_cmodel_unit-memory.obj `if test -f 'linker_script/memory.c++'; then $(CYGPATH_W) 'linker_script/memory.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/memory.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-memory.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-memory.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/memory.c++' object='linker_script/ldscript_cmodel_unit-memory.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-memory.obj `if test -f 'linker_script/memory.c++'; then $(CYGPATH_W) 'linker_script/memory.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/memory.c++'; fi`
+
+linker_script/ldscript_cmodel_unit-phdr.o: linker_script/phdr.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-phdr.o -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-phdr.Tpo -c -o linker_script/ldscript_cmodel_unit-phdr.o `test -f 'linker_script/phdr.c++' || echo '$(srcdir)/'`linker_script/phdr.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-phdr.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-phdr.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/phdr.c++' object='linker_script/ldscript_cmodel_unit-phdr.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-phdr.o `test -f 'linker_script/phdr.c++' || echo '$(srcdir)/'`linker_script/phdr.c++
+
+linker_script/ldscript_cmodel_unit-phdr.obj: linker_script/phdr.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-phdr.obj -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-phdr.Tpo -c -o linker_script/ldscript_cmodel_unit-phdr.obj `if test -f 'linker_script/phdr.c++'; then $(CYGPATH_W) 'linker_script/phdr.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/phdr.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-phdr.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-phdr.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/phdr.c++' object='linker_script/ldscript_cmodel_unit-phdr.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-phdr.obj `if test -f 'linker_script/phdr.c++'; then $(CYGPATH_W) 'linker_script/phdr.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/phdr.c++'; fi`
+
+linker_script/ldscript_cmodel_unit-ranges.o: linker_script/ranges.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-ranges.o -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-ranges.Tpo -c -o linker_script/ldscript_cmodel_unit-ranges.o `test -f 'linker_script/ranges.c++' || echo '$(srcdir)/'`linker_script/ranges.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-ranges.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-ranges.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/ranges.c++' object='linker_script/ldscript_cmodel_unit-ranges.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-ranges.o `test -f 'linker_script/ranges.c++' || echo '$(srcdir)/'`linker_script/ranges.c++
+
+linker_script/ldscript_cmodel_unit-ranges.obj: linker_script/ranges.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-ranges.obj -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-ranges.Tpo -c -o linker_script/ldscript_cmodel_unit-ranges.obj `if test -f 'linker_script/ranges.c++'; then $(CYGPATH_W) 'linker_script/ranges.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/ranges.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-ranges.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-ranges.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/ranges.c++' object='linker_script/ldscript_cmodel_unit-ranges.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-ranges.obj `if test -f 'linker_script/ranges.c++'; then $(CYGPATH_W) 'linker_script/ranges.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/ranges.c++'; fi`
+
+linker_script/ldscript_cmodel_unit-section.o: linker_script/section.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-section.o -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-section.Tpo -c -o linker_script/ldscript_cmodel_unit-section.o `test -f 'linker_script/section.c++' || echo '$(srcdir)/'`linker_script/section.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-section.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-section.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/section.c++' object='linker_script/ldscript_cmodel_unit-section.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-section.o `test -f 'linker_script/section.c++' || echo '$(srcdir)/'`linker_script/section.c++
+
+linker_script/ldscript_cmodel_unit-section.obj: linker_script/section.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-section.obj -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-section.Tpo -c -o linker_script/ldscript_cmodel_unit-section.obj `if test -f 'linker_script/section.c++'; then $(CYGPATH_W) 'linker_script/section.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/section.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-section.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-section.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/section.c++' object='linker_script/ldscript_cmodel_unit-section.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-section.obj `if test -f 'linker_script/section.c++'; then $(CYGPATH_W) 'linker_script/section.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/section.c++'; fi`
+
+linker_script/ldscript_cmodel_unit-section_group.o: linker_script/section_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-section_group.o -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-section_group.Tpo -c -o linker_script/ldscript_cmodel_unit-section_group.o `test -f 'linker_script/section_group.c++' || echo '$(srcdir)/'`linker_script/section_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-section_group.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-section_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/section_group.c++' object='linker_script/ldscript_cmodel_unit-section_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-section_group.o `test -f 'linker_script/section_group.c++' || echo '$(srcdir)/'`linker_script/section_group.c++
+
+linker_script/ldscript_cmodel_unit-section_group.obj: linker_script/section_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/ldscript_cmodel_unit-section_group.obj -MD -MP -MF linker_script/$(DEPDIR)/ldscript_cmodel_unit-section_group.Tpo -c -o linker_script/ldscript_cmodel_unit-section_group.obj `if test -f 'linker_script/section_group.c++'; then $(CYGPATH_W) 'linker_script/section_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/section_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/$(DEPDIR)/ldscript_cmodel_unit-section_group.Tpo linker_script/$(DEPDIR)/ldscript_cmodel_unit-section_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/section_group.c++' object='linker_script/ldscript_cmodel_unit-section_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ldscript_cmodel_unit_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/ldscript_cmodel_unit-section_group.obj `if test -f 'linker_script/section_group.c++'; then $(CYGPATH_W) 'linker_script/section_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/section_group.c++'; fi`
+
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
 tags: tags-am
@@ -1622,7 +2173,7 @@ check-TESTS:
 	log_list=`echo $$log_list`; trs_list=`echo $$trs_list`; \
 	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$log_list"; \
 	exit $$?;
-recheck: all 
+recheck: all $(check_PROGRAMS)
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 	@set +e; $(am__set_TESTS_bases); \
 	bases=`for i in $$bases; do echo $$i; done \
@@ -1633,6 +2184,13 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
+ldscript_cmodel_unit.log: ldscript_cmodel_unit$(EXEEXT)
+	@p='ldscript_cmodel_unit$(EXEEXT)'; \
+	b='ldscript_cmodel_unit'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 tests/e31-arty-ldscript.bash.log: tests/e31-arty-ldscript.bash
 	@p='tests/e31-arty-ldscript.bash'; \
 	b='tests/e31-arty-ldscript.bash'; \
@@ -2064,6 +2622,7 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 all-am: Makefile $(PROGRAMS)
@@ -2110,6 +2669,8 @@ distclean-generic:
 	-rm -f linker_script/sections/$(am__dirstamp)
 	-rm -f linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
 	-rm -f linker_script/strategies/$(am__dirstamp)
+	-rm -f linker_script/test/$(DEPDIR)/$(am__dirstamp)
+	-rm -f linker_script/test/$(am__dirstamp)
 	-rm -f metal_header/$(DEPDIR)/$(am__dirstamp)
 	-rm -f metal_header/$(am__dirstamp)
 
@@ -2118,11 +2679,12 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) bare_header/$(DEPDIR) linker_script/$(DEPDIR) linker_script/layouts/$(DEPDIR) linker_script/sections/$(DEPDIR) linker_script/strategies/$(DEPDIR) metal_header/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) bare_header/$(DEPDIR) linker_script/$(DEPDIR) linker_script/layouts/$(DEPDIR) linker_script/sections/$(DEPDIR) linker_script/strategies/$(DEPDIR) linker_script/test/$(DEPDIR) metal_header/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -2170,7 +2732,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) bare_header/$(DEPDIR) linker_script/$(DEPDIR) linker_script/layouts/$(DEPDIR) linker_script/sections/$(DEPDIR) linker_script/strategies/$(DEPDIR) metal_header/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) bare_header/$(DEPDIR) linker_script/$(DEPDIR) linker_script/layouts/$(DEPDIR) linker_script/sections/$(DEPDIR) linker_script/strategies/$(DEPDIR) linker_script/test/$(DEPDIR) metal_header/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -2191,21 +2753,21 @@ uninstall-am: uninstall-binPROGRAMS
 .MAKE: check-am install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--refresh check check-TESTS \
-	check-am clean clean-binPROGRAMS clean-cscope clean-generic \
-	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
-	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-compile distclean-generic \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
-	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS
+	check-am clean clean-binPROGRAMS clean-checkPROGRAMS \
+	clean-cscope clean-generic cscope cscopelist-am ctags ctags-am \
+	dist dist-all dist-bzip2 dist-gzip dist-lzip dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-compile distclean-generic distclean-tags \
+	distcleancheck distdir distuninstallcheck dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am recheck tags tags-am \
+	uninstall uninstall-am uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 

@@ -53,7 +53,7 @@ LinkerScript DefaultRocketArtyStrategy::create_layout(const fdt &dtb, list<Memor
     itim_memory = ram_memory;
   }
 
-  print_chosen_strategy("DefaultRocketArtyStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
+  print_chosen_strategy(dtb, "DefaultRocketArtyStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
 
   switch (link_strategy) {
   default:

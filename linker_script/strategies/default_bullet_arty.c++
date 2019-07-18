@@ -55,7 +55,7 @@ LinkerScript DefaultBulletArtyStrategy::create_layout(const fdt &dtb, list<Memor
   }
 
   /* Generate the layouts */
-  print_chosen_strategy("DefaultBulletArtyStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
+  print_chosen_strategy(dtb, "DefaultBulletArtyStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
 
   switch (link_strategy) {
   default:

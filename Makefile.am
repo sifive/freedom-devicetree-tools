@@ -12,9 +12,10 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 
 freedom_ldscript_generator_CPPFLAGS = -I$(srcdir)/linker_script
 
-freedom_ldscript_generator_SOURCES = \
+# The sources for ldscript_generator are shared between the program itself
+# and its C++ unit tests
+ldscript_generator_shared_sources = \
 	fdt.c++ \
-	linker_script/freedom-ldscript-generator.c++ \
 	linker_script/layouts/default_layout.c++ \
 	linker_script/layouts/default_layout.h \
 	linker_script/layouts/ramrodata_layout.c++ \
@@ -67,6 +68,10 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/section.h \
 	linker_script/section_group.c++ \
 	linker_script/section_group.h
+
+freedom_ldscript_generator_SOURCES = \
+	linker_script/freedom-ldscript-generator.c++ \
+	$(ldscript_generator_shared_sources)
 
 freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++ \
@@ -146,8 +151,26 @@ AM_TESTS_ENVIRONMENT = \
   export SOURCE_DIR=$(abspath $(srcdir)); \
   export WORK_DIR=$(abspath .);
 
-TESTS       =
+TESTS = 
+check_PROGRAMS =
 EXTRA_DIST  =
+
+##############
+# UNIT TESTS #
+##############
+
+# Unit test the algorithm for checking code model support
+TESTS += ldscript_cmodel_unit
+check_PROGRAMS += ldscript_cmodel_unit
+ldscript_cmodel_unit_SOURCES = \
+	linker_script/test/ldscript_cmodel_unit.c++ \
+	$(ldscript_generator_shared_sources)
+ldscript_cmodel_unit_CPPFLAGS = -I$(srcdir)/linker_script
+EXTRA_DIST += linker_script/test/blank_rv64.dtb
+
+#####################
+# INTEGRATION TESTS #
+#####################
 TESTS      += tests/e31-arty-ldscript.bash
 TESTS      += tests/e31-arty-openocd.bash
 TESTS      += tests/e31-arty-makeattributes.bash
