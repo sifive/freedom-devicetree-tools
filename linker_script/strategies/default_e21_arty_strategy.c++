@@ -36,6 +36,10 @@ LinkerScript DefaultE21ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
 
   for (auto it = available_memories.begin(); it != available_memories.end(); it++) {
     if ((*it).compatible == "sifive,sram0") {
+      /* Memories are presented in reverse order sorted by base address.
+       * Therefore, the ram is mapped to the lower-based sram0 and the
+       * itim is mapped to the higher-based sram0
+       */
       if (ram_mapped) {
         itim_memory = *it;
         itim_memory.name = "itim";
