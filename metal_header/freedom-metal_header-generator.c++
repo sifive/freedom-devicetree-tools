@@ -35,6 +35,7 @@
 /* FE310-G000 Devices */
 #include <sifive_fe310_g000_hfrosc.h>
 #include <sifive_fe310_g000_hfxosc.h>
+#include <sifive_fe310_g000_lfrosc.h>
 #include <sifive_fe310_g000_pll.h>
 #include <sifive_fe310_g000_prci.h>
 
@@ -160,6 +161,7 @@ static void prepare_devices(const fdt &dtb, fstream &os, std::list<Device *>& de
   /* FE310-G000 Devices */
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_hfxosc(os, dtb));
+  devices.push_back(new sifive_fe310_g000_lfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
 
