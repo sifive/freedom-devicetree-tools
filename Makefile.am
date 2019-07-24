@@ -76,37 +76,64 @@ freedom_makeattributes_generator_SOURCES = \
 	freedom-makeattributes-generator.c++ \
 	fdt.c++
 
+freedom_metal_header_generator_CPPFLAGS = -I$(srcdir)/metal_header
+
 freedom_metal_header_generator_SOURCES = \
 	fdt.c++ \
 	header-labels.h \
-	metal_header/freedom-metal_header-generator.c++ \
 	metal_header/device.c++ \
 	metal_header/device.h \
+	metal_header/fixed_clock.c++ \
 	metal_header/fixed_clock.h \
+	metal_header/fixed_factor_clock.c++ \
 	metal_header/fixed_factor_clock.h \
+	metal_header/freedom-metal_header-generator.c++ \
 	metal_header/inline.h \
 	metal_header/memory.h \
+	metal_header/memory.c++ \
+	metal_header/riscv_clint0.c++ \
 	metal_header/riscv_clint0.h \
+	metal_header/riscv_cpu.c++ \
 	metal_header/riscv_cpu.h \
+	metal_header/riscv_cpu_intc.c++ \
 	metal_header/riscv_cpu_intc.h \
+	metal_header/riscv_plic0.c++ \
 	metal_header/riscv_plic0.h \
+	metal_header/riscv_pmp.c++ \
 	metal_header/riscv_pmp.h \
+	metal_header/sifive_clic0.c++ \
 	metal_header/sifive_clic0.h \
+	metal_header/sifive_fe310_g000_hfrosc.c++ \
 	metal_header/sifive_fe310_g000_hfrosc.h \
+	metal_header/sifive_fe310_g000_hfxosc.c++ \
 	metal_header/sifive_fe310_g000_hfxosc.h \
+	metal_header/sifive_fe310_g000_pll.c++ \
 	metal_header/sifive_fe310_g000_pll.h \
+	metal_header/sifive_fe310_g000_prci.c++ \
 	metal_header/sifive_fe310_g000_prci.h \
+	metal_header/sifive_fu540_c000_l2.c++ \
 	metal_header/sifive_fu540_c000_l2.h \
+	metal_header/sifive_global_external_interrupts0.c++ \
 	metal_header/sifive_global_external_interrupts0.h \
+	metal_header/sifive_gpio0.c++ \
 	metal_header/sifive_gpio0.h \
+	metal_header/sifive_gpio_button.c++ \
 	metal_header/sifive_gpio_button.h \
+	metal_header/sifive_gpio_led.c++ \
 	metal_header/sifive_gpio_led.h \
+	metal_header/sifive_gpio_switch.c++ \
 	metal_header/sifive_gpio_switch.h \
+	metal_header/sifive_local_external_interrupts0.c++ \
 	metal_header/sifive_local_external_interrupts0.h \
+	metal_header/sifive_spi0.c++ \
 	metal_header/sifive_spi0.h \
+	metal_header/sifive_test0.c++ \
 	metal_header/sifive_test0.h \
+	metal_header/sifive_uart0.c++ \
 	metal_header/sifive_uart0.h \
+	metal_header/stdout_path.c++ \
 	metal_header/stdout_path.h \
+	metal_header/template_device.c++ \
 	metal_header/template_device.h
 
 freedom_bare_header_generator_SOURCES = \
