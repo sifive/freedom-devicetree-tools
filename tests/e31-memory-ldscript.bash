@@ -20,9 +20,3 @@ then
     echo "The E31 eval config must load code into the test RAM on memory" >&2
     exit 1
 fi
-
-if [[ "$(grep ">flash" e31-memory.lds | wc -l)" != 0 ]]
-then
-    echo "The E31 eval config can't reference a SPI flash as there isn't one" >&2
-    exit 1
-fi

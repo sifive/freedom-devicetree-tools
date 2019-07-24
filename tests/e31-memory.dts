@@ -40,13 +40,13 @@
 		L12: ahb-periph-port@20000000 {
 			#address-cells = <1>;
 			#size-cells = <1>;
-			compatible = "simple-bus";
+			compatible = "sifive,ahb-periph-port", "simple-bus";
 			ranges = <0x20000000 0x20000000 0x2000>;
 		};
 		L11: ahb-sys-port@40000000 {
 			#address-cells = <1>;
 			#size-cells = <1>;
-			compatible = "simple-bus";
+			compatible = "sifive,ahb-sys-port", "simple-bus";
 			ranges = <0x40000000 0x40000000 0x2000>;
 		};
 		L1: clint@2000000 {
