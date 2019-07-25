@@ -5,6 +5,8 @@
 
 #include <regex>
 
+using std::string;
+
 sifive_test0::sifive_test0(std::ostream &os, const fdt &dtb)
   : Device(os, dtb, "sifive,test0")
 {}
@@ -32,13 +34,13 @@ void sifive_test0::declare_inlines()
 	"control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
 	  if (count == 0) {
 	    func = create_inline_dec("base",
-				   "unsigned long",
-				   " ");
+				     "unsigned long",
+				     "const struct __metal_shutdown *sd");
 	    extern_inlines.push_back(func);
 
 	    func = create_inline_dec("size",
-				   "unsigned long",
-				   " ");
+				     "unsigned long",
+				     "const struct __metal_shutdown *sd");
 	    extern_inlines.push_back(func);
 	  }
 	});
@@ -58,43 +60,57 @@ void sifive_test0::declare_inlines()
 
 void sifive_test0::define_inlines()
 {
-  Inline* func;
-  std::list<Inline *> extern_inlines;
+  Inline* base_func;
+  Inline* size_func;
 
   int count = 0;
+
   dtb.match(
     std::regex(compat_string),
     [&](node n) {
+
+      string base = "0";
+      string size = "0";
       n.named_tuples(
 	"reg-names", "reg",
-	"control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	  if (count == 0) {
-	    func = create_inline_def("base",
-				     "unsigned long",
-				     "empty",
-				     std::to_string(base),
-				     " ");
-	    extern_inlines.push_back(func);
-
-	    func = create_inline_def("size",
-				     "unsigned long",
-				     "empty",
-				     std::to_string(size),
-				     " ");
-	    extern_inlines.push_back(func);
-	  }
+	"control", tuple_t<target_addr, target_size>(), [&](target_addr b, target_size s) {
+	  base = std::to_string(b);
+	  size = std::to_string(s);
 	});
 
-      count++;
+	if (count == 0) {
+	  base_func = create_inline_def("base",
+					"unsigned long",
+					"(uintptr_t)sd == (uintptr_t)&__metal_dt_" + n.handle(),
+					base,
+					"const struct __metal_shutdown *sd");
+
+	  size_func = create_inline_def("size",
+					"unsigned long",
+					"(uintptr_t)sd == (uintptr_t)&__metal_dt_" + n.handle(),
+					size,
+					"const struct __metal_shutdown *sd");
+	} else {
+	  add_inline_body(base_func,
+			  "(uintptr_t)sd == (uintptr_t)&__metal_dt_" + n.handle(),
+			  base);
+	  add_inline_body(size_func,
+			  "(uintptr_t)sd == (uintptr_t)&__metal_dt_" + n.handle(),
+			  size);
+	}
+
+      count += 1;
     }
   );
   os << "\n";
   os << "/* --------------------- sifive_test0 ------------ */\n";
-  while (!extern_inlines.empty()) {
-    func = extern_inlines.front();
-    extern_inlines.pop_front();
-    emit_inline_def(func, "sifive_test0");
-    delete func;
+  if (count != 0) {
+    add_inline_body(base_func, "else", "0");
+    emit_inline_def(base_func, "sifive_test0");
+    delete base_func;
+    add_inline_body(size_func, "else", "0");
+    emit_inline_def(size_func, "sifive_test0");
+    delete size_func;
   }
   os << "\n";
 }
