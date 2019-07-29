@@ -119,6 +119,8 @@ void sifive_fe310_g000_prci::define_structs()
     [&](node n) {
       emit_struct_begin("sifive_fe310_g000_prci", n);
 
+      emit_struct_field("vtable", "&__metal_driver_vtable_sifive_fe310_g000_prci");
+
       emit_struct_end();
     });
 }
