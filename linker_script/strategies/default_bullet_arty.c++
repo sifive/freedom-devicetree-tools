@@ -41,7 +41,7 @@ LinkerScript DefaultBulletArtyStrategy::create_layout(const fdt &dtb, list<Memor
       rom_memory = *it;
       rom_memory.name = "flash";
       rom_memory.attributes = "rxai!w";
-    } else if ((*it).compatible == "sifive,itim0") {
+    } else if ((*it).compatible == "sifive,itim0" || it->compatible == "sifive,sram0") {
       itim_memory = *it;
       itim_memory.name = "itim";
       itim_memory.attributes = "wx!rai";

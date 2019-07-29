@@ -40,7 +40,7 @@ LinkerScript DefaultBulletStrategy::create_layout(const fdt &dtb, list<Memory> a
       ram_memory = *it;
       ram_memory.name = "ram";
       ram_memory.attributes = "wxa!ri";
-    } else if ((*it).compatible == "sifive,itim0") {
+    } else if ((*it).compatible == "sifive,itim0" || it->compatible == "sifive,sram0") {
       itim_memory = *it;
       itim_memory.name = "itim";
       itim_memory.attributes = "wx!rai";
