@@ -101,8 +101,8 @@ void Device::add_inline_body(Inline *func, std::string body, std::string ret_val
 
 void Device::emit_inline_retun_type(bool declare, std::string type) {
   (declare == true) ?
-    (os << "extern inline " << type << " ") : 
-    (os << "static inline " << type << " ");
+    (os << "extern __inline__ " << type << " ") : 
+    (os << "static __inline__ " << type << " ");
 }
 void Device::emit_inline_name(std::string type, std::string field) {
   os << "__metal_driver_" << type << "_" << field << "(";
