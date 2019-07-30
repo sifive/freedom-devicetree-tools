@@ -29,6 +29,7 @@
 #include "bare_header/sifive_clic0.h"
 #include "bare_header/sifive_fe310_g000_hfrosc.h"
 #include "bare_header/sifive_fe310_g000_hfxosc.h"
+#include "bare_header/sifive_fe310_g000_lfrosc.h"
 #include "bare_header/sifive_fe310_g000_prci.h"
 #include "bare_header/sifive_fe310_g000_pll.h"
 #include "bare_header/sifive_fu540_c000_l2.h"
@@ -43,6 +44,7 @@
 #include "bare_header/sifive_spi0.h"
 #include "bare_header/sifive_test0.h"
 #include "bare_header/sifive_uart0.h"
+#include "bare_header/sifive_wdog0.h"
 
 using std::cerr;
 using std::endl;
@@ -147,6 +149,7 @@ static void write_config_file(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_clic0(os, dtb));
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_hfxosc(os, dtb));
+  devices.push_back(new sifive_fe310_g000_lfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
   devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_fu540_c000_l2(os, dtb));
@@ -161,6 +164,7 @@ static void write_config_file(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
+  devices.push_back(new sifive_wdog0(os, dtb));
 
   for(auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->emit_defines();

@@ -107,6 +107,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_fe310_g000_hfrosc.h \
 	metal_header/sifive_fe310_g000_hfxosc.c++ \
 	metal_header/sifive_fe310_g000_hfxosc.h \
+	metal_header/sifive_fe310_g000_lfrosc.c++ \
+	metal_header/sifive_fe310_g000_lfrosc.h \
 	metal_header/sifive_fe310_g000_pll.c++ \
 	metal_header/sifive_fe310_g000_pll.h \
 	metal_header/sifive_fe310_g000_prci.c++ \
@@ -131,6 +133,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_test0.h \
 	metal_header/sifive_uart0.c++ \
 	metal_header/sifive_uart0.h \
+	metal_header/sifive_wdog0.c++ \
+	metal_header/sifive_wdog0.h \
 	metal_header/stdout_path.c++ \
 	metal_header/stdout_path.h \
 	metal_header/template_device.c++ \
@@ -150,6 +154,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_clic0.h \
 	bare_header/sifive_fe310_g000_hfrosc.h \
 	bare_header/sifive_fe310_g000_hfxosc.h \
+	bare_header/sifive_fe310_g000_lfrosc.h \
 	bare_header/sifive_fe310_g000_prci.h \
 	bare_header/sifive_fe310_g000_pll.h \
 	bare_header/sifive_fu540_c000_l2.h \
@@ -163,7 +168,8 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_pwm0.h \
 	bare_header/sifive_spi0.h \
 	bare_header/sifive_test0.h \
-	bare_header/sifive_uart0.h
+	bare_header/sifive_uart0.h \
+	bare_header/sifive_wdog0.h
 
 freedom_metal_specs_generator_SOURCES = \
 	freedom-metal_specs-generator.c++ \
