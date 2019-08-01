@@ -124,7 +124,7 @@ void memory::create_handles()
 {
   emit_def("__METAL_DT_MAX_MEMORIES", std::to_string(num_memories));
 
-  os << "asm (\".weak __metal_memory_table\");\n";
+  os << "__asm__ (\".weak __metal_memory_table\");\n";
   os << "struct metal_memory *__metal_memory_table[] = {\n";
 
   int i = 0;

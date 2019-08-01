@@ -37,16 +37,16 @@ void fixed_factor_clock::declare_inlines()
       if (count == 0) {
 	func = create_inline_dec("parent",
 				 "struct metal_clock *",
-				 "struct metal_clock *clock");
+				 "const struct metal_clock *clock");
 	extern_inlines.push_back(func);
 
 	func = create_inline_dec("mult",
 				 "unsigned long",
-				 "struct metal_clock *clock");
+				 "const struct metal_clock *clock");
 	extern_inlines.push_back(func);
 	func = create_inline_dec("div",
 				 "unsigned long",
-				 "struct metal_clock *clock");
+				 "const struct metal_clock *clock");
 	extern_inlines.push_back(func);
       }
       count++;
@@ -91,19 +91,19 @@ void fixed_factor_clock::define_inlines()
 				       "struct metal_clock *",
 				       "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 				       clock_value,
-				       "struct metal_clock *clock");
+				       "const struct metal_clock *clock");
 
 	mult_func = create_inline_def("mult",
 				      "unsigned long",
 				      "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 				      platform_define(n, METAL_CLOCK_MULT_LABEL),
-				      "struct metal_clock *clock");
+				      "const struct metal_clock *clock");
 
 	div_func = create_inline_def("div",
 				     "unsigned long",
 				     "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 				     platform_define(n, METAL_CLOCK_DIV_LABEL),
-				     "struct metal_clock *clock");
+				     "const struct metal_clock *clock");
       }
       if (count > 0) {
 	add_inline_body(mult_func,

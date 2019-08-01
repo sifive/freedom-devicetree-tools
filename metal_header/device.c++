@@ -101,8 +101,8 @@ void Device::add_inline_body(Inline *func, std::string body, std::string ret_val
 
 void Device::emit_inline_retun_type(bool declare, std::string type) {
   (declare == true) ?
-    (os << "extern inline " << type << " ") : 
-    (os << "static inline " << type << " ");
+    (os << "extern __inline__ " << type << " ") : 
+    (os << "static __inline__ " << type << " ");
 }
 void Device::emit_inline_name(std::string type, std::string field) {
   os << "__metal_driver_" << type << "_" << field << "(";
@@ -186,7 +186,7 @@ void Device::emit_inline_def(Inline* func, std::string device)
 }
 
 void Device::emit_struct_pointer_begin(std::string type, std::string name, std::string ext) {
-  os << "asm (\".weak " << name << "\");\n";
+  os << "__asm__ (\".weak " << name << "\");\n";
   os << "struct __metal_driver_" << type << " *" << name << ext << " = {\n";
 }
 void Device::emit_struct_pointer_element(std::string type, uint32_t id,
@@ -345,7 +345,7 @@ void Device::emit_struct_end(void) {
 
 void Device::emit_struct_array_def_begin(std::string type, std::string name, std::string size) {
   os << "/* Custom array definition */\n";
-  os << "asm (\".weak __metal_dt_" << name << "\");\n";
+  os << "__asm__ (\".weak __metal_dt_" << name << "\");\n";
   os << "struct __metal_driver_" << type << " __metal_dt_" << name << "[ ] = {\n";
 }
 
