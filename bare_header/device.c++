@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <ranges.h>
 #include <set>
 #include <string>
 
@@ -80,16 +81,47 @@ string Device::def_handle_index(const node &n) {
   return "METAL_" + name + "_" + instance;
 }
 
+typedef struct {
+  uint64_t base;
+  uint64_t size;
+} mem_map_t;
+
+static mem_map_t extract_mem_map(const node &n) {
+  mem_map_t m;
+
+  if(n.field_exists("reg-names")) {
+    n.named_tuples(
+      "reg-names",
+      "reg", "mem",
+      tuple_t<target_addr, target_size>(),
+      [&](target_addr b, target_size s) {
+	m.base = b;
+	m.size = s;
+      });
+  } else if (n.field_exists("ranges")) {
+    ranges_t ranges = get_ranges(n);
+
+    /* TODO: How do we pick which of the ranges entries to use? */
+    if (!ranges.empty()) {
+      m.base = ranges.front().child_address;
+      m.size = ranges.front().size;
+    }
+  } else {
+    n.maybe_tuple(
+      "reg",
+      tuple_t<target_addr, target_size>(),
+      [&]() {},
+      [&](target_addr b, target_size s) {
+	m.base = b;
+	m.size = s;
+      });
+  }
+
+  return m;
+}
+
 uint64_t Device::base_address(const node &n) {
-  uint64_t b;
-
-  n.named_tuples(
-    "reg-names", "reg",
-    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	b = base;
-    });
-
-  return b;
+  return extract_mem_map(n).base;
 }
 
 void Device::emit_base(const node &n) {
@@ -102,15 +134,7 @@ void Device::emit_base(const node &n) {
 }
 
 uint64_t Device::size(const node &n) {
-  uint64_t s;
-
-  n.named_tuples(
-    "reg-names", "reg",
-    "control", tuple_t<target_addr, target_size>(), [&](target_addr base, target_size size) {
-	s = size;
-  });
-
-  return s;
+  return extract_mem_map(n).size;
 }
 
 void Device::emit_size(const node &n) {
