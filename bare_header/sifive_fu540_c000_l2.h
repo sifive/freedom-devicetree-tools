@@ -15,12 +15,12 @@ class sifive_fu540_c000_l2 : public Device {
     {}
 
     int get_index(const node &n) {
-      return Device::get_index(n, "sifive,ccache0");
+      return Device::get_index(n, compat_string);
     }
 
     void emit_defines() {
       dtb.match(
-	std::regex("sifive,ccache0"),
+	std::regex(compat_string),
 	[&](node n) {
 	  emit_comment(n);
 
@@ -32,9 +32,8 @@ class sifive_fu540_c000_l2 : public Device {
     }
 
     void emit_offsets() {
-      if(dtb.match(std::regex("sifive,ccache0"), [](const node n){}) != 0) {
+      if(dtb.match(std::regex(compat_string), [](const node n){}) != 0) {
 	emit_compat();
-
 	emit_offset(METAL_SIFIVE_FU540_C000_L2_CONFIG_LABEL, 0x0);
 	emit_offset(METAL_SIFIVE_FU540_C000_L2_WAYENABLE_LABEL, 0x8);
 

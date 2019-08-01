@@ -12,7 +12,7 @@ sifive_fu540_c000_l2::sifive_fu540_c000_l2(std::ostream &os, const fdt &dtb)
 void sifive_fu540_c000_l2::include_headers()
 {
   dtb.match(
-    std::regex("sifive,ccache0"),
+    std::regex(compat_string),
     [&](node n) {
       emit_include(compat_string);
     });
@@ -86,7 +86,7 @@ void sifive_fu540_c000_l2::define_inlines()
 void sifive_fu540_c000_l2::declare_structs()
 {
   dtb.match(
-    std::regex("sifive,ccache0"),
+    std::regex(compat_string),
     [&](node n) {
       emit_struct_decl("sifive_fu540_c000_l2", n);
     }
@@ -96,7 +96,7 @@ void sifive_fu540_c000_l2::declare_structs()
 void sifive_fu540_c000_l2::define_structs()
 {
   dtb.match(
-    std::regex("sifive,ccache0"),
+    std::regex(compat_string),
     [&](node n) {
       emit_struct_begin("sifive_fu540_c000_l2", n);
 
@@ -109,7 +109,7 @@ void sifive_fu540_c000_l2::define_structs()
 void sifive_fu540_c000_l2::create_handles()
 {
   dtb.match(
-    std::regex("sifive,ccache0"),
+    std::regex(compat_string),
     [&](node n) {
       emit_def_handle("__METAL_DT_SIFIVE_FU540_C000_L2_HANDLE", n, "");
     });
