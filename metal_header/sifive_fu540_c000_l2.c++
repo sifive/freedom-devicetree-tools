@@ -57,17 +57,13 @@ void sifive_fu540_c000_l2::define_inlines()
     std::regex(compat_string),
     [&](node n) {
       if (count == 0) {
-	n.named_tuples(
-	  "reg-names", "reg",
-	  "config", tuple_t<node>(), [&](node m) {
-	  func = create_inline_def("control_base",
-				   "uintptr_t",
-				   "(uintptr_t)cache == (uintptr_t)&__metal_dt_" + n.handle(),
-				   "&__metal_dt_" + m.handle(),
-				   "struct metal_cache *cache");
-	  add_inline_body(func, "else", "NULL");
-	  extern_inlines.push_back(func);
-	  });
+	func = create_inline_def("control_base",
+				 "uintptr_t",
+				 "(uintptr_t)cache == (uintptr_t)&__metal_dt_" + n.handle(),
+				 platform_define(n, METAL_BASE_ADDRESS_LABEL),
+				 "struct metal_cache *cache");
+	add_inline_body(func, "else", "0");
+	extern_inlines.push_back(func);
       }
     count++;
     }
