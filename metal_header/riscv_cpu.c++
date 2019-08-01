@@ -123,13 +123,11 @@ void riscv_cpu::define_inlines()
 					   "struct metal_cpu *cpu");
 	extern_inlines.push_back(func_pmpregions);
 
-      }
-      if ((count + 1) == num_cpus) {
+      } else if ((count + 1) == num_cpus) {
 	add_inline_body(func_hartid, "else", "-1");
 	add_inline_body(func_tf, "else", "0");
 	add_inline_body(func_ic, "else", "NULL");
 	add_inline_body(func_pmpregions, "else", "0");
-
       } else {
 	add_inline_body(func_hartid,
 			"(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),

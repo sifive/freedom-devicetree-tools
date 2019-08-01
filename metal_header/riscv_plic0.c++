@@ -242,8 +242,7 @@ void riscv_plic0::define_inlines()
 				     std::to_string(irline),
 				     "struct metal_interrupt *controller", "int idx");
 	    extern_inlines.push_back(funcl);
-	  }
-	  if ((i + 1) == max_interrupts) {
+	  } else if ((i + 1) == max_interrupts) {
 	    add_inline_body(func, "idx == " + std::to_string(i), value);
 	    add_inline_body(func, "else", "NULL");
 
