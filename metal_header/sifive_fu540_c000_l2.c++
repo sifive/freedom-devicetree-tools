@@ -111,7 +111,7 @@ void sifive_fu540_c000_l2::create_handles()
   dtb.match(
     std::regex(compat_string),
     [&](node n) {
-      emit_def_handle("__METAL_DT_SIFIVE_FU540_C000_L2_HANDLE", n, "");
+      emit_def_handle("__METAL_DT_SIFIVE_FU540_C000_L2_HANDLE", n, ".cache");
     });
 }
 
