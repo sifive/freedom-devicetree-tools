@@ -10,7 +10,7 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-metal_specs-generator
 
 
-freedom_ldscript_generator_CPPFLAGS = -I$(srcdir)/linker_script
+freedom_ldscript_generator_CPPFLAGS = -I$(srcdir) -I$(srcdir)/linker_script
 
 freedom_ldscript_generator_SOURCES = \
 	fdt.c++ \
@@ -61,12 +61,12 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/memory.h \
 	linker_script/phdr.c++ \
 	linker_script/phdr.h \
-	linker_script/ranges.c++ \
-	linker_script/ranges.h \
 	linker_script/section.c++ \
 	linker_script/section.h \
 	linker_script/section_group.c++ \
-	linker_script/section_group.h
+	linker_script/section_group.h \
+	ranges.c++ \
+	ranges.h
 
 freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++ \
@@ -140,6 +140,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/template_device.c++ \
 	metal_header/template_device.h
 
+freedom_bare_header_generator_CPPFLAGS = -I$(srcdir) -I$(srcdir)/bare_header
+
 freedom_bare_header_generator_SOURCES = \
 	fdt.c++ \
 	header-labels.h \
@@ -169,7 +171,9 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_spi0.h \
 	bare_header/sifive_test0.h \
 	bare_header/sifive_uart0.h \
-	bare_header/sifive_wdog0.h
+	bare_header/sifive_wdog0.h \
+	ranges.c++ \
+	ranges.h
 
 freedom_metal_specs_generator_SOURCES = \
 	freedom-metal_specs-generator.c++ \
