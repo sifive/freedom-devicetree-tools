@@ -27,6 +27,7 @@
 #include <sifive_gpio_button.h>
 #include <sifive_gpio_led.h>
 #include <sifive_gpio_switch.h>
+#include <sifive_rtc0.h>
 #include <sifive_spi0.h>
 #include <sifive_test0.h>
 #include <sifive_uart0.h>
@@ -153,6 +154,7 @@ static void prepare_devices(const fdt &dtb, fstream &os, std::list<Device *>& de
   devices.push_back(new sifive_gpio_button(os, dtb));
   devices.push_back(new sifive_gpio_led(os, dtb));
   devices.push_back(new sifive_gpio_switch(os, dtb));
+  devices.push_back(new sifive_rtc0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
