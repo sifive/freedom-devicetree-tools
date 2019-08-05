@@ -92,13 +92,17 @@ static mem_map_t extract_mem_map(const node &n) {
   if(n.field_exists("reg-names")) {
     n.named_tuples(
       "reg-names", "reg",
-      "mem",
+      /* "control" goes first, if this exists then it will return the control
+       * registers and not the "mem" registers */
+      "control",
       tuple_t<target_addr, target_size>(),
       [&](target_addr b, target_size s) {
 	m.base = b;
 	m.size = s;
       },
-      "control",
+      /* Return the "mem" registers if and only if there is no "control"
+       * registers */
+      "mem",
       tuple_t<target_addr, target_size>(),
       [&](target_addr b, target_size s) {
 	m.base = b;
