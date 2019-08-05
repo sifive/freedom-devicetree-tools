@@ -120,36 +120,36 @@ void sifive_fe310_g000_lfrosc::define_inlines()
       if (count == 0) {
 	lfrosc_func = create_inline_def("lfrosc",
 	                                "struct metal_clock *",
-				        "(struct metal_clock *)&__metal_dt_" + n.handle(),
+				        "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 				        lfrosc_node,
 				        "const struct metal_clock *clock");
 	psdlfaltclk_func = create_inline_def("psdlfaltclk",
 	                                     "struct metal_clock *",
-				             "(struct metal_clock *)&__metal_dt_" + n.handle(),
+				             "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 				             psdlfaltclk_node,
 				             "const struct metal_clock *clock");
 	cfg_func = create_inline_def("config_reg",
 	                             "unsigned long int",
-				     "(struct metal_clock *)&__metal_dt_" + n.handle(),
+				     "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 				     config_reg,
 				     "const struct metal_clock *clock");
 	mux_func = create_inline_def("mux_reg",
 	                             "unsigned long int",
-				     "(struct metal_clock *)&__metal_dt_" + n.handle(),
+				     "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 				     mux_reg,
 				     "const struct metal_clock *clock");
       } else {
 	add_inline_body(lfrosc_func,
-	                "(struct metal_clock *)&__metal_dt_" + n.handle(),
+	                "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 			lfrosc_node);
 	add_inline_body(psdlfaltclk_func,
-	                "(struct metal_clock *)&__metal_dt_" + n.handle(),
+	                "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 			psdlfaltclk_node);
 	add_inline_body(cfg_func,
-	                "(struct metal_clock *)&__metal_dt_" + n.handle(),
+	                "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 			config_reg);
 	add_inline_body(mux_func,
-	                "(struct metal_clock *)&__metal_dt_" + n.handle(),
+	                "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
 			mux_reg);
       }
 
