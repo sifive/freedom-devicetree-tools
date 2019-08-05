@@ -91,8 +91,14 @@ static mem_map_t extract_mem_map(const node &n) {
 
   if(n.field_exists("reg-names")) {
     n.named_tuples(
-      "reg-names",
-      "reg", "mem",
+      "reg-names", "reg",
+      "mem",
+      tuple_t<target_addr, target_size>(),
+      [&](target_addr b, target_size s) {
+	m.base = b;
+	m.size = s;
+      },
+      "control",
       tuple_t<target_addr, target_size>(),
       [&](target_addr b, target_size s) {
 	m.base = b;
