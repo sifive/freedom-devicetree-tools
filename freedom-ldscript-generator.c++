@@ -703,6 +703,7 @@ static void write_linker_sections (fstream &os, int num_harts, int boot_hart, bo
     os << "\t.init \t\t:" << std::endl;
     os << "\t{" << std::endl;
     os << "\t\tKEEP (*(.text.metal.init.enter))" << std::endl;
+    os << "\t\tKEEP (*(.text.metal.init.*))" << std::endl;
     os << "\t\tKEEP (*(SORT_NONE(.init)))" << std::endl;
     os << "\t\tKEEP (*(.text.libgloss.start))" << std::endl;
     if (scratchpad) {
