@@ -206,15 +206,13 @@ void riscv_clint0::define_inlines()
 				     std::to_string(irline),
 				     "struct metal_interrupt *controller", "int idx");
 	    extern_inlines.push_back(funcl);
-	  } else if ((i + 1) == max_interrupts) {
-	    add_inline_body(func, "idx == " + std::to_string(i), value);
-	    add_inline_body(func, "else", "NULL");
-
-	    add_inline_body(funcl, "idx == " + std::to_string(i), std::to_string(irline));
-	    add_inline_body(funcl, "else", "0");
 	  } else {
 	    add_inline_body(func, "idx == " + std::to_string(i), value);
 	    add_inline_body(funcl, "idx == " + std::to_string(i), std::to_string(irline));
+	  }
+	  if ((i + 1) == max_interrupts) {
+	    add_inline_body(func, "else", "NULL");
+	    add_inline_body(funcl, "else", "0");
 	  }
 	});
 
