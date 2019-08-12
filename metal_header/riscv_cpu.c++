@@ -189,6 +189,9 @@ void riscv_cpu::create_handles()
       std::regex(compat_string),
       [&](node n) {
 	  auto name = n.name();
+          if (n.field_exists("i-cache-size")) {
+              emit_def("__METAL_" + n.handle_cap() + "_ICACHE_HANDLE", std::to_string(1));
+          }
 	  if (n.field_exists("d-cache-size")) {
 	      emit_def("__METAL_" + n.handle_cap() + "_DCACHE_HANDLE", std::to_string(1));
 	  }
