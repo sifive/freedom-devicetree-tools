@@ -129,6 +129,8 @@ am_freedom_ldscript_generator_OBJECTS =  \
 	linker_script/sections/freedom_ldscript_generator-constants_group.$(OBJEXT) \
 	linker_script/sections/freedom_ldscript_generator-ctors_group.$(OBJEXT) \
 	linker_script/sections/freedom_ldscript_generator-data_group.$(OBJEXT) \
+	linker_script/sections/freedom_ldscript_generator-init_text_group.$(OBJEXT) \
+	linker_script/sections/freedom_ldscript_generator-itim_text_group.$(OBJEXT) \
 	linker_script/sections/freedom_ldscript_generator-itim_group.$(OBJEXT) \
 	linker_script/sections/freedom_ldscript_generator-rodata_group.$(OBJEXT) \
 	linker_script/sections/freedom_ldscript_generator-text_group.$(OBJEXT) \
@@ -618,6 +620,10 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/sections/ctors_group.h \
 	linker_script/sections/data_group.c++ \
 	linker_script/sections/data_group.h \
+	linker_script/sections/init_text_group.c++ \
+	linker_script/sections/init_text_group.h \
+	linker_script/sections/itim_text_group.c++ \
+	linker_script/sections/itim_text_group.h \
 	linker_script/sections/itim_group.c++ \
 	linker_script/sections/itim_group.h \
 	linker_script/sections/rodata_group.c++ \
@@ -948,6 +954,12 @@ linker_script/sections/freedom_ldscript_generator-ctors_group.$(OBJEXT):  \
 linker_script/sections/freedom_ldscript_generator-data_group.$(OBJEXT):  \
 	linker_script/sections/$(am__dirstamp) \
 	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/freedom_ldscript_generator-init_text_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
+linker_script/sections/freedom_ldscript_generator-itim_text_group.$(OBJEXT):  \
+	linker_script/sections/$(am__dirstamp) \
+	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
 linker_script/sections/freedom_ldscript_generator-itim_group.$(OBJEXT):  \
 	linker_script/sections/$(am__dirstamp) \
 	linker_script/sections/$(DEPDIR)/$(am__dirstamp)
@@ -1164,7 +1176,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-constants_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-ctors_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-data_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-init_text_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_text_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-rodata_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-text_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-uninit_group.Po@am__quote@
@@ -1391,6 +1405,34 @@ linker_script/sections/freedom_ldscript_generator-data_group.obj: linker_script/
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/data_group.c++' object='linker_script/sections/freedom_ldscript_generator-data_group.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/freedom_ldscript_generator-data_group.obj `if test -f 'linker_script/sections/data_group.c++'; then $(CYGPATH_W) 'linker_script/sections/data_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/data_group.c++'; fi`
+
+linker_script/sections/freedom_ldscript_generator-init_text_group.o: linker_script/sections/init_text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/freedom_ldscript_generator-init_text_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-init_text_group.Tpo -c -o linker_script/sections/freedom_ldscript_generator-init_text_group.o `test -f 'linker_script/sections/init_text_group.c++' || echo '$(srcdir)/'`linker_script/sections/init_text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-init_text_group.Tpo linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-init_text_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/init_text_group.c++' object='linker_script/sections/freedom_ldscript_generator-init_text_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/freedom_ldscript_generator-init_text_group.o `test -f 'linker_script/sections/init_text_group.c++' || echo '$(srcdir)/'`linker_script/sections/init_text_group.c++
+
+linker_script/sections/freedom_ldscript_generator-init_text_group.obj: linker_script/sections/init_text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/freedom_ldscript_generator-init_text_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-init_text_group.Tpo -c -o linker_script/sections/freedom_ldscript_generator-init_text_group.obj `if test -f 'linker_script/sections/init_text_group.c++'; then $(CYGPATH_W) 'linker_script/sections/init_text_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/init_text_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-init_text_group.Tpo linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-init_text_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/init_text_group.c++' object='linker_script/sections/freedom_ldscript_generator-init_text_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/freedom_ldscript_generator-init_text_group.obj `if test -f 'linker_script/sections/init_text_group.c++'; then $(CYGPATH_W) 'linker_script/sections/init_text_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/init_text_group.c++'; fi`
+
+linker_script/sections/freedom_ldscript_generator-itim_text_group.o: linker_script/sections/itim_text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/freedom_ldscript_generator-itim_text_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_text_group.Tpo -c -o linker_script/sections/freedom_ldscript_generator-itim_text_group.o `test -f 'linker_script/sections/itim_text_group.c++' || echo '$(srcdir)/'`linker_script/sections/itim_text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_text_group.Tpo linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_text_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/itim_text_group.c++' object='linker_script/sections/freedom_ldscript_generator-itim_text_group.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/freedom_ldscript_generator-itim_text_group.o `test -f 'linker_script/sections/itim_text_group.c++' || echo '$(srcdir)/'`linker_script/sections/itim_text_group.c++
+
+linker_script/sections/freedom_ldscript_generator-itim_text_group.obj: linker_script/sections/itim_text_group.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/freedom_ldscript_generator-itim_text_group.obj -MD -MP -MF linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_text_group.Tpo -c -o linker_script/sections/freedom_ldscript_generator-itim_text_group.obj `if test -f 'linker_script/sections/itim_text_group.c++'; then $(CYGPATH_W) 'linker_script/sections/itim_text_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/itim_text_group.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_text_group.Tpo linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_text_group.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/sections/itim_text_group.c++' object='linker_script/sections/freedom_ldscript_generator-itim_text_group.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/sections/freedom_ldscript_generator-itim_text_group.obj `if test -f 'linker_script/sections/itim_text_group.c++'; then $(CYGPATH_W) 'linker_script/sections/itim_text_group.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/sections/itim_text_group.c++'; fi`
 
 linker_script/sections/freedom_ldscript_generator-itim_group.o: linker_script/sections/itim_group.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/sections/freedom_ldscript_generator-itim_group.o -MD -MP -MF linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-itim_group.Tpo -c -o linker_script/sections/freedom_ldscript_generator-itim_group.o `test -f 'linker_script/sections/itim_group.c++' || echo '$(srcdir)/'`linker_script/sections/itim_group.c++
