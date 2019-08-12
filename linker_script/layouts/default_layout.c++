@@ -6,6 +6,7 @@
 #include <sections/constants_group.h>
 #include <sections/ctors_group.h>
 #include <sections/data_group.h>
+#include <sections/init_text_group.h>
 #include <sections/itim_group.h>
 #include <sections/rodata_group.h>
 #include <sections/text_group.h>
@@ -29,6 +30,9 @@ DefaultLayout::DefaultLayout(const fdt &dtb, Memory rom_memory, Memory itim_memo
   program_headers.push_back(itim_init_phdr);
 
   section_groups.push_back(ConstantsGroup(dtb));
+
+  section_groups.push_back(InitTextGroup(rom_memory, rom_phdr,   /* Text sections are loaded from ROM */
+                                         rom_memory, rom_phdr)); /* And stay in ROM when mapped */
 
   section_groups.push_back(TextGroup(rom_memory, rom_phdr,   /* Text sections are loaded from ROM */
                                      rom_memory, rom_phdr)); /* And stay in ROM when mapped */
