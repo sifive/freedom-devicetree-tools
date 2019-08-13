@@ -27,6 +27,10 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/sections/ctors_group.h \
 	linker_script/sections/data_group.c++ \
 	linker_script/sections/data_group.h \
+	linker_script/sections/init_text_group.c++ \
+	linker_script/sections/init_text_group.h \
+	linker_script/sections/itim_text_group.c++ \
+	linker_script/sections/itim_text_group.h \
 	linker_script/sections/itim_group.c++ \
 	linker_script/sections/itim_group.h \
 	linker_script/sections/rodata_group.c++ \

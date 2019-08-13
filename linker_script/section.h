@@ -26,6 +26,7 @@ class Section {
     Section(Memory logical_memory, Memory virtual_memory, Phdr program_header);
 
     void add_command(string command);
+    void add_trailing_command(string command);
 
     virtual string describe();
 };

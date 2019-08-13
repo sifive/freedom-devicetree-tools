@@ -31,3 +31,7 @@ string Section::describe() {
 void Section::add_command(string command) {
   commands.push_back(command);
 }
+
+void Section::add_trailing_command(string command) {
+  trailing_commands.push_back(command);
+}

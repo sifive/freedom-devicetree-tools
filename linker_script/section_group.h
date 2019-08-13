@@ -30,6 +30,9 @@ class SectionGroup {
                  Memory virtual_memory, Phdr virtual_header);
 
     virtual string describe();
+
+    void add_command(string command);
+    void add_trailing_command(string command);
 };
 
 #endif /* __SECTION_GROUP__H */
