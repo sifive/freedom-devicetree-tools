@@ -142,6 +142,7 @@ am_freedom_ldscript_generator_OBJECTS =  \
 	linker_script/strategies/freedom_ldscript_generator-default_e21_strategy.$(OBJEXT) \
 	linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.$(OBJEXT) \
 	linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.$(OBJEXT) \
+	linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-linker_script.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-map_strategy.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-memory.$(OBJEXT) \
@@ -644,6 +645,8 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/strategies/default_rocket_arty.h \
 	linker_script/strategies/default_rocket_strategy.c++ \
 	linker_script/strategies/default_rocket_strategy.h \
+	linker_script/strategies/rocket_bootrom_strategy.c++ \
+	linker_script/strategies/rocket_bootrom_strategy.h \
 	linker_script/linker_script.c++ \
 	linker_script/linker_script.h \
 	linker_script/map_strategy.c++ \
@@ -993,6 +996,9 @@ linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.$(OBJEXT
 linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.$(OBJEXT):  \
 	linker_script/strategies/$(am__dirstamp) \
 	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
+linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.$(OBJEXT):  \
+	linker_script/strategies/$(am__dirstamp) \
+	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
 linker_script/freedom_ldscript_generator-linker_script.$(OBJEXT):  \
 	linker_script/$(am__dirstamp) \
 	linker_script/$(DEPDIR)/$(am__dirstamp)
@@ -1177,6 +1183,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_strategy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_strategy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-rocket_bootrom_strategy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-device.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-fixed_clock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-fixed_factor_clock.Po@am__quote@
@@ -1573,6 +1580,20 @@ linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.obj:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_rocket_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.obj `if test -f 'linker_script/strategies/default_rocket_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_rocket_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_rocket_strategy.c++'; fi`
+
+linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.o: linker_script/strategies/rocket_bootrom_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-rocket_bootrom_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.o `test -f 'linker_script/strategies/rocket_bootrom_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/rocket_bootrom_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-rocket_bootrom_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-rocket_bootrom_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/rocket_bootrom_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.o `test -f 'linker_script/strategies/rocket_bootrom_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/rocket_bootrom_strategy.c++
+
+linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.obj: linker_script/strategies/rocket_bootrom_strategy.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-rocket_bootrom_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.obj `if test -f 'linker_script/strategies/rocket_bootrom_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/rocket_bootrom_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/rocket_bootrom_strategy.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-rocket_bootrom_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-rocket_bootrom_strategy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/rocket_bootrom_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-rocket_bootrom_strategy.obj `if test -f 'linker_script/strategies/rocket_bootrom_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/rocket_bootrom_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/rocket_bootrom_strategy.c++'; fi`
 
 linker_script/freedom_ldscript_generator-linker_script.o: linker_script/linker_script.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/freedom_ldscript_generator-linker_script.o -MD -MP -MF linker_script/$(DEPDIR)/freedom_ldscript_generator-linker_script.Tpo -c -o linker_script/freedom_ldscript_generator-linker_script.o `test -f 'linker_script/linker_script.c++' || echo '$(srcdir)/'`linker_script/linker_script.c++
