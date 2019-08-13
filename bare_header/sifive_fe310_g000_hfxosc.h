@@ -11,28 +11,25 @@
 #include <regex>
 
 class sifive_fe310_g000_hfxosc : public Device {
-  public:
-    sifive_fe310_g000_hfxosc(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "sifive,fe310-g000,hfxosc")
-    {}
+public:
+  sifive_fe310_g000_hfxosc(std::ostream &os, const fdt &dtb)
+      : Device(os, dtb, "sifive,fe310-g000,hfxosc") {}
 
-    void emit_defines() {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_comment(n);
+  void emit_defines() {
+    dtb.match(std::regex(compat_string), [&](node n) {
+      emit_comment(n);
 
-	  os << std::endl;
-	});
+      os << std::endl;
+    });
+  }
+
+  void emit_offsets() {
+    if (dtb.match(std::regex(compat_string), [](const node n) {}) != 0) {
+      emit_compat();
+
+      os << std::endl;
     }
-
-    void emit_offsets() {
-      if(dtb.match(std::regex(compat_string), [](const node n){}) != 0) {
-	emit_compat();
-
-	os << std::endl;
-      }
-    }
+  }
 };
 
 #endif

@@ -15,10 +15,9 @@ using std::list;
 using std::string;
 
 class ItimGroup : public SectionGroup {
-  public:
-    ItimGroup(Memory logical_memory, Phdr logical_header,
-              Memory virtual_memory, Phdr virtual_header);
+public:
+  ItimGroup(Memory logical_memory, Phdr logical_header, Memory virtual_memory,
+            Phdr virtual_header);
 };
 
 #endif /* __ITIM_GROUP__H */
-

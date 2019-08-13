@@ -21,17 +21,17 @@
 #include <regex>
 
 class template_device : public Device {
-  public:
-    template_device(std::ostream &os, const fdt &dtb);
+public:
+  template_device(std::ostream &os, const fdt &dtb);
 
-    void create_machine_macros();
-    void create_defines();
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
-    void create_handles();
+  void create_machine_macros();
+  void create_defines();
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif

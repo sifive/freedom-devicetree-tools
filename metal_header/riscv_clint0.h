@@ -9,19 +9,19 @@
 #include <regex>
 
 class riscv_clint0 : public Device {
-  public:
-    int num_parents;
-    uint32_t max_interrupts = 0;
+public:
+  int num_parents;
+  uint32_t max_interrupts = 0;
 
-    riscv_clint0(std::ostream &os, const fdt &dtb);
-    void create_machine_macros();
-    void create_defines();
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
-    void create_handles();
+  riscv_clint0(std::ostream &os, const fdt &dtb);
+  void create_machine_macros();
+  void create_defines();
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif /* __METAL_HEADER_RISCV_CLINT0__H */

@@ -3,12 +3,11 @@
 
 #include "linker_script.h"
 
-LinkerScript::LinkerScript(const fdt &dtb, Memory rom_memory, Memory itim_memory,
-                           Memory data_memory, Memory rodata_memory)
-  : rom_memory(rom_memory), itim_memory(itim_memory),
-    data_memory(data_memory), rodata_memory(rodata_memory)
-{
-}
+LinkerScript::LinkerScript(const fdt &dtb, Memory rom_memory,
+                           Memory itim_memory, Memory data_memory,
+                           Memory rodata_memory)
+    : rom_memory(rom_memory), itim_memory(itim_memory),
+      data_memory(data_memory), rodata_memory(rodata_memory) {}
 
 string LinkerScript::describe() {
   string description = "";
@@ -26,7 +25,8 @@ string LinkerScript::describe() {
   if (data_memory != rom_memory && data_memory != itim_memory) {
     description += "\t" + data_memory.describe() + "\n";
   }
-  if (rodata_memory != rom_memory && rodata_memory != itim_memory && rodata_memory != data_memory) {
+  if (rodata_memory != rom_memory && rodata_memory != itim_memory &&
+      rodata_memory != data_memory) {
     description += "\t" + rodata_memory.describe() + "\n";
   }
   description += "}\n\n";
@@ -47,4 +47,3 @@ string LinkerScript::describe() {
 
   return description;
 }
-

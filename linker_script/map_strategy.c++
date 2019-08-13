@@ -1,10 +1,10 @@
 /* Copyright (c) 2019 SiFive Inc. */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <iostream>
 #include <iomanip>
-#include <string>
+#include <iostream>
 #include <regex>
+#include <string>
 
 #include "map_strategy.h"
 
@@ -23,30 +23,22 @@ using std::string;
  * heuristic for reset vector selection
  */
 static list<string> testram_compats = {
-  "sifive,ahb-periph-port",
-  "sifive,apb-periph-port",
-  "sifive,axi4-periph-port",
-  "sifive,tl-periph-port",
-  "sifive,periph-port",
-  "sifive,ahb-sys-port",
-  "sifive,apb-sys-port",
-  "sifive,axi4-sys-port",
-  "sifive,sys-port",
-  "sifive,tl-sys-port",
-  "sifive,ahb-mem-port",
-  "sifive,apb-mem-port",
-  "sifive,axi4-mem-port",
-  "sifive,tl-mem-port",
-  "sifive,mem-port",
+    "sifive,ahb-periph-port",  "sifive,apb-periph-port",
+    "sifive,axi4-periph-port", "sifive,tl-periph-port",
+    "sifive,periph-port",      "sifive,ahb-sys-port",
+    "sifive,apb-sys-port",     "sifive,axi4-sys-port",
+    "sifive,sys-port",         "sifive,tl-sys-port",
+    "sifive,ahb-mem-port",     "sifive,apb-mem-port",
+    "sifive,axi4-mem-port",    "sifive,tl-mem-port",
+    "sifive,mem-port",
 };
 
 void MapStrategy::print_chosen_strategy(string name, LinkStrategy layout,
-                                        Memory ram, Memory rom, Memory itim)
-{
+                                        Memory ram, Memory rom, Memory itim) {
   cout << hex;
   cout << "Using strategy " << name;
   cout << " with ";
-  switch(layout) {
+  switch (layout) {
   default:
   case LINK_STRATEGY_DEFAULT:
     cout << "default";
@@ -59,9 +51,12 @@ void MapStrategy::print_chosen_strategy(string name, LinkStrategy layout,
     break;
   }
   cout << " layout" << endl;
-  cout << "\tRAM:  " << setw(25) << ram.compatible << " - 0x" << ram.base << endl;
-  cout << "\tROM:  " << setw(25) << rom.compatible << " - 0x" << rom.base << endl;
-  cout << "\tITIM: " << setw(25) << itim.compatible << " - 0x" << itim.base << endl;
+  cout << "\tRAM:  " << setw(25) << ram.compatible << " - 0x" << ram.base
+       << endl;
+  cout << "\tROM:  " << setw(25) << rom.compatible << " - 0x" << rom.base
+       << endl;
+  cout << "\tITIM: " << setw(25) << itim.compatible << " - 0x" << itim.base
+       << endl;
   cout << dec;
 }
 
@@ -94,4 +89,3 @@ Memory MapStrategy::find_testram(list<Memory> memories) {
 
   return testram;
 }
-

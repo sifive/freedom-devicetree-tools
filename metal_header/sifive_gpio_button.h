@@ -9,18 +9,17 @@
 #include <regex>
 
 class sifive_gpio_button : public Device {
-  public:
-	
-    int num_buttons;
+public:
+  int num_buttons;
 
-    sifive_gpio_button(std::ostream &os, const fdt &dtb);
-    void create_defines();
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
-    void create_handles();
+  sifive_gpio_button(std::ostream &os, const fdt &dtb);
+  void create_defines();
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif

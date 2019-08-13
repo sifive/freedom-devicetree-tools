@@ -15,10 +15,9 @@ using std::list;
 using std::string;
 
 class TextGroup : public SectionGroup {
-  public:
-    TextGroup(Memory logical_memory, Phdr logical_header,
-              Memory virtual_memory, Phdr virtual_header);
+public:
+  TextGroup(Memory logical_memory, Phdr logical_header, Memory virtual_memory,
+            Phdr virtual_header);
 };
 
 #endif /* __TEXT_GROUP__H */
-

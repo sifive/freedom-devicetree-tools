@@ -4,8 +4,7 @@
 #include "constants_group.h"
 
 ConstantsGroup::ConstantsGroup(const fdt &dtb)
-  : SectionGroup(Memory(), Phdr(), Memory(), Phdr())
-{
+    : SectionGroup(Memory(), Phdr(), Memory(), Phdr()) {
   add_constant("__stack_size = DEFINED(__stack_size) ? __stack_size : 0x400;");
   add_constant("PROVIDE(__stack_size = __stack_size);");
   add_constant("__heap_size = DEFINED(__heap_size) ? __heap_size : 0x400;");
@@ -13,23 +12,21 @@ ConstantsGroup::ConstantsGroup(const fdt &dtb)
   string boot_hart = "0";
   int chicken_bit = 0;
 
-  dtb.chosen(
-    "metal,boothart",
-    tuple_t<node>(),
-    [&](const node n) {
-      boot_hart = n.instance();
+  dtb.chosen("metal,boothart", tuple_t<node>(), [&](const node n) {
+    boot_hart = n.instance();
 
-      auto cpucompat = n.get_fields<string>("compatible");
-      for(auto it = cpucompat.begin(); it != cpucompat.end(); it++) {
-        if (it->find("bullet") != string::npos) {
-          chicken_bit = 1;
-          break;
-        }
+    auto cpucompat = n.get_fields<string>("compatible");
+    for (auto it = cpucompat.begin(); it != cpucompat.end(); it++) {
+      if (it->find("bullet") != string::npos) {
+        chicken_bit = 1;
+        break;
       }
-    });
+    }
+  });
 
   add_constant("PROVIDE(__metal_boot_hart = " + boot_hart + ");");
-  add_constant("PROVIDE(__metal_chicken_bit = " + std::to_string(chicken_bit) + ");");
+  add_constant("PROVIDE(__metal_chicken_bit = " + std::to_string(chicken_bit) +
+               ");");
 }
 
 void ConstantsGroup::add_constant(string constant) {
@@ -39,10 +36,10 @@ void ConstantsGroup::add_constant(string constant) {
 string ConstantsGroup::describe() {
   string description = "";
 
-  for (auto it = trailing_commands.begin(); it != trailing_commands.end(); it++) {
+  for (auto it = trailing_commands.begin(); it != trailing_commands.end();
+       it++) {
     description += "\t" + *it + "\n";
   }
 
   return description;
 }
-

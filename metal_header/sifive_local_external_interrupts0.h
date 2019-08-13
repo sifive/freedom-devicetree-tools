@@ -9,18 +9,18 @@
 #include <regex>
 
 class sifive_local_external_interrupts0 : public Device {
-  public:
-    int num_local_ext_ints = 0;
-    uint32_t max_interrupts = 0;
+public:
+  int num_local_ext_ints = 0;
+  uint32_t max_interrupts = 0;
 
-    sifive_local_external_interrupts0(std::ostream &os, const fdt &dtb);
-    void create_defines();
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
-    void create_handles();
+  sifive_local_external_interrupts0(std::ostream &os, const fdt &dtb);
+  void create_defines();
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif

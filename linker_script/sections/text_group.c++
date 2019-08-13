@@ -5,9 +5,8 @@
 
 TextGroup::TextGroup(Memory logical_memory, Phdr logical_header,
                      Memory virtual_memory, Phdr virtual_header)
-  : SectionGroup(logical_memory, logical_header,
-                 virtual_memory, virtual_header)
-{
+    : SectionGroup(logical_memory, logical_header, virtual_memory,
+                   virtual_header) {
   Section text_section(logical_memory, virtual_memory, logical_header);
 
   text_section.output_name = "text";
@@ -23,4 +22,3 @@ TextGroup::TextGroup(Memory logical_memory, Phdr logical_header,
   trailing_commands.push_back("PROVIDE (_etext = .);");
   trailing_commands.push_back("PROVIDE (etext = .);");
 }
-

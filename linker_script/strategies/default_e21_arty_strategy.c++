@@ -4,16 +4,18 @@
 #include "default_e21_arty_strategy.h"
 
 #include <layouts/default_layout.h>
-#include <layouts/scratchpad_layout.h>
 #include <layouts/ramrodata_layout.h>
+#include <layouts/scratchpad_layout.h>
 
-bool DefaultE21ArtyStrategy::valid(const fdt &dtb, list<Memory> available_memories)
-{
+bool DefaultE21ArtyStrategy::valid(const fdt &dtb,
+                                   list<Memory> available_memories) {
   int sram_count = 0;
   bool has_spi = false;
 
-  /* Look through the available memories to determine if this is a valid strategy */
-  for (auto it = available_memories.begin(); it != available_memories.end(); it++) {
+  /* Look through the available memories to determine if this is a valid
+   * strategy */
+  for (auto it = available_memories.begin(); it != available_memories.end();
+       it++) {
     if ((*it).compatible == "sifive,sram0") {
       sram_count += 1;
     } else if ((*it).compatible == "sifive,spi0") {
@@ -24,9 +26,10 @@ bool DefaultE21ArtyStrategy::valid(const fdt &dtb, list<Memory> available_memori
   return ((sram_count == 2) && has_spi);
 }
 
-LinkerScript DefaultE21ArtyStrategy::create_layout(const fdt &dtb, list<Memory> available_memories,
-                                             LinkStrategy link_strategy)
-{
+LinkerScript
+DefaultE21ArtyStrategy::create_layout(const fdt &dtb,
+                                      list<Memory> available_memories,
+                                      LinkStrategy link_strategy) {
   Memory rom_memory;
   Memory ram_memory;
   Memory itim_memory;
@@ -34,7 +37,8 @@ LinkerScript DefaultE21ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
 
   /* Map the available memories to the ROM, RAM, and ITIM */
 
-  for (auto it = available_memories.begin(); it != available_memories.end(); it++) {
+  for (auto it = available_memories.begin(); it != available_memories.end();
+       it++) {
     if ((*it).compatible == "sifive,sram0") {
       /* Memories are presented in reverse order sorted by base address.
        * Therefore, the ram is mapped to the lower-based sram0 and the
@@ -58,7 +62,8 @@ LinkerScript DefaultE21ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
   }
 
   /* Generate the layouts */
-  print_chosen_strategy("DefaultE21ArtyStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
+  print_chosen_strategy("DefaultE21ArtyStrategy", link_strategy, ram_memory,
+                        rom_memory, itim_memory);
 
   switch (link_strategy) {
   default:
@@ -67,12 +72,13 @@ LinkerScript DefaultE21ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
     break;
 
   case LINK_STRATEGY_SCRATCHPAD:
-    return ScratchpadLayout(dtb, ram_memory, itim_memory, ram_memory, ram_memory);
+    return ScratchpadLayout(dtb, ram_memory, itim_memory, ram_memory,
+                            ram_memory);
     break;
 
   case LINK_STRATEGY_RAMRODATA:
-    return RamrodataLayout(dtb, rom_memory, itim_memory, ram_memory, rom_memory);
+    return RamrodataLayout(dtb, rom_memory, itim_memory, ram_memory,
+                           rom_memory);
     break;
   }
 }
-

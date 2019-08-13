@@ -13,10 +13,9 @@ using std::list;
 using std::string;
 
 class DefaultLayout : public LinkerScript {
-  public:
-    DefaultLayout(const fdt &dtb, Memory rom_memory, Memory itim_memory,
-                  Memory data_memory, Memory rodata_memory);
+public:
+  DefaultLayout(const fdt &dtb, Memory rom_memory, Memory itim_memory,
+                Memory data_memory, Memory rodata_memory);
 };
 
 #endif /* __DEFAULT_LAYOUT_H */
-

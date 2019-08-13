@@ -5,9 +5,8 @@
 
 DataGroup::DataGroup(Memory logical_memory, Phdr logical_header,
                      Memory virtual_memory, Phdr virtual_header)
-  : SectionGroup(logical_memory, logical_header,
-                 virtual_memory, virtual_header)
-{
+    : SectionGroup(logical_memory, logical_header, virtual_memory,
+                   virtual_header) {
   Section lalign(logical_memory, logical_memory, logical_header);
 
   lalign.output_name = "lalign";
@@ -50,5 +49,3 @@ DataGroup::DataGroup(Memory logical_memory, Phdr logical_header,
   trailing_commands.push_back("PROVIDE( edata = . );");
   trailing_commands.push_back("PROVIDE( metal_segment_data_target_end = . );");
 }
-
-

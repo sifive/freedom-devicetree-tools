@@ -9,17 +9,17 @@
 #include <regex>
 
 class sifive_rtc0 : public Device {
-  public:
-    int num_rtcs;
+public:
+  int num_rtcs;
 
-    sifive_rtc0(std::ostream &os, const fdt &dtb);
+  sifive_rtc0(std::ostream &os, const fdt &dtb);
 
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
-    void create_handles();
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif

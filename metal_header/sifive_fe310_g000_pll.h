@@ -9,14 +9,14 @@
 #include <regex>
 
 class sifive_fe310_g000_pll : public Device {
-  public:
-    sifive_fe310_g000_pll(std::ostream &os, const fdt &dtb);
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
-    void create_handles();
+public:
+  sifive_fe310_g000_pll(std::ostream &os, const fdt &dtb);
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif

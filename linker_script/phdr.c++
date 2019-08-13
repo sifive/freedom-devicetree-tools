@@ -3,13 +3,6 @@
 
 #include "phdr.h"
 
-Phdr::Phdr()
-  : name(""), flags("")
-{
-}
+Phdr::Phdr() : name(""), flags("") {}
 
-Phdr::Phdr(string name, string flags)
-  : name(name), flags(flags)
-{
-}
-
+Phdr::Phdr(string name, string flags) : name(name), flags(flags) {}

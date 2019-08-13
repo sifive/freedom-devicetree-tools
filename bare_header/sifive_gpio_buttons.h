@@ -9,28 +9,25 @@
 #include <regex>
 
 class sifive_gpio_buttons : public Device {
-  public:
-    sifive_gpio_buttons(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "sifive,gpio-buttons")
-    {}
+public:
+  sifive_gpio_buttons(std::ostream &os, const fdt &dtb)
+      : Device(os, dtb, "sifive,gpio-buttons") {}
 
-    void emit_defines() {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_comment(n);
+  void emit_defines() {
+    dtb.match(std::regex(compat_string), [&](node n) {
+      emit_comment(n);
 
-	  os << std::endl;
-	});
+      os << std::endl;
+    });
+  }
+
+  void emit_offsets() {
+    if (dtb.match(std::regex(compat_string), [](const node n) {}) != 0) {
+      emit_compat();
+
+      os << std::endl;
     }
-
-    void emit_offsets() {
-      if(dtb.match(std::regex(compat_string), [](const node n){}) != 0) {
-	emit_compat();
-
-	os << std::endl;
-      }
-    }
+  }
 };
 
 #endif

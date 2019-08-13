@@ -15,10 +15,9 @@ using std::list;
 using std::string;
 
 class DataGroup : public SectionGroup {
-  public:
-    DataGroup(Memory logical_memory, Phdr logical_header,
-              Memory virtual_memory, Phdr virtual_header);
+public:
+  DataGroup(Memory logical_memory, Phdr logical_header, Memory virtual_memory,
+            Phdr virtual_header);
 };
 
 #endif /* __DATA_GROUP__H */
-

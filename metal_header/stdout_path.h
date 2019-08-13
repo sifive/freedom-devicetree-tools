@@ -9,9 +9,9 @@
 #include <regex>
 
 class stdout_path : public Device {
-  public:
-    stdout_path(std::ostream &os, const fdt &dtb);
-    void create_handles();
+public:
+  stdout_path(std::ostream &os, const fdt &dtb);
+  void create_handles();
 };
 
 #endif

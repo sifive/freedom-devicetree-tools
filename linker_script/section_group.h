@@ -15,25 +15,24 @@ using std::list;
 using std::string;
 
 class SectionGroup {
-  public:
-    list<Section> sections;
+public:
+  list<Section> sections;
 
-    Memory logical_memory;
-    Phdr logical_header;
-    Memory virtual_memory;
-    Phdr virtual_header;
+  Memory logical_memory;
+  Phdr logical_header;
+  Memory virtual_memory;
+  Phdr virtual_header;
 
-    list<string> leading_commands;
-    list<string> trailing_commands;
+  list<string> leading_commands;
+  list<string> trailing_commands;
 
-    SectionGroup(Memory logical_memory, Phdr logical_header,
-                 Memory virtual_memory, Phdr virtual_header);
+  SectionGroup(Memory logical_memory, Phdr logical_header,
+               Memory virtual_memory, Phdr virtual_header);
 
-    virtual string describe();
+  virtual string describe();
 
-    void add_command(string command);
-    void add_trailing_command(string command);
+  void add_command(string command);
+  void add_trailing_command(string command);
 };
 
 #endif /* __SECTION_GROUP__H */
-

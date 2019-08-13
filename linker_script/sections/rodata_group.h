@@ -15,10 +15,9 @@ using std::list;
 using std::string;
 
 class RodataGroup : public SectionGroup {
-  public:
-    RodataGroup(Memory logical_memory, Phdr logical_header,
-              Memory virtual_memory, Phdr virtual_header);
+public:
+  RodataGroup(Memory logical_memory, Phdr logical_header, Memory virtual_memory,
+              Phdr virtual_header);
 };
 
 #endif /* __RODATA_GROUP__H */
-
