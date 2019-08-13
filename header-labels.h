@@ -10,7 +10,7 @@
 
 /* Generic Devices */
 #define METAL_BASE_ADDRESS_LABEL "BASE_ADDRESS"
-#define METAL_SIZE_LABEL "SIZE" 
+#define METAL_SIZE_LABEL "SIZE"
 
 /* Clocks */
 #define METAL_CLOCK_FREQUENCY_LABEL "CLOCK_FREQUENCY"

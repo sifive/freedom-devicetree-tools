@@ -9,12 +9,12 @@
 #include <regex>
 
 class riscv_pmp : public Device {
-  public:
-    int pmp_present;
-    riscv_pmp(std::ostream &os, const fdt &dtb);
-    void include_headers();
-    void declare_structs();
-    void create_handles();
+public:
+  int pmp_present;
+  riscv_pmp(std::ostream &os, const fdt &dtb);
+  void include_headers();
+  void declare_structs();
+  void create_handles();
 };
 
 #endif

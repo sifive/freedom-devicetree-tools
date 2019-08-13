@@ -9,17 +9,17 @@
 #include <regex>
 
 class sifive_wdog0 : public Device {
-  public:
-    int num_wdogs;
+public:
+  int num_wdogs;
 
-    sifive_wdog0(std::ostream &os, const fdt &dtb);
+  sifive_wdog0(std::ostream &os, const fdt &dtb);
 
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
-    void create_handles();
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif

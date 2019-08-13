@@ -9,15 +9,15 @@
 #include <regex>
 
 class fixed_clock : public Device {
-  public:
-    int num_clocks;
+public:
+  int num_clocks;
 
-    fixed_clock(std::ostream &os, const fdt &dtb);
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
+  fixed_clock(std::ostream &os, const fdt &dtb);
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
 };
 
 #endif /* __METAL_HEADER_FIXED_CLOCK__H */

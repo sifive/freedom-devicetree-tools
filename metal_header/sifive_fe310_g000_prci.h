@@ -9,13 +9,13 @@
 #include <regex>
 
 class sifive_fe310_g000_prci : public Device {
-  public:
-    sifive_fe310_g000_prci(std::ostream &os, const fdt &dtb);
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
+public:
+  sifive_fe310_g000_prci(std::ostream &os, const fdt &dtb);
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
 };
 
 #endif

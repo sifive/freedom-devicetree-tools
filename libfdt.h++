@@ -1,7 +1,7 @@
 #ifdef __cplusplus
 extern "C" {
-# include <libfdt.h>
+#include <libfdt.h>
 };
 #else
-# include <libfdt.h>
+#include <libfdt.h>
 #endif

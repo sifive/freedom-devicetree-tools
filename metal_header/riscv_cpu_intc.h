@@ -11,11 +11,11 @@
 using std::string;
 
 class riscv_cpu_intc : public Device {
-  public:
-    riscv_cpu_intc(std::ostream &os, const fdt &dtb);
-    string handle(node n);
-    void declare_structs();
-    void define_structs();
+public:
+  riscv_cpu_intc(std::ostream &os, const fdt &dtb);
+  string handle(node n);
+  void declare_structs();
+  void define_structs();
 };
 
 #endif /* __METAL_HEADER_RISCV_CPU_INTC__H */

@@ -8,8 +8,7 @@
 #include <string>
 
 Device::Device(std::ostream &os, const fdt &dtb, std::string compat_string)
-  : os(os), dtb(dtb), compat_string(compat_string)
-{}
+    : os(os), dtb(dtb), compat_string(compat_string) {}
 
 void Device::emit_comment(const node &n) {
   os << "/* From " << n.name() << " */\n";
@@ -17,14 +16,18 @@ void Device::emit_comment(const node &n) {
 
 void Device::emit_handle(std::string d, const node &n, std::string v) {
   emit_comment(n);
-  os << "#define __METAL_DTB_HANDLE_" << d << "_" << n.handle() << " " << v << "\n";
+  os << "#define __METAL_DTB_HANDLE_" << d << "_" << n.handle() << " " << v
+     << "\n";
 }
 
-void Device::emit_def_handle(std::string handle, const node &n, std::string field) {
+void Device::emit_def_handle(std::string handle, const node &n,
+                             std::string field) {
   emit_comment(n);
-  os << "#define " << handle << " (&__metal_dt_" << n.handle() << field << ")\n\n";
-  os << "#define " << "__METAL_DT_" << n.handle_cap() << "_HANDLE (&__metal_dt_"
-     << n.handle() << field << ")\n\n";
+  os << "#define " << handle << " (&__metal_dt_" << n.handle() << field
+     << ")\n\n";
+  os << "#define "
+     << "__METAL_DT_" << n.handle_cap() << "_HANDLE (&__metal_dt_" << n.handle()
+     << field << ")\n\n";
 }
 
 void Device::emit_def(std::string handle, std::string field) {
@@ -35,12 +38,11 @@ void Device::emit_include(std::string d) {
 
   auto to_include = [](std::string input_string) -> std::string {
     std::string s = input_string;
-    std::transform(s.begin(), s.end(), s.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',') {
-	  return '_';
-	}
-	return c;
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> char {
+      if (c == ',') {
+        return '_';
+      }
+      return c;
     });
     return s;
   };
@@ -54,9 +56,8 @@ void Device::emit_include(std::string d) {
 }
 
 Inline *Device::create_inline_dec(std::string name, std::string ret_type,
-				  std::string arg) const
-{
-  Inline* func;
+                                  std::string arg) const {
+  Inline *func;
   func = new Inline(name, ret_type);
   func->args.push_back(arg);
 
@@ -64,18 +65,16 @@ Inline *Device::create_inline_dec(std::string name, std::string ret_type,
 }
 
 Inline *Device::create_inline_dec(std::string name, std::string ret_type,
-				  std::string arg1, std::string arg2) const
-{
-  Inline* func = create_inline_dec(name, ret_type, arg1);
+                                  std::string arg1, std::string arg2) const {
+  Inline *func = create_inline_dec(name, ret_type, arg1);
   func->args.push_back(arg2);
   return func;
 }
 
 Inline *Device::create_inline_def(std::string name, std::string ret_type,
-				  std::string body, std::string ret_value,
-				  std::string arg) const
-{
-  Inline* func;
+                                  std::string body, std::string ret_value,
+                                  std::string arg) const {
+  Inline *func;
   func = new Inline(name, ret_type);
   func->args.push_back(arg);
   func->body_cases.push_back(body);
@@ -85,34 +84,32 @@ Inline *Device::create_inline_def(std::string name, std::string ret_type,
 }
 
 Inline *Device::create_inline_def(std::string name, std::string ret_type,
-				  std::string body, std::string ret_value,
-				  std::string arg1, std::string arg2) const
-{
-  Inline* func = create_inline_def(name, ret_type, body, ret_value, arg1);
+                                  std::string body, std::string ret_value,
+                                  std::string arg1, std::string arg2) const {
+  Inline *func = create_inline_def(name, ret_type, body, ret_value, arg1);
   func->args.push_back(arg2);
   return func;
 }
 
-void Device::add_inline_body(Inline *func, std::string body, std::string ret_value) const
-{
+void Device::add_inline_body(Inline *func, std::string body,
+                             std::string ret_value) const {
   func->body_cases.push_back(body);
   func->body_returns.push_back(ret_value);
 }
 
 void Device::emit_inline_retun_type(bool declare, std::string type) {
-  (declare == true) ?
-    (os << "extern __inline__ " << type << " ") : 
-    (os << "static __inline__ " << type << " ");
+  (declare == true) ? (os << "extern __inline__ " << type << " ")
+                    : (os << "static __inline__ " << type << " ");
 }
 void Device::emit_inline_name(std::string type, std::string field) {
   os << "__metal_driver_" << type << "_" << field << "(";
 }
 
 void Device::emit_inline_body(Inline::Stage stage, std::string condition,
-			      std::string return_value) {
+                              std::string return_value) {
   switch (stage) {
   case Inline::Start:
-    os << "{\n" ;
+    os << "{\n";
     os << "\tif (" << condition << ") {\n";
     os << "\t\treturn " << return_value << ";\n";
     os << "\t}\n";
@@ -120,19 +117,19 @@ void Device::emit_inline_body(Inline::Stage stage, std::string condition,
   case Inline::Middle:
     os << "\telse if (" << condition << ") {\n";
     os << "\t\treturn " << return_value << ";\n";
-    os << "\t}\n" ;
+    os << "\t}\n";
     break;
   case Inline::End:
     os << "\telse {\n";
     os << "\t\treturn " << return_value << ";\n";
     os << "\t}\n";
-    os << "}\n\n" ;
+    os << "}\n\n";
     break;
   case Inline::Empty:
   defaut:
-    os << "{\n" ;
+    os << "{\n";
     os << "\t\treturn " << return_value << ";\n";
-    os << "}\n\n" ;
+    os << "}\n\n";
     break;
   }
 }
@@ -141,22 +138,20 @@ void Device::emit_inline_arg(std::ostream &os, std::list<std::string> params) {
   while (!params.empty()) {
     os << params.front();
     if (params.size() > 1) {
-      os << ", " ;
+      os << ", ";
     }
     params.pop_front();
   }
 }
 
-void Device::emit_inline_dec(Inline* func, std::string device)
-{
+void Device::emit_inline_dec(Inline *func, std::string device) {
   emit_inline_retun_type(true, func->return_type);
   emit_inline_name(device, func->name);
   emit_inline_arg(os, func->args);
   os << ");\n";
 }
 
-void Device::emit_inline_def(Inline* func, std::string device)
-{
+void Device::emit_inline_def(Inline *func, std::string device) {
   emit_inline_retun_type(false, func->return_type);
   emit_inline_name(device, func->name);
   emit_inline_arg(os, func->args);
@@ -175,22 +170,24 @@ void Device::emit_inline_def(Inline* func, std::string device)
       stage = Inline::End;
     } else {
       if (start == true) {
-	stage = Inline::Start;
-	start = false;
+        stage = Inline::Start;
+        start = false;
       } else {
-	stage = Inline::Middle;
+        stage = Inline::Middle;
       }
     }
     emit_inline_body(stage, bc, br);
   }
 }
 
-void Device::emit_struct_pointer_begin(std::string type, std::string name, std::string ext) {
+void Device::emit_struct_pointer_begin(std::string type, std::string name,
+                                       std::string ext) {
   os << "__asm__ (\".weak " << name << "\");\n";
   os << "struct __metal_driver_" << type << " *" << name << ext << " = {\n";
 }
 void Device::emit_struct_pointer_element(std::string type, uint32_t id,
-				       std::string field, std::string delimiter) {
+                                         std::string field,
+                                         std::string delimiter) {
   os << "\t\t\t\t\t&__metal_dt_" << type << "_" << id << field << delimiter;
 }
 void Device::emit_struct_pointer_end(std::string empty) {
@@ -200,12 +197,11 @@ void Device::emit_struct_pointer_end(std::string empty) {
 std::string Device::platform_define(node n, std::string suffix) {
   auto to_define = [](std::string input_string) -> std::string {
     std::string s = input_string;
-    std::transform(s.begin(), s.end(), s.begin(),
-      [](unsigned char c) -> char {
-        if(c == ',' || c == '-') {
-          return '_';
-        }
-        return toupper(c);
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> char {
+      if (c == ',' || c == '-') {
+        return '_';
+      }
+      return toupper(c);
     });
 
     return s;
@@ -220,12 +216,11 @@ std::string Device::platform_define(node n, std::string suffix) {
 std::string Device::platform_define_offset(node n, std::string suffix) {
   auto to_define = [](std::string input_string) -> std::string {
     std::string s = input_string;
-    std::transform(s.begin(), s.end(), s.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',' || c == '-') {
-	  return '_';
-	}
-	return toupper(c);
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> char {
+      if (c == ',' || c == '-') {
+        return '_';
+      }
+      return toupper(c);
     });
 
     return s;
@@ -245,12 +240,14 @@ std::string Device::platform_define_offset(node n, std::string suffix) {
  * "__metal_" namespace */
 void Device::emit_struct_decl(std::string type, const node &n) {
   emit_comment(n);
-  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << ";\n\n";
+  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle()
+     << ";\n\n";
 }
 
 void Device::emit_struct_begin(std::string type, const node &n) {
   emit_comment(n);
-  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle() << " = {\n";
+  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle()
+     << " = {\n";
 }
 
 void Device::emit_struct_field(std::string field, std::string value) {
@@ -273,15 +270,15 @@ void Device::emit_struct_field_ts(std::string field, target_size value) {
   os << "    ." << field << " = " << std::to_string(value) << "UL,\n";
 }
 
-void Device::emit_struct_field_platform_define(std::string field, node n, std::string suffix) {
+void Device::emit_struct_field_platform_define(std::string field, node n,
+                                               std::string suffix) {
   auto to_define = [](std::string input_string) -> std::string {
     std::string s = input_string;
-    std::transform(s.begin(), s.end(), s.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',' || c == '-') {
-	  return '_';
-	}
-	return toupper(c);
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> char {
+      if (c == ',' || c == '-') {
+        return '_';
+      }
+      return toupper(c);
     });
 
     return s;
@@ -290,22 +287,25 @@ void Device::emit_struct_field_platform_define(std::string field, node n, std::s
   std::string instance = to_define(n.instance());
   suffix = to_define(suffix);
 
-  os << "    ." << field << " = METAL_" << name << "_" << instance << "_" << suffix << "," << std::endl; 
+  os << "    ." << field << " = METAL_" << name << "_" << instance << "_"
+     << suffix << "," << std::endl;
 }
 
-void Device::emit_struct_field_platform_define_offset(std::string field, node n, std::string suffix) {
+void Device::emit_struct_field_platform_define_offset(std::string field, node n,
+                                                      std::string suffix) {
   emit_struct_field_platform_define_offset(compat_string, field, n, suffix);
 }
 
-void Device::emit_struct_field_platform_define_offset(std::string compat_override, std::string field, node n, std::string suffix) {
+void Device::emit_struct_field_platform_define_offset(
+    std::string compat_override, std::string field, node n,
+    std::string suffix) {
   auto to_define = [](std::string input_string) -> std::string {
     std::string s = input_string;
-    std::transform(s.begin(), s.end(), s.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',' || c == '-') {
-	  return '_';
-	}
-	return toupper(c);
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> char {
+      if (c == ',' || c == '-') {
+        return '_';
+      }
+      return toupper(c);
     });
 
     return s;
@@ -313,43 +313,50 @@ void Device::emit_struct_field_platform_define_offset(std::string compat_overrid
   std::string name = to_define(compat_override);
   suffix = to_define(suffix);
 
-  os << "    ." << field << " = METAL_" << name << "_" << suffix << "," << std::endl; 
+  os << "    ." << field << " = METAL_" << name << "_" << suffix << ","
+     << std::endl;
 }
 
 void Device::emit_struct_container_node_and_array(int size, std::string field1,
-						const node& c, std::string subfield1,
-						std::string field2, uint32_t elem) {
+                                                  const node &c,
+                                                  std::string subfield1,
+                                                  std::string field2,
+                                                  uint32_t elem) {
   static int cna = 0;
   if (cna == 0) {
-      os << "    ." << field1 << " = &" << "__metal_dt_" << c.parent().handle() + "_" + c.handle() << subfield1 << ",\n";
+    os << "    ." << field1 << " = &"
+       << "__metal_dt_" << c.parent().handle() + "_" + c.handle() << subfield1
+       << ",\n";
   }
   os << "    ." << field2 << "[" << cna << "] = " << elem << ",\n";
   cna++;
   if (cna == size) {
-      cna = 0;
+    cna = 0;
   }
 }
 
-void Device::emit_struct_field_array_elem(int idx, std::string field, uint32_t elem) {
+void Device::emit_struct_field_array_elem(int idx, std::string field,
+                                          uint32_t elem) {
   os << "    ." << field << "[" << idx << "] = " << elem << ",\n";
 }
 
-void Device::emit_struct_field_node(std::string field, const node& n, std::string subfield) {
+void Device::emit_struct_field_node(std::string field, const node &n,
+                                    std::string subfield) {
   emit_comment(n);
-  os << "    ." << field << " = &" << "__metal_dt_" << n.handle() << subfield << ",\n";
+  os << "    ." << field << " = &"
+     << "__metal_dt_" << n.handle() << subfield << ",\n";
 }
 
-void Device::emit_struct_end(void) {
-  os << "};\n\n";
-}
+void Device::emit_struct_end(void) { os << "};\n\n"; }
 
-void Device::emit_struct_array_def_begin(std::string type, std::string name, std::string size) {
+void Device::emit_struct_array_def_begin(std::string type, std::string name,
+                                         std::string size) {
   os << "/* Custom array definition */\n";
   os << "__asm__ (\".weak __metal_dt_" << name << "\");\n";
-  os << "struct __metal_driver_" << type << " __metal_dt_" << name << "[ ] = {\n";
+  os << "struct __metal_driver_" << type << " __metal_dt_" << name
+     << "[ ] = {\n";
 }
 
-void Device::emit_struct_array_elem_node(const node& n) {
+void Device::emit_struct_array_elem_node(const node &n) {
   os << "                    &__metal_dt_" << n.handle() << ",\n";
 }
-

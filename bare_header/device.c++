@@ -10,12 +10,9 @@
 #include <string>
 
 Device::Device(std::ostream &os, const fdt &dtb, std::string compat_string)
-  : os(os), dtb(dtb), compat_string(compat_string)
-{}
+    : os(os), dtb(dtb), compat_string(compat_string) {}
 
-int Device::get_index(const node &n) {
-  return get_index(n, compat_string);
-}
+int Device::get_index(const node &n) { return get_index(n, compat_string); }
 
 int Device::get_index(const node &n, string compat) {
   /* Compare nodes by base address */
@@ -28,16 +25,13 @@ int Device::get_index(const node &n, string compat) {
   /* Build a list of all matching nodes, sorted by base address */
   std::set<node, node_compare> matching_nodes;
 
-  dtb.match(
-      std::regex(compat),
-      [&](const node &n) {
-	matching_nodes.insert(n);
-      });
+  dtb.match(std::regex(compat),
+            [&](const node &n) { matching_nodes.insert(n); });
 
   /* Return the index of node n in the list */
   int count = 0;
-  for(auto it = matching_nodes.begin(); it != matching_nodes.end(); it++) {
-    if(((*it).instance().compare(n.instance())) == 0) {
+  for (auto it = matching_nodes.begin(); it != matching_nodes.end(); it++) {
+    if (((*it).instance().compare(n.instance())) == 0) {
       return count;
     }
     count++;
@@ -54,12 +48,12 @@ string Device::def_handle(const node &n) {
   string instance = n.instance();
 
   std::transform(name.begin(), name.end(), name.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',' || c == '-') {
-	  return '_';
-	}
-	return toupper(c);
-      });
+                 [](unsigned char c) -> char {
+                   if (c == ',' || c == '-') {
+                     return '_';
+                   }
+                   return toupper(c);
+                 });
   std::transform(instance.begin(), instance.end(), instance.begin(), toupper);
 
   return "METAL_" + name + "_" + instance;
@@ -70,12 +64,12 @@ string Device::def_handle_index(const node &n) {
   string instance = std::to_string(get_index(n));
 
   std::transform(name.begin(), name.end(), name.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',' || c == '-') {
-	  return '_';
-	}
-	return toupper(c);
-      });
+                 [](unsigned char c) -> char {
+                   if (c == ',' || c == '-') {
+                     return '_';
+                   }
+                   return toupper(c);
+                 });
   std::transform(instance.begin(), instance.end(), instance.begin(), toupper);
 
   return "METAL_" + name + "_" + instance;
@@ -89,25 +83,22 @@ typedef struct {
 static mem_map_t extract_mem_map(const node &n) {
   mem_map_t m;
 
-  if(n.field_exists("reg-names")) {
-    n.named_tuples(
-      "reg-names", "reg",
-      /* "control" goes first, if this exists then it will return the control
-       * registers and not the "mem" registers */
-      "control",
-      tuple_t<target_addr, target_size>(),
-      [&](target_addr b, target_size s) {
-	m.base = b;
-	m.size = s;
-      },
-      /* Return the "mem" registers if and only if there is no "control"
-       * registers */
-      "mem",
-      tuple_t<target_addr, target_size>(),
-      [&](target_addr b, target_size s) {
-	m.base = b;
-	m.size = s;
-      });
+  if (n.field_exists("reg-names")) {
+    n.named_tuples("reg-names", "reg",
+                   /* "control" goes first, if this exists then it will return
+                    * the control registers and not the "mem" registers */
+                   "control", tuple_t<target_addr, target_size>(),
+                   [&](target_addr b, target_size s) {
+                     m.base = b;
+                     m.size = s;
+                   },
+                   /* Return the "mem" registers if and only if there is no
+                    * "control" registers */
+                   "mem", tuple_t<target_addr, target_size>(),
+                   [&](target_addr b, target_size s) {
+                     m.base = b;
+                     m.size = s;
+                   });
   } else if (n.field_exists("ranges")) {
     ranges_t ranges = get_ranges(n);
 
@@ -117,75 +108,75 @@ static mem_map_t extract_mem_map(const node &n) {
       m.size = ranges.front().size;
     }
   } else {
-    n.maybe_tuple(
-      "reg",
-      tuple_t<target_addr, target_size>(),
-      [&]() {},
-      [&](target_addr b, target_size s) {
-	m.base = b;
-	m.size = s;
-      });
+    n.maybe_tuple("reg", tuple_t<target_addr, target_size>(), [&]() {},
+                  [&](target_addr b, target_size s) {
+                    m.base = b;
+                    m.size = s;
+                  });
   }
 
   return m;
 }
 
-uint64_t Device::base_address(const node &n) {
-  return extract_mem_map(n).base;
-}
+uint64_t Device::base_address(const node &n) { return extract_mem_map(n).base; }
 
 void Device::emit_base(const node &n) {
-  os << "#define " << def_handle(n) << "_" METAL_BASE_ADDRESS_LABEL << " " << base_address(n) << "UL" << std::endl;
+  os << "#define " << def_handle(n) << "_" METAL_BASE_ADDRESS_LABEL << " "
+     << base_address(n) << "UL" << std::endl;
 
   // If the address is very small, it already is an index.
-  if(n.instance().length() > 2) {
-    os << "#define " << def_handle_index(n) << "_" METAL_BASE_ADDRESS_LABEL << " " << base_address(n) << "UL" << std::endl;
+  if (n.instance().length() > 2) {
+    os << "#define " << def_handle_index(n) << "_" METAL_BASE_ADDRESS_LABEL
+       << " " << base_address(n) << "UL" << std::endl;
   }
 }
 
-uint64_t Device::size(const node &n) {
-  return extract_mem_map(n).size;
-}
+uint64_t Device::size(const node &n) { return extract_mem_map(n).size; }
 
 void Device::emit_size(const node &n) {
-  os << "#define " << def_handle(n) << "_" << METAL_SIZE_LABEL << " " << size(n) << "UL" << std::endl;
+  os << "#define " << def_handle(n) << "_" << METAL_SIZE_LABEL << " " << size(n)
+     << "UL" << std::endl;
 
   // If the address is very small, it already is an index.
-  if(n.instance().length() > 2) {
-    os << "#define " << def_handle_index(n) << "_" << METAL_SIZE_LABEL << " " << size(n) << "UL" << std::endl;
+  if (n.instance().length() > 2) {
+    os << "#define " << def_handle_index(n) << "_" << METAL_SIZE_LABEL << " "
+       << size(n) << "UL" << std::endl;
   }
 }
 
 void Device::emit_compat() {
   string compat = compat_string;
   std::transform(compat.begin(), compat.end(), compat.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',' || c == '-') {
-	  return '_';
-	}
-	return toupper(c);
-      });
+                 [](unsigned char c) -> char {
+                   if (c == ',' || c == '-') {
+                     return '_';
+                   }
+                   return toupper(c);
+                 });
   os << "#define METAL_" << compat << std::endl;
 }
 
 void Device::emit_offset(string offset_name, uint32_t offset) {
   string name = compat_string;
   std::transform(name.begin(), name.end(), name.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',' || c == '-') {
-	  return '_';
-	}
-	return toupper(c);
-      });
+                 [](unsigned char c) -> char {
+                   if (c == ',' || c == '-') {
+                     return '_';
+                   }
+                   return toupper(c);
+                 });
 
-  os << "#define METAL_" << name << "_" << offset_name << " " << offset << "UL" << std::endl;
+  os << "#define METAL_" << name << "_" << offset_name << " " << offset << "UL"
+     << std::endl;
 }
 
-void Device::emit_property_u32(const node &n, string property_name, uint32_t value) {
-  os << "#define " << def_handle(n) << "_" << property_name << " " << value << "UL" << std::endl;
+void Device::emit_property_u32(const node &n, string property_name,
+                               uint32_t value) {
+  os << "#define " << def_handle(n) << "_" << property_name << " " << value
+     << "UL" << std::endl;
   // If the address is very small, it already is an index.
-  if(n.instance().length() > 2) {
-    os << "#define " << def_handle_index(n) << "_" << property_name << " " << value << "UL" << std::endl;
+  if (n.instance().length() > 2) {
+    os << "#define " << def_handle_index(n) << "_" << property_name << " "
+       << value << "UL" << std::endl;
   }
 }
-

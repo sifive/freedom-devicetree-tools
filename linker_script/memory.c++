@@ -1,26 +1,19 @@
 /* Copyright (c) 2019 SiFive Inc. */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <sstream>
 #include <iomanip>
+#include <sstream>
 
-using std::stringstream;
 using std::hex;
+using std::stringstream;
 
 #include "memory.h"
 
-Memory::Memory()
-  : compatible(""), size(0)
-{
-}
+Memory::Memory() : compatible(""), size(0) {}
 
-Memory::Memory(string compatible)
-  : compatible(compatible)
-{
-}
+Memory::Memory(string compatible) : compatible(compatible) {}
 
-Memory& Memory::operator=(const Memory& other)
-{
+Memory &Memory::operator=(const Memory &other) {
   if (this != &other) {
     compatible = other.compatible;
     base = other.base;
@@ -33,27 +26,20 @@ Memory& Memory::operator=(const Memory& other)
   return *this;
 }
 
-bool Memory::operator==(const Memory& other) const
-{
+bool Memory::operator==(const Memory &other) const {
   return ((compatible.compare(other.compatible) == 0) &&
-         (name.compare(other.name) == 0) &&
-         (attributes.compare(other.attributes) == 0) &&
-         (base == other.base) &&
-         (size == other.size));
+          (name.compare(other.name) == 0) &&
+          (attributes.compare(other.attributes) == 0) && (base == other.base) &&
+          (size == other.size));
 }
 
-bool Memory::operator!=(const Memory& other) const
-{
-  return !(*this == other);
-}
+bool Memory::operator!=(const Memory &other) const { return !(*this == other); }
 
-bool Memory::operator< (const Memory& rhs) const
-{
+bool Memory::operator<(const Memory &rhs) const {
   return (this->base < rhs.base);
 }
 
-string Memory::describe()
-{
+string Memory::describe() {
   stringstream stream;
 
   stream << hex << name << " (" << attributes << ") : ORIGIN = 0x" << base
@@ -61,4 +47,3 @@ string Memory::describe()
 
   return stream.str();
 }
-

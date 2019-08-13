@@ -15,20 +15,19 @@ using std::list;
 using std::string;
 
 class LinkerScript {
-  public:
-    list<SectionGroup> section_groups;
-    list<Phdr> program_headers;
-    
-    Memory rom_memory;
-    Memory itim_memory;
-    Memory data_memory;
-    Memory rodata_memory;
+public:
+  list<SectionGroup> section_groups;
+  list<Phdr> program_headers;
 
-    LinkerScript(const fdt &dtb, Memory rom_memory, Memory itim_memory,
-                 Memory data_memory, Memory rodata_memory);
+  Memory rom_memory;
+  Memory itim_memory;
+  Memory data_memory;
+  Memory rodata_memory;
 
-    virtual string describe();
+  LinkerScript(const fdt &dtb, Memory rom_memory, Memory itim_memory,
+               Memory data_memory, Memory rodata_memory);
+
+  virtual string describe();
 };
 
 #endif /* __LINKER_SCRIPT_H */
-

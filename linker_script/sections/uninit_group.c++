@@ -7,17 +7,13 @@ using std::regex;
 
 #include "uninit_group.h"
 
-UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory, Phdr logical_header,
-                     Memory virtual_memory, Phdr virtual_header)
-  : SectionGroup(logical_memory, logical_header,
-                 virtual_memory, virtual_header)
-{
+UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory,
+                         Phdr logical_header, Memory virtual_memory,
+                         Phdr virtual_header)
+    : SectionGroup(logical_memory, logical_header, virtual_memory,
+                   virtual_header) {
   int num_harts = 0;
-  dtb.match(
-    regex("cpu"),
-    [&](node n) {
-      num_harts += 1;
-    });
+  dtb.match(regex("cpu"), [&](node n) { num_harts += 1; });
 
   leading_commands.push_back(". = ALIGN(8);");
   leading_commands.push_back("PROVIDE( _fbss = . );");
@@ -36,7 +32,8 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory, Phdr logical_hea
 
   bss.trailing_commands.push_back("PROVIDE( _end = . );");
   bss.trailing_commands.push_back("PROVIDE( end = . );");
-  bss.trailing_commands.push_back("PROVIDE( metal_segment_bss_target_end = . );");
+  bss.trailing_commands.push_back(
+      "PROVIDE( metal_segment_bss_target_end = . );");
 
   sections.push_back(bss);
 
@@ -65,4 +62,3 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory, Phdr logical_hea
 
   sections.push_back(heap);
 }
-

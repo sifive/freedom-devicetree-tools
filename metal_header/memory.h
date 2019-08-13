@@ -6,20 +6,20 @@
 
 #include <device.h>
 
-#include <string>
 #include <regex>
+#include <string>
 
 using std::string;
 
 class memory : public Device {
-  public:
-    int num_memories = 0;
+public:
+  int num_memories = 0;
 
-    memory(std::ostream &os, const fdt &dtb);
-    void include_headers();
-    void declare_structs();
-    void define_structs();
-    void create_handles();
+  memory(std::ostream &os, const fdt &dtb);
+  void include_headers();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif /* __METAL_HEADER_MEMORY__H */

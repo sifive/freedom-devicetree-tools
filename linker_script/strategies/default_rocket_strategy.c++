@@ -4,16 +4,17 @@
 #include "default_rocket_strategy.h"
 
 #include <layouts/default_layout.h>
-#include <layouts/scratchpad_layout.h>
 #include <layouts/ramrodata_layout.h>
+#include <layouts/scratchpad_layout.h>
 
-bool DefaultRocketStrategy::valid(const fdt &dtb, list<Memory> available_memories)
-{
+bool DefaultRocketStrategy::valid(const fdt &dtb,
+                                  list<Memory> available_memories) {
   bool testram = has_testram(available_memories);
   bool has_dtim = false;
   /* ITIM is optional */
 
-  for (auto it = available_memories.begin(); it != available_memories.end(); it++) {
+  for (auto it = available_memories.begin(); it != available_memories.end();
+       it++) {
     if ((*it).compatible.compare("sifive,dtim0") == 0) {
       has_dtim = true;
     }
@@ -22,9 +23,10 @@ bool DefaultRocketStrategy::valid(const fdt &dtb, list<Memory> available_memorie
   return (testram && has_dtim);
 }
 
-LinkerScript DefaultRocketStrategy::create_layout(const fdt &dtb, list<Memory> available_memories,
-                                                  LinkStrategy link_strategy)
-{
+LinkerScript
+DefaultRocketStrategy::create_layout(const fdt &dtb,
+                                     list<Memory> available_memories,
+                                     LinkStrategy link_strategy) {
   Memory ram_memory;
   Memory itim_memory;
   bool has_itim = false;
@@ -33,7 +35,8 @@ LinkerScript DefaultRocketStrategy::create_layout(const fdt &dtb, list<Memory> a
   rom_memory.name = "flash";
   rom_memory.attributes = "rxai!w";
 
-  for (auto it = available_memories.begin(); it != available_memories.end(); it++) {
+  for (auto it = available_memories.begin(); it != available_memories.end();
+       it++) {
     if ((*it).compatible == "sifive,dtim0") {
       ram_memory = *it;
       ram_memory.name = "ram";
@@ -50,7 +53,8 @@ LinkerScript DefaultRocketStrategy::create_layout(const fdt &dtb, list<Memory> a
     itim_memory = ram_memory;
   }
 
-  print_chosen_strategy("DefaultRocketStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
+  print_chosen_strategy("DefaultRocketStrategy", link_strategy, ram_memory,
+                        rom_memory, itim_memory);
 
   switch (link_strategy) {
   default:
@@ -59,12 +63,13 @@ LinkerScript DefaultRocketStrategy::create_layout(const fdt &dtb, list<Memory> a
     break;
 
   case LINK_STRATEGY_SCRATCHPAD:
-    return ScratchpadLayout(dtb, ram_memory, itim_memory, ram_memory, ram_memory);
+    return ScratchpadLayout(dtb, ram_memory, itim_memory, ram_memory,
+                            ram_memory);
     break;
 
   case LINK_STRATEGY_RAMRODATA:
-    return RamrodataLayout(dtb, rom_memory, itim_memory, ram_memory, rom_memory);
+    return RamrodataLayout(dtb, rom_memory, itim_memory, ram_memory,
+                           rom_memory);
     break;
   }
 }
-

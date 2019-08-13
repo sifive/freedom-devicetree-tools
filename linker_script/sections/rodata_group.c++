@@ -4,12 +4,11 @@
 #include "rodata_group.h"
 
 RodataGroup::RodataGroup(Memory logical_memory, Phdr logical_header,
-                     Memory virtual_memory, Phdr virtual_header)
-  : SectionGroup(logical_memory, logical_header,
-                 virtual_memory, virtual_header)
-{
+                         Memory virtual_memory, Phdr virtual_header)
+    : SectionGroup(logical_memory, logical_header, virtual_memory,
+                   virtual_header) {
   Section rodata_section(logical_memory, virtual_memory, logical_header);
-  
+
   rodata_section.output_name = "rodata";
 
   rodata_section.add_command("*(.rdata)");
@@ -24,4 +23,3 @@ RodataGroup::RodataGroup(Memory logical_memory, Phdr logical_header,
 
   sections.push_back(rodata_section);
 }
-

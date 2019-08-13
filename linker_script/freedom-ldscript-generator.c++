@@ -26,22 +26,25 @@ using std::endl;
 using std::ofstream;
 using std::string;
 
-void show_usage(string name)
-{
-  std::cerr << "Usage: " << name << " <option(s)>\n"
-            << "General Options:\n"
-            << "    -h,--help                               Show this help message\n"
-            << "Input/Output Options:\n"
-            << "    -d,--dtb <eg. xxx.dtb>                  Specify fullpath to the DTB file\n"
-            << "    -l,--linker <eg. zzz.lds>               Generate linker file to fullpath filename\n"
-            << "Linker Script Generation Options:\n"
-            << "    --scratchpad                            Execute codes from ram, -l option\n"
-            << "    --ramrodata                             Rodata in ram data section, -l option\n"
-            << endl;
+void show_usage(string name) {
+  std::cerr
+      << "Usage: " << name << " <option(s)>\n"
+      << "General Options:\n"
+      << "    -h,--help                               Show this help message\n"
+      << "Input/Output Options:\n"
+      << "    -d,--dtb <eg. xxx.dtb>                  Specify fullpath to the "
+         "DTB file\n"
+      << "    -l,--linker <eg. zzz.lds>               Generate linker file to "
+         "fullpath filename\n"
+      << "Linker Script Generation Options:\n"
+      << "    --scratchpad                            Execute codes from ram, "
+         "-l option\n"
+      << "    --ramrodata                             Rodata in ram data "
+         "section, -l option\n"
+      << endl;
 }
 
-int main (int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
   /*
    * Parse Arguments
    */
@@ -92,9 +95,9 @@ int main (int argc, char* argv[])
   }
 
   if (dtb_file.empty()) {
-      std::cerr << "--dtb option requires file path." << std::endl;
-      show_usage(argv[0]);
-      return 1;
+    std::cerr << "--dtb option requires file path." << std::endl;
+    show_usage(argv[0]);
+    return 1;
   }
   fdt dtb(dtb_file);
 
@@ -103,15 +106,13 @@ int main (int argc, char* argv[])
    */
 
   auto extract_mem_map = [](Memory &m, const node &n) {
-    if(n.field_exists("reg-names")) {
-      n.named_tuples(
-        "reg-names",
-        "reg", "mem",
-        tuple_t<target_addr, target_size>(),
-        [&](target_addr b, target_size s) {
-          m.base = b;
-          m.size = s;
-        });
+    if (n.field_exists("reg-names")) {
+      n.named_tuples("reg-names", "reg", "mem",
+                     tuple_t<target_addr, target_size>(),
+                     [&](target_addr b, target_size s) {
+                       m.base = b;
+                       m.size = s;
+                     });
     } else if (n.field_exists("ranges")) {
       ranges_t ranges = get_ranges(n);
 
@@ -121,14 +122,11 @@ int main (int argc, char* argv[])
         m.size = ranges.front().size;
       }
     } else {
-      n.maybe_tuple(
-        "reg",
-        tuple_t<target_addr, target_size>(),
-        [&]() {},
-        [&](target_addr b, target_size s) {
-          m.base = b;
-          m.size = s;
-        });
+      n.maybe_tuple("reg", tuple_t<target_addr, target_size>(), [&]() {},
+                    [&](target_addr b, target_size s) {
+                      m.base = b;
+                      m.size = s;
+                    });
     }
   };
 
@@ -143,55 +141,52 @@ int main (int argc, char* argv[])
    * identification in RTL simulation.
    */
   list<string> memory_devices = {
-    "memory",
-    "sifive,ahb-mem-port",
-    "sifive,ahb-periph-port",
-    "sifive,ahb-sys-port",
-    "sifive,apb-mem-port",
-    "sifive,apb-periph-port",
-    "sifive,apb-sys-port",
-    "sifive,axi4-mem-port",
-    "sifive,axi4-periph-port",
-    "sifive,axi4-sys-port",
-    "sifive,dtim0",
-    "sifive,itim0",
-    "sifive,mem-port",
-    "sifive,periph-port",
-    "sifive,spi0",
-    "sifive,sram0",
-    "sifive,sys-port",
-    "sifive,tl-mem-port",
-    "sifive,tl-periph-port",
-    "sifive,tl-sys-port",
+      "memory",
+      "sifive,ahb-mem-port",
+      "sifive,ahb-periph-port",
+      "sifive,ahb-sys-port",
+      "sifive,apb-mem-port",
+      "sifive,apb-periph-port",
+      "sifive,apb-sys-port",
+      "sifive,axi4-mem-port",
+      "sifive,axi4-periph-port",
+      "sifive,axi4-sys-port",
+      "sifive,dtim0",
+      "sifive,itim0",
+      "sifive,mem-port",
+      "sifive,periph-port",
+      "sifive,spi0",
+      "sifive,sram0",
+      "sifive,sys-port",
+      "sifive,tl-mem-port",
+      "sifive,tl-periph-port",
+      "sifive,tl-sys-port",
   };
   list<Memory> memories;
 
   /* Get the node pointed to by metal,entry */
   string entry_handle;
-  uint32_t entry_offset = 0;;
-  dtb.chosen(
-    "metal,entry",
-    tuple_t<node, uint32_t>(),
-    [&](node n, uint32_t offset) {
-      entry_handle = n.handle();
-      entry_offset = offset;
-    });
+  uint32_t entry_offset = 0;
+  ;
+  dtb.chosen("metal,entry", tuple_t<node, uint32_t>(),
+             [&](node n, uint32_t offset) {
+               entry_handle = n.handle();
+               entry_offset = offset;
+             });
 
   for (auto it = memory_devices.begin(); it != memory_devices.end(); it++) {
-    dtb.match(
-        std::regex(*it),
-        [&](const node n) {
-          Memory mem(*it);
-          extract_mem_map(mem, n);
+    dtb.match(std::regex(*it), [&](const node n) {
+      Memory mem(*it);
+      extract_mem_map(mem, n);
 
-          /* If we've requested an offset, add it to the node */
-          if(n.handle() == entry_handle) {
-            mem.base += entry_offset;
-            mem.size -= entry_offset;
-          }
+      /* If we've requested an offset, add it to the node */
+      if (n.handle() == entry_handle) {
+        mem.base += entry_offset;
+        mem.size -= entry_offset;
+      }
 
-          memories.push_back(mem);
-        });
+      memories.push_back(mem);
+    });
   }
 
   /* Sort memories (by base address) and then reverse so that the last
@@ -238,17 +233,20 @@ int main (int argc, char* argv[])
    */
   bool strategy_found = false;
   for (auto it = strategies.begin(); it != strategies.end(); it++) {
-    if ((*it)->valid(dtb ,memories)) {
+    if ((*it)->valid(dtb, memories)) {
       strategy_found = true;
 
       if (ramrodata) {
-        LinkerScript lds = (*it)->create_layout(dtb, memories, LINK_STRATEGY_RAMRODATA);
+        LinkerScript lds =
+            (*it)->create_layout(dtb, memories, LINK_STRATEGY_RAMRODATA);
         os << lds.describe();
       } else if (scratchpad) {
-        LinkerScript lds = (*it)->create_layout(dtb, memories, LINK_STRATEGY_SCRATCHPAD);
+        LinkerScript lds =
+            (*it)->create_layout(dtb, memories, LINK_STRATEGY_SCRATCHPAD);
         os << lds.describe();
       } else {
-        LinkerScript lds = (*it)->create_layout(dtb, memories, LINK_STRATEGY_DEFAULT);
+        LinkerScript lds =
+            (*it)->create_layout(dtb, memories, LINK_STRATEGY_DEFAULT);
         os << lds.describe();
       }
 

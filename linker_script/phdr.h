@@ -11,13 +11,12 @@ using std::list;
 using std::string;
 
 class Phdr {
-  public:
-    string name;
-    string flags;
+public:
+  string name;
+  string flags;
 
-    Phdr();
-    Phdr(string name, string flags);
+  Phdr();
+  Phdr(string name, string flags);
 };
 
 #endif /* __PHDR__H */
-

@@ -4,10 +4,9 @@
 #include "init_text_group.h"
 
 InitTextGroup::InitTextGroup(Memory logical_memory, Phdr logical_header,
-                     Memory virtual_memory, Phdr virtual_header)
-  : SectionGroup(logical_memory, logical_header,
-                 virtual_memory, virtual_header)
-{
+                             Memory virtual_memory, Phdr virtual_header)
+    : SectionGroup(logical_memory, logical_header, virtual_memory,
+                   virtual_header) {
   Section init_section(logical_memory, virtual_memory, logical_header);
 
   init_section.output_name = "init";
@@ -27,4 +26,3 @@ InitTextGroup::InitTextGroup(Memory logical_memory, Phdr logical_header,
 
   sections.push_back(fini_section);
 }
-

@@ -9,30 +9,28 @@
 #include <regex>
 
 class fixed_clock : public Device {
-  public:
-    fixed_clock(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "fixed-clock")
-    {}
+public:
+  fixed_clock(std::ostream &os, const fdt &dtb)
+      : Device(os, dtb, "fixed-clock") {}
 
-    void emit_defines() {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_comment(n);
+  void emit_defines() {
+    dtb.match(std::regex(compat_string), [&](node n) {
+      emit_comment(n);
 
-	  emit_property_u32(n, METAL_CLOCK_FREQUENCY_LABEL, n.get_field<uint32_t>("clock-frequency"));
+      emit_property_u32(n, METAL_CLOCK_FREQUENCY_LABEL,
+                        n.get_field<uint32_t>("clock-frequency"));
 
-	  os << std::endl;
-	});
+      os << std::endl;
+    });
+  }
+
+  void emit_offsets() {
+    if (dtb.match(std::regex(compat_string), [](const node n) {}) != 0) {
+      emit_compat();
+
+      os << std::endl;
     }
-
-    void emit_offsets() {
-      if(dtb.match(std::regex(compat_string), [](const node n){}) != 0) {
-	emit_compat();
-
-	os << std::endl;
-      }
-    }
+  }
 };
 
 #endif

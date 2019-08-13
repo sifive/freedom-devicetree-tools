@@ -13,10 +13,9 @@ using std::list;
 using std::string;
 
 class ScratchpadLayout : public LinkerScript {
-  public:
-    ScratchpadLayout(const fdt &dtb, Memory rom_memory, Memory itim_memory,
-                     Memory data_memory, Memory rodata_memory);
+public:
+  ScratchpadLayout(const fdt &dtb, Memory rom_memory, Memory itim_memory,
+                   Memory data_memory, Memory rodata_memory);
 };
 
 #endif /* __SCRATCHPAD_LAYOUT_H */
-

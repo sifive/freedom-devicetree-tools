@@ -17,13 +17,12 @@ using std::list;
 using std::string;
 
 class ConstantsGroup : public SectionGroup {
-  public:
-    ConstantsGroup(const fdt &dtb);
+public:
+  ConstantsGroup(const fdt &dtb);
 
-    void add_constant(string constant);
+  void add_constant(string constant);
 
-    string describe();
+  string describe();
 };
 
 #endif /* __CONSTANTS_GROUP__H */
-

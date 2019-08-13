@@ -3,12 +3,10 @@
 
 #include "section.h"
 
-Section::Section(Memory logical_memory, Memory virtual_memory, Phdr program_header)
-  : logical_memory(logical_memory),
-    virtual_memory(virtual_memory),
-    program_header(program_header)
-{
-}
+Section::Section(Memory logical_memory, Memory virtual_memory,
+                 Phdr program_header)
+    : logical_memory(logical_memory), virtual_memory(virtual_memory),
+      program_header(program_header) {}
 
 string Section::describe() {
   string description = "\t." + output_name + " : {\n";
@@ -21,16 +19,15 @@ string Section::describe() {
   description += "AT>" + logical_memory.name + " ";
   description += ":" + program_header.name + "\n";
 
-  for (auto it = trailing_commands.begin(); it != trailing_commands.end(); it++) {
+  for (auto it = trailing_commands.begin(); it != trailing_commands.end();
+       it++) {
     description += "\t" + *it + "\n";
   }
 
   return description;
 }
 
-void Section::add_command(string command) {
-  commands.push_back(command);
-}
+void Section::add_command(string command) { commands.push_back(command); }
 
 void Section::add_trailing_command(string command) {
   trailing_commands.push_back(command);

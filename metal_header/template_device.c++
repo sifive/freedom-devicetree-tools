@@ -18,8 +18,7 @@
 #include <regex>
 
 template_device::template_device(std::ostream &os, const fdt &dtb)
-  : Device(os, dtb, "compat,example")
-{}
+    : Device(os, dtb, "compat,example") {}
 
 /* "Machine macros" are #defines used by certain drivers to provide more
  * information about device capabilities during the driver build. */
@@ -30,15 +29,11 @@ void template_device::create_machine_macros() {}
 void template_device::create_defines() {}
 
 /* This method includes the header file */
-void template_device::include_headers()
-{
+void template_device::include_headers() {
   /* If all you need is metal/driver/compat_example.h, you can leave this
    * alone */
-  dtb.match(
-    std::regex(compat_string),
-    [&](node n) {
-      emit_include(compat_string);
-    });
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_include(compat_string); });
 }
 
 /* This method declares inline functions in metal-inline.h */
@@ -48,31 +43,22 @@ void template_device::declare_inlines() {}
 void template_device::define_inlines() {}
 
 /* This method declares the device driver struct */
-void template_device::declare_structs()
-{
-  dtb.match(
-    std::regex(compat_string),
-    [&](node n) {
-      emit_struct_decl("struct_example", n);
-    }
-  );
+void template_device::declare_structs() {
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_struct_decl("struct_example", n); });
 }
 
 /* This method defines the device driver struct, and is also where you
  * should output the values for the struct fields */
-void template_device::define_structs()
-{
-  dtb.match(
-    std::regex(compat_string),
-    [&](node n) {
-      emit_struct_begin("struct_example", n);
+void template_device::define_structs() {
+  dtb.match(std::regex(compat_string), [&](node n) {
+    emit_struct_begin("struct_example", n);
 
-      /* Emit struct fields here */
+    /* Emit struct fields here */
 
-      emit_struct_end();
-    });
+    emit_struct_end();
+  });
 }
 
 /* This method creates device handles */
 void template_device::create_handles() {}
-

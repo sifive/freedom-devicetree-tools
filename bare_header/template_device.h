@@ -11,35 +11,32 @@
 #include <regex>
 
 class template_device : public Device {
-  public:
-    template_device(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "template_device")
-    {}
+public:
+  template_device(std::ostream &os, const fdt &dtb)
+      : Device(os, dtb, "template_device") {}
 
-    void emit_defines() {
-      dtb.match(
-	std::regex(compat_string),
-	[&](node n) {
-	  emit_comment(n);
+  void emit_defines() {
+    dtb.match(std::regex(compat_string), [&](node n) {
+      emit_comment(n);
 
-	  emit_base(n);
-	  emit_size(n);
+      emit_base(n);
+      emit_size(n);
 
-	  /* Add more properties here */
+      /* Add more properties here */
 
-	  os << std::endl;
-	});
+      os << std::endl;
+    });
+  }
+
+  void emit_offsets() {
+    if (dtb.match(std::regex(compat_string), [](const node n) {}) != 0) {
+      emit_compat();
+
+      /* Add offsets here */
+
+      os << std::endl;
     }
-
-    void emit_offsets() {
-      if(dtb.match(std::regex(compat_string), [](const node n){}) != 0) {
-	emit_compat();
-
-	/* Add offsets here */
-
-	os << std::endl;
-      }
-    }
+  }
 };
 
 #endif

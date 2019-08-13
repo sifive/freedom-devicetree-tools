@@ -15,10 +15,9 @@ using std::list;
 using std::string;
 
 class CtorsGroup : public SectionGroup {
-  public:
-    CtorsGroup(Memory logical_memory, Phdr logical_header,
-              Memory virtual_memory, Phdr virtual_header);
+public:
+  CtorsGroup(Memory logical_memory, Phdr logical_header, Memory virtual_memory,
+             Phdr virtual_header);
 };
 
 #endif /* __CTORS_GROUP__H */
-

@@ -14,22 +14,21 @@ using std::list;
 using std::string;
 
 class Section {
-  public:
-    string output_name;
-    list<string> commands;
-    list<string> trailing_commands;
+public:
+  string output_name;
+  list<string> commands;
+  list<string> trailing_commands;
 
-    Memory logical_memory;
-    Memory virtual_memory;
-    Phdr program_header;
+  Memory logical_memory;
+  Memory virtual_memory;
+  Phdr program_header;
 
-    Section(Memory logical_memory, Memory virtual_memory, Phdr program_header);
+  Section(Memory logical_memory, Memory virtual_memory, Phdr program_header);
 
-    void add_command(string command);
-    void add_trailing_command(string command);
+  void add_command(string command);
+  void add_trailing_command(string command);
 
-    virtual string describe();
+  virtual string describe();
 };
 
 #endif /* __SECTION__H */
-

@@ -4,10 +4,9 @@
 #include "itim_text_group.h"
 
 ItimTextGroup::ItimTextGroup(Memory logical_memory, Phdr logical_header,
-                     Memory virtual_memory, Phdr virtual_header)
-  : SectionGroup(logical_memory, logical_header,
-                 virtual_memory, virtual_header)
-{
+                             Memory virtual_memory, Phdr virtual_header)
+    : SectionGroup(logical_memory, logical_header, virtual_memory,
+                   virtual_header) {
   Section litimalign(logical_memory, logical_memory, logical_header);
 
   litimalign.output_name = "litimalign";
@@ -17,7 +16,7 @@ ItimTextGroup::ItimTextGroup(Memory logical_memory, Phdr logical_header,
 
   sections.push_back(litimalign);
 
-  Section ditimalign(logical_memory, virtual_memory,  virtual_header);
+  Section ditimalign(logical_memory, virtual_memory, virtual_header);
 
   ditimalign.output_name = "ditimalign";
 
@@ -47,4 +46,3 @@ ItimTextGroup::ItimTextGroup(Memory logical_memory, Phdr logical_header,
 
   trailing_commands.push_back("PROVIDE( metal_segment_itim_target_end = . );");
 }
-
