@@ -19,6 +19,7 @@
 #include <strategies/default_e21_strategy.h>
 #include <strategies/default_rocket_arty.h>
 #include <strategies/default_rocket_strategy.h>
+#include <strategies/rocket_bootrom_strategy.h>
 
 using std::cerr;
 using std::cout;
@@ -157,6 +158,7 @@ int main (int argc, char* argv[])
     "sifive,itim0",
     "sifive,mem-port",
     "sifive,periph-port",
+    "sifive,rom0",
     "sifive,spi0",
     "sifive,sram0",
     "sifive,sys-port",
@@ -223,6 +225,7 @@ int main (int argc, char* argv[])
   /* Rocket is pretty straightforward */
   strategies.push_back(new DefaultRocketArtyStrategy());
   strategies.push_back(new DefaultRocketStrategy());
+  strategies.push_back(new RocketBootromStrategy());
 
   /* E20 strategy goes last because it only uses one sram */
   strategies.push_back(new DefaultE20ArtyStrategy());

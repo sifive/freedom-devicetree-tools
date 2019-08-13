@@ -53,6 +53,8 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/strategies/default_rocket_arty.h \
 	linker_script/strategies/default_rocket_strategy.c++ \
 	linker_script/strategies/default_rocket_strategy.h \
+	linker_script/strategies/rocket_bootrom_strategy.c++ \
+	linker_script/strategies/rocket_bootrom_strategy.h \
 	linker_script/linker_script.c++ \
 	linker_script/linker_script.h \
 	linker_script/map_strategy.c++ \
