@@ -6,6 +6,7 @@
 #include <sections/constants_group.h>
 #include <sections/ctors_group.h>
 #include <sections/data_group.h>
+#include <sections/init_text_group.h>
 #include <sections/itim_group.h>
 #include <sections/rodata_group.h>
 #include <sections/text_group.h>
@@ -26,6 +27,9 @@ ScratchpadLayout::ScratchpadLayout(const fdt &dtb, Memory rom_memory, Memory iti
   program_headers.push_back(itim_init_phdr);
 
   section_groups.push_back(ConstantsGroup(dtb));
+
+  section_groups.push_back(InitTextGroup(data_memory, ram_phdr,
+                                          data_memory, ram_phdr));
 
   section_groups.push_back(TextGroup(data_memory, ram_phdr,
                                      data_memory, ram_phdr));

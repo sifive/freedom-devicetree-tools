@@ -32,3 +32,11 @@ string SectionGroup::describe()
 
   return description;
 }
+
+void SectionGroup::add_command(string command) {
+  leading_commands.push_back(command);
+}
+
+void SectionGroup::add_trailing_command(string command) {
+  trailing_commands.push_back(command);
+}
