@@ -19,6 +19,7 @@
 #include <strategies/default_e21_strategy.h>
 #include <strategies/default_rocket_arty.h>
 #include <strategies/default_rocket_strategy.h>
+#include <strategies/memory_only_strategy.h>
 
 using std::cerr;
 using std::cout;
@@ -224,9 +225,12 @@ int main (int argc, char* argv[])
   strategies.push_back(new DefaultRocketArtyStrategy());
   strategies.push_back(new DefaultRocketStrategy());
 
-  /* E20 strategy goes last because it only uses one sram */
+  /* E20 strategy goes after because it only uses one sram */
   strategies.push_back(new DefaultE20ArtyStrategy());
   strategies.push_back(new DefaultE20Strategy());
+
+  /* If all else fails, just use the memory port (and optionally an itim) */
+  strategies.push_back(new MemoryOnlyStrategy());
 
   ofstream os;
   os.open(linker_file);
