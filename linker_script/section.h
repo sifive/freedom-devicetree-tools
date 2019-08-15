@@ -14,10 +14,11 @@ using std::list;
 using std::string;
 
 class Section {
-  public:
-    string output_name;
-    list<string> commands;
-    list<string> trailing_commands;
+public:
+  string output_name;
+  int alignment;
+  list<string> commands;
+  list<string> trailing_commands;
 
     Memory logical_memory;
     Memory virtual_memory;

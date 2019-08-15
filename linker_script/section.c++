@@ -3,15 +3,18 @@
 
 #include "section.h"
 
-Section::Section(Memory logical_memory, Memory virtual_memory, Phdr program_header)
-  : logical_memory(logical_memory),
-    virtual_memory(virtual_memory),
-    program_header(program_header)
-{
-}
+Section::Section(Memory logical_memory, Memory virtual_memory,
+                 Phdr program_header)
+    : logical_memory(logical_memory), virtual_memory(virtual_memory),
+      program_header(program_header), alignment(0) {}
 
 string Section::describe() {
-  string description = "\t." + output_name + " : {\n";
+  string description;
+  if (alignment == 0) {
+    description = "\t." + output_name + " : {\n";
+  } else {
+    description = "\t." + output_name + " : ALIGN(" + std::to_string(alignment) + ") {\n";
+  }
 
   for (auto it = commands.begin(); it != commands.end(); it++) {
     description += "\t\t" + *it + "\n";
