@@ -16,6 +16,7 @@ using std::string;
 class Section {
 public:
   string output_name;
+  int alignment;
   list<string> commands;
   list<string> trailing_commands;
 
