@@ -19,14 +19,10 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory, Phdr logical_hea
       num_harts += 1;
     });
 
-  leading_commands.push_back(". = ALIGN(8);");
-  leading_commands.push_back("PROVIDE( _fbss = . );");
-  leading_commands.push_back("PROVIDE( __bss_start = . );");
-  leading_commands.push_back("PROVIDE( metal_segment_bss_target_start = . );");
-
   Section bss(virtual_memory, virtual_memory, virtual_header);
 
   bss.output_name = "bss";
+  bss.alignment = 8;
 
   bss.add_command("*(.sbss*)");
   bss.add_command("*(.gnu.linkonce.sb.*)");
@@ -34,9 +30,8 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory, Phdr logical_hea
   bss.add_command("*(.gnu.linkonce.b.*)");
   bss.add_command("*(COMMON)");
 
-  bss.trailing_commands.push_back("PROVIDE( _end = . );");
-  bss.trailing_commands.push_back("PROVIDE( end = . );");
-  bss.trailing_commands.push_back("PROVIDE( metal_segment_bss_target_end = . );");
+  bss.trailing_commands.push_back("PROVIDE( metal_segment_bss_target_start = ADDR(.bss) );");
+  bss.trailing_commands.push_back("PROVIDE( metal_segment_bss_target_end = ADDR(.bss) + SIZEOF(.bss) );");
 
   sections.push_back(bss);
 
