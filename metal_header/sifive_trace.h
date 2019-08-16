@@ -9,14 +9,14 @@
 #include <regex>
 
 class sifive_trace : public Device {
-  public:
-    sifive_trace(std::ostream &os, const fdt &dtb);
+public:
+  sifive_trace(std::ostream &os, const fdt &dtb);
 
-    void include_headers();
-    void declare_inlines();
-    void define_inlines();
-    void declare_structs();
-    void define_structs();
+  void include_headers();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
 };
 
 #endif
