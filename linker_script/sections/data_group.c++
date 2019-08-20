@@ -24,6 +24,10 @@ DataGroup::DataGroup(Memory logical_memory, Phdr logical_header,
   data.add_command("*(.srodata.cst4)");
   data.add_command("*(.srodata.cst2)");
   data.add_command("*(.srodata .srodata.*)");
+  data.add_command(". = ALIGN(8);");
+  data.add_command("*(.rdata)");
+  data.add_command("*(.rodata .rodata.*)");
+  data.add_command("*(.gnu.linkonce.r.*)");
 
   sections.push_back(data);
 
