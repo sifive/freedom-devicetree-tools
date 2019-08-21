@@ -1,5 +1,9 @@
 #include "fdt.h++"
+#ifdef __MINGW32__
+#include <winsock.h>
+#else
 #include <arpa/inet.h>
+#endif
 #include <cassert>
 #include <cstring>
 #include <fcntl.h>
