@@ -30,6 +30,12 @@ CtorsGroup::CtorsGroup(Memory logical_memory, Phdr logical_header,
                          "*crtbegin?.o *crtend.o *crtend?.o ) .ctors))");
   init_array.add_command("PROVIDE_HIDDEN (__init_array_end = .);");
 
+  init_array.add_command("PROVIDE_HIDDEN ( metal_constructors_start = .);");
+  init_array.add_command(
+      "KEEP (*(SORT_BY_INIT_PRIORITY(.metal.init_array.*)));");
+  init_array.add_command("KEEP (*(.metal.init_array));");
+  init_array.add_command("PROVIDE_HIDDEN ( metal_constructors_end = .);");
+
   sections.push_back(init_array);
 
   Section fini_array(logical_memory, virtual_memory, logical_header);
@@ -43,6 +49,12 @@ CtorsGroup::CtorsGroup(Memory logical_memory, Phdr logical_header,
                          "*crtbegin?.o *crtend.o *crtend?.o ) .dtors))");
   fini_array.add_command("PROVIDE_HIDDEN (__fini_array_end = .);");
 
+  fini_array.add_command("PROVIDE_HIDDEN ( metal_destructors_start = .);");
+  fini_array.add_command(
+      "KEEP (*(SORT_BY_INIT_PRIORITY(.metal.fini_array.*)));");
+  fini_array.add_command("KEEP (*(.metal.fini_array));");
+  fini_array.add_command("PROVIDE_HIDDEN ( metal_destructors_end = .);");
+
   sections.push_back(fini_array);
 
   Section ctors(logical_memory, virtual_memory, logical_header);
@@ -54,6 +66,7 @@ CtorsGroup::CtorsGroup(Memory logical_memory, Phdr logical_header,
   ctors.add_command("KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))");
   ctors.add_command("KEEP (*(SORT(.ctors.*)))");
   ctors.add_command("KEEP (*(.ctors))");
+  ctors.add_command("KEEP (*(.metal.ctors metal.ctors.*));");
 
   sections.push_back(ctors);
 
@@ -66,6 +79,7 @@ CtorsGroup::CtorsGroup(Memory logical_memory, Phdr logical_header,
   dtors.add_command("KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))");
   dtors.add_command("KEEP (*(SORT(.dtors.*)))");
   dtors.add_command("KEEP (*(.dtors))");
+  dtors.add_command("KEEP (*(.metal.dtors metal.dtors.*));");
 
   sections.push_back(dtors);
 }
