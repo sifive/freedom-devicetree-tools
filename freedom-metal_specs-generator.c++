@@ -19,6 +19,7 @@ extern "C" {
 }
 #endif
 #include "multilib.h++"
+#include <fdt.h++>
 
 using std::cout;
 using std::endl;
@@ -111,44 +112,6 @@ std::string trim(const std::string &str,
   const auto strRange = strEnd - strBegin + 1;
 
   return str.substr(strBegin, strRange);
-}
-
-static char *dts_read(const char *filename) {
-  char *buf = NULL;
-  int fd = 0; /* assume stdin */
-  size_t bufsize = 1024, offset = 0;
-  ;
-  int ret = 0;
-
-  if (strcmp(filename, "-") != 0) {
-    fd = open(filename, O_RDONLY);
-    if (fd < 0)
-      return buf;
-  }
-
-  /* Loop until we have read everything */
-  buf = (char *)malloc(bufsize);
-  do {
-    /* Expand the buffer to hold the next chunk */
-    if (offset == bufsize) {
-      bufsize *= 2;
-      buf = (char *)realloc(buf, bufsize);
-    }
-
-    ret = read(fd, &buf[offset], bufsize - offset);
-    if (ret < 0) {
-      break;
-    }
-    offset += ret;
-  } while (ret != 0);
-
-  /* Clean up, including closing stdin; return errno on error */
-  close(fd);
-  if (ret) {
-    free(buf);
-    return NULL;
-  }
-  return buf;
 }
 
 static string get_dts_attribute(const string path, const string tag) {

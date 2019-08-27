@@ -402,4 +402,6 @@ public:
   }
 };
 
+char *dts_read(const char *filename);
+
 #endif
