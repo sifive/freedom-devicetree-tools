@@ -6,7 +6,7 @@
 	compatible = "SiFive,FE510G-dev", "fe510-dev", "sifive-dev";
 	model = "SiFive,FE510G";
 	L17: cpus {
-		#address-cells = <2>;
+		#address-cells = <1>;
 		#size-cells = <0>;
 		L6: cpu@0 {
 			clock-frequency = <0>;
@@ -16,7 +16,7 @@
 			i-cache-sets = <128>;
 			i-cache-size = <16384>;
 			next-level-cache = <&L12>;
-			reg = <0 0>;
+			reg = <0>;
 			riscv,isa = "rv64imac";
 			sifive,dtim = <&L5>;
 			sifive,itim = <&L4>;
