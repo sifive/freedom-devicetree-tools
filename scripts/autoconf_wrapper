@@ -17,7 +17,6 @@ case $i in
 esac
 done
 
-autoreconf -i
 ./configure ${CONFIGURE_ARGS} --prefix=
 make
 make DESTDIR=$(pwd)/${INSTALL_DIR} install
