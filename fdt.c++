@@ -7,35 +7,33 @@
 #include <cassert>
 #include <cstring>
 #include <fcntl.h>
-#include <string>
-#include <unistd.h>
-#include <sys/stat.h>
 #include <fstream>
+#include <string>
+#include <sys/stat.h>
+#include <unistd.h>
 
-char *dts_read(const char *filename)
-{
-    if (strcmp(filename, "-") != 0) {
-        std::ifstream ifs(filename, std::ios::binary|std::ios::ate);
-        std::ifstream::pos_type pos = ifs.tellg();
-        int length = pos;
-        char *buf = (char *)malloc(length);
-        ifs.seekg(0, std::ios::beg);
-        ifs.read(buf, length);
-        if (!ifs) {
-            free(buf);
-            buf = NULL;
-        }
-        ifs.close();
-        return buf;
-    } else {
-    	/* stdin/cin is not supported yet */
-        return NULL;
+char *dts_read(const char *filename) {
+  if (strcmp(filename, "-") != 0) {
+    std::ifstream ifs(filename, std::ios::binary | std::ios::ate);
+    std::ifstream::pos_type pos = ifs.tellg();
+    int length = pos;
+    char *buf = (char *)malloc(length);
+    ifs.seekg(0, std::ios::beg);
+    ifs.read(buf, length);
+    if (!ifs) {
+      free(buf);
+      buf = NULL;
     }
+    ifs.close();
+    return buf;
+  } else {
+    /* stdin/cin is not supported yet */
+    return NULL;
+  }
 }
 
-static uint8_t *read_fdt_from_path(const char *filename)
-{
-    return (uint8_t *)dts_read(filename);
+static uint8_t *read_fdt_from_path(const char *filename) {
+  return (uint8_t *)dts_read(filename);
 }
 
 node node::parent(void) const {
