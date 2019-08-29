@@ -33,6 +33,8 @@
 #include <sifive_uart0.h>
 #include <sifive_wdog0.h>
 
+#include <synopsys_i2c_v2_02a_standard.h>
+
 /* FE310-G000 Devices */
 #include <sifive_fe310_g000_hfrosc.h>
 #include <sifive_fe310_g000_hfxosc.h>
@@ -154,6 +156,8 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
   devices.push_back(new sifive_wdog0(os, dtb));
+
+  devices.push_back(new synopsys_i2c_v2_02a_standard(os, dtb));
 
   /* FE310-G000 Devices */
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
