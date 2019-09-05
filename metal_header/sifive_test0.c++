@@ -54,32 +54,25 @@ void sifive_test0::define_inlines() {
   int count = 0;
 
   dtb.match(std::regex(compat_string), [&](node n) {
-    string base = "0";
-    string size = "0";
-    n.named_tuples("reg-names", "reg", "control",
-                   tuple_t<target_addr, target_size>(),
-                   [&](target_addr b, target_size s) {
-                     base = std::to_string(b);
-                     size = std::to_string(s);
-                   });
-
     if (count == 0) {
-      base_func = create_inline_def("base", "unsigned long",
-                                    "(uintptr_t)sd == (uintptr_t)&__metal_dt_" +
-                                        n.handle(),
-                                    base, "const struct __metal_shutdown *sd");
+      base_func = create_inline_def(
+          "base", "unsigned long",
+          "(uintptr_t)sd == (uintptr_t)&__metal_dt_" + n.handle(),
+          platform_define(n, METAL_BASE_ADDRESS_LABEL),
+          "const struct __metal_shutdown *sd");
 
       size_func = create_inline_def("size", "unsigned long",
                                     "(uintptr_t)sd == (uintptr_t)&__metal_dt_" +
                                         n.handle(),
-                                    size, "const struct __metal_shutdown *sd");
+                                    platform_define(n, METAL_SIZE_LABEL),
+                                    "const struct __metal_shutdown *sd");
     } else {
       add_inline_body(base_func,
                       "(uintptr_t)sd == (uintptr_t)&__metal_dt_" + n.handle(),
-                      base);
+                      platform_define(n, METAL_BASE_ADDRESS_LABEL));
       add_inline_body(size_func,
                       "(uintptr_t)sd == (uintptr_t)&__metal_dt_" + n.handle(),
-                      size);
+                      platform_define(n, METAL_SIZE_LABEL));
     }
 
     count += 1;
