@@ -37,8 +37,11 @@ public:
       emit_offset("PRIORITY_BASE", 0x0);
       emit_offset("PENDING_BASE", 0x1000);
       emit_offset("ENABLE_BASE", 0x2000);
-      emit_offset("THRESHOLD", 0x200000);
-      emit_offset("CLAIM", 0x200004);
+      emit_offset("ENABLE_PER_HART", 0x80);
+      emit_offset("CONTEXT_BASE", 0x200000);
+      emit_offset("CONTEXT_PER_HART", 0x1000);
+      emit_offset("CONTEXT_THRESHOLD", 0x00);
+      emit_offset("CONTEXT_CLAIM", 0x04);
 
       os << std::endl;
     }

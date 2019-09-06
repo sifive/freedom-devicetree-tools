@@ -95,6 +95,9 @@ void riscv_plic0::declare_inlines() {
       func = create_inline_dec("interrupt_lines", "int",
                                "struct metal_interrupt *controller", "int idx");
       extern_inlines.push_back(func);
+
+      func = create_inline_dec("context_ids", "int", "int hartid");
+      extern_inlines.push_back(func);
     }
     count++;
   });
@@ -109,9 +112,12 @@ void riscv_plic0::declare_inlines() {
   os << "\n";
 }
 
+#define MMODE_EXT_INTR 11
+
 void riscv_plic0::define_inlines() {
   Inline *func;
   Inline *funcl;
+  Inline *funcc;
   std::list<Inline *> extern_inlines;
 
   int count = 0;
@@ -168,6 +174,7 @@ void riscv_plic0::define_inlines() {
       }
     }
 
+    bool has_m_ext_intr = false;
     n.maybe_tuple_index(
         "interrupts-extended", tuple_t<node, uint32_t>(),
         [&]() {
@@ -180,6 +187,10 @@ void riscv_plic0::define_inlines() {
             func = create_inline_def("interrupt_lines", "int", "empty", "0",
                                      "struct metal_interrupt *controller",
                                      "int idx");
+            extern_inlines.push_back(func);
+
+            func = create_inline_def("context_ids", "int", "empty", "-1",
+                                     "int hartid");
             extern_inlines.push_back(func);
           }
         },
@@ -204,9 +215,26 @@ void riscv_plic0::define_inlines() {
             add_inline_body(funcl, "idx == " + std::to_string(i),
                             std::to_string(irline));
           }
+
+          if (irline == MMODE_EXT_INTR) {
+            target_addr hartid = m.parent().get_field<target_addr>("reg");
+            if (!has_m_ext_intr) {
+              funcc = create_inline_def("context_ids", "int",
+                                        "hartid == " + hartid.as_string(),
+                                        std::to_string(i), "int hartid");
+              extern_inlines.push_back(funcc);
+              has_m_ext_intr = true;
+            } else {
+              add_inline_body(funcc, "hartid == " + hartid.as_string(),
+                              std::to_string(i));
+            }
+          }
+
           if ((i + 1) == max_interrupts) {
             add_inline_body(func, "else", "NULL");
             add_inline_body(funcl, "else", "0");
+            if (has_m_ext_intr)
+              add_inline_body(funcc, "else", "-1");
           }
         });
     count++;
