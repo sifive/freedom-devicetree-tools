@@ -137,6 +137,10 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_rtc0.h \
 	metal_header/sifive_spi0.c++ \
 	metal_header/sifive_spi0.h \
+	metal_header/synopsys_i2s_master_v1_11a.c++ \
+	metal_header/synopsys_i2s_master_v1_11a.h \
+	metal_header/synopsys_i2s_slave_v1_11a.c++ \
+	metal_header/synopsys_i2s_slave_v1_11a.h \
 	metal_header/sifive_test0.c++ \
 	metal_header/sifive_test0.h \
 	metal_header/sifive_uart0.c++ \
@@ -178,6 +182,8 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_pwm0.h \
 	bare_header/sifive_rtc0.h \
 	bare_header/sifive_spi0.h \
+	bare_header/synopsys_i2s_master_v1_11a.h \
+	bare_header/synopsys_i2s_slave_v1_11a.h \
 	bare_header/sifive_test0.h \
 	bare_header/sifive_uart0.h \
 	bare_header/sifive_wdog0.h \

@@ -39,6 +39,8 @@
 #include "bare_header/sifive_gpio_leds.h"
 #include "bare_header/sifive_gpio_switches.h"
 #include "bare_header/sifive_i2c0.h"
+#include "bare_header/synopsys_i2s_master_v1_11a.h"
+#include "bare_header/synopsys_i2s_slave_v1_11a.h"
 #include "bare_header/sifive_local_external_interrupts0.h"
 #include "bare_header/sifive_pwm0.h"
 #include "bare_header/sifive_rtc0.h"
@@ -154,6 +156,8 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_gpio_leds(os, dtb));
   devices.push_back(new sifive_gpio_switches(os, dtb));
   devices.push_back(new sifive_i2c0(os, dtb));
+  devices.push_back(new synopsys_i2s_master_v1_11a(os, dtb));
+  devices.push_back(new synopsys_i2s_slave_v1_11a(os, dtb));
   devices.push_back(new sifive_local_external_interrupts0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
