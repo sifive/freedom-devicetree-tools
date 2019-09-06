@@ -38,10 +38,10 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory,
   stack.output_name = "stack";
 
   stack.add_command("PROVIDE(metal_segment_stack_begin = .);");
-  stack.add_command(". = __stack_size;");
+  stack.add_command(". += __stack_size;");
   stack.add_command("PROVIDE( _sp = . );");
   for (int i = 0; i < (num_harts - 1); i++) {
-    stack.add_command(". = __stack_size;");
+    stack.add_command(". += __stack_size;");
   }
   stack.add_command("PROVIDE(metal_segment_stack_end = .);");
 
