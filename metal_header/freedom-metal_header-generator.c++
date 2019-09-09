@@ -123,6 +123,7 @@ void format_config_file_name(std::string &cfg_file) {
   search_replace_all(cfg_file, "-", "_");
   search_replace_all(cfg_file, ".", "_");
   search_replace_all(cfg_file, "/", "__");
+  search_replace_all(cfg_file, ":", "__");
 
   uppercase_string(cfg_file);
 }

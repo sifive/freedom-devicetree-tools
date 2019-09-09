@@ -7,45 +7,33 @@
 #include <cassert>
 #include <cstring>
 #include <fcntl.h>
+#include <fstream>
 #include <string>
+#include <sys/stat.h>
 #include <unistd.h>
 
-static uint8_t *read_fdt_from_path(const char *filename) {
-  uint8_t *buf = NULL;
-  int fd = 0; /* assume stdin */
-  size_t bufsize = 1024, offset = 0;
-  ;
-  int ret = 0;
-
+char *dts_read(const char *filename) {
   if (strcmp(filename, "-") != 0) {
-    fd = open(filename, O_RDONLY);
-    if (fd < 0)
-      return buf;
-  }
-
-  /* Loop until we have read everything */
-  buf = (uint8_t *)malloc(bufsize);
-  do {
-    /* Expand the buffer to hold the next chunk */
-    if (offset == bufsize) {
-      bufsize *= 2;
-      buf = (uint8_t *)realloc(buf, bufsize);
+    std::ifstream ifs(filename, std::ios::binary | std::ios::ate);
+    std::ifstream::pos_type pos = ifs.tellg();
+    int length = pos;
+    char *buf = (char *)malloc(length);
+    ifs.seekg(0, std::ios::beg);
+    ifs.read(buf, length);
+    if (!ifs) {
+      free(buf);
+      buf = NULL;
     }
-
-    ret = read(fd, &buf[offset], bufsize - offset);
-    if (ret < 0) {
-      break;
-    }
-    offset += ret;
-  } while (ret != 0);
-
-  /* Clean up, including closing stdin; return errno on error */
-  close(fd);
-  if (ret) {
-    free(buf);
+    ifs.close();
+    return buf;
+  } else {
+    /* stdin/cin is not supported yet */
     return NULL;
   }
-  return buf;
+}
+
+static uint8_t *read_fdt_from_path(const char *filename) {
+  return (uint8_t *)dts_read(filename);
 }
 
 node node::parent(void) const {
