@@ -171,6 +171,7 @@ am_freedom_metal_header_generator_OBJECTS =  \
 	metal_header/freedom_metal_header_generator-riscv_cpu_intc.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-riscv_plic0.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-riscv_pmp.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-sifive_ccache0.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-sifive_clic0.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-sifive_fe310_g000_hfrosc.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-sifive_fe310_g000_hfxosc.$(OBJEXT) \
@@ -698,6 +699,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/riscv_plic0.h \
 	metal_header/riscv_pmp.c++ \
 	metal_header/riscv_pmp.h \
+        metal_header/sifive_ccache0.c++ \
+        metal_header/sifive_ccache0.h \
 	metal_header/sifive_clic0.c++ \
 	metal_header/sifive_clic0.h \
 	metal_header/sifive_fe310_g000_hfrosc.c++ \
@@ -753,6 +756,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/riscv_clint0.h \
 	bare_header/riscv_plic0.h \
 	bare_header/sifive_aon0.h \
+	bare_header/sifive_ccache0.h \
 	bare_header/sifive_clic0.h \
 	bare_header/sifive_fe310_g000_hfrosc.h \
 	bare_header/sifive_fe310_g000_hfxosc.h \
@@ -1071,6 +1075,9 @@ metal_header/freedom_metal_header_generator-riscv_plic0.$(OBJEXT):  \
 metal_header/freedom_metal_header_generator-riscv_pmp.$(OBJEXT):  \
 	metal_header/$(am__dirstamp) \
 	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-sifive_ccache0.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
 metal_header/freedom_metal_header_generator-sifive_clic0.$(OBJEXT):  \
 	metal_header/$(am__dirstamp) \
 	metal_header/$(DEPDIR)/$(am__dirstamp)
@@ -1208,6 +1215,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-riscv_cpu_intc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-riscv_plic0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-riscv_pmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_ccache0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_clic0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_fe310_g000_hfrosc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_fe310_g000_hfxosc.Po@am__quote@
@@ -1875,6 +1883,20 @@ metal_header/freedom_metal_header_generator-riscv_pmp.obj: metal_header/riscv_pm
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/riscv_pmp.c++' object='metal_header/freedom_metal_header_generator-riscv_pmp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-riscv_pmp.obj `if test -f 'metal_header/riscv_pmp.c++'; then $(CYGPATH_W) 'metal_header/riscv_pmp.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/riscv_pmp.c++'; fi`
+
+metal_header/freedom_metal_header_generator-sifive_ccache0.o: metal_header/sifive_ccache0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_ccache0.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_ccache0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_ccache0.o `test -f 'metal_header/sifive_ccache0.c++' || echo '$(srcdir)/'`metal_header/sifive_ccache0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_ccache0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_ccache0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_ccache0.c++' object='metal_header/freedom_metal_header_generator-sifive_ccache0.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_ccache0.o `test -f 'metal_header/sifive_ccache0.c++' || echo '$(srcdir)/'`metal_header/sifive_ccache0.c++
+
+metal_header/freedom_metal_header_generator-sifive_ccache0.obj: metal_header/sifive_ccache0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_ccache0.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_ccache0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_ccache0.obj `if test -f 'metal_header/sifive_ccache0.c++'; then $(CYGPATH_W) 'metal_header/sifive_ccache0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_ccache0.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_ccache0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_ccache0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_ccache0.c++' object='metal_header/freedom_metal_header_generator-sifive_ccache0.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_ccache0.obj `if test -f 'metal_header/sifive_ccache0.c++'; then $(CYGPATH_W) 'metal_header/sifive_ccache0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_ccache0.c++'; fi`
 
 metal_header/freedom_metal_header_generator-sifive_clic0.o: metal_header/sifive_clic0.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_clic0.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_clic0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_clic0.o `test -f 'metal_header/sifive_clic0.c++' || echo '$(srcdir)/'`metal_header/sifive_clic0.c++

@@ -43,6 +43,7 @@ class Device {
     virtual uint64_t size(const node &n);
     void emit_size(const node &n);
 
+    void emit_compat(string custom_string);
     void emit_compat();
 
     void emit_offset(string offset_name, uint32_t offset);
