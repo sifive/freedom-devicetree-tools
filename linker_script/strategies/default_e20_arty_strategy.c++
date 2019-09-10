@@ -29,12 +29,54 @@ LinkerScript DefaultE20ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
 {
   Memory rom_memory;
   Memory ram_memory;
+  Memory itim_memory;
+  int sram0_count = 0;
+  bool ram_mapped = false;
+
+  /* Map the available memories to the ROM, RAM, and ITIM */
+
+  /* Count how many sram0, E20 typically only have one. Just in case */
+  for (auto it = available_memories.begin(); it != available_memories.end(); it++) {
+    if ((*it).compatible == "sifive,sram0") {
+      sram0_count++;
+    }
+  }
 
   for (auto it = available_memories.begin(); it != available_memories.end(); it++) {
     if ((*it).compatible == "sifive,sram0") {
-      ram_memory = *it;
-      ram_memory.name = "ram";
-      ram_memory.attributes = "wxa!ri";
+      if (sram0_count > 1) {
+        /* Memories are presented in reverse order sorted by base address.
+         * Therefore, the ram is mapped to the lower-based sram0 and the
+         * itim is mapped to the higher-based sram0
+         */
+        if (ram_mapped) {
+          itim_memory = *it;
+          itim_memory.name = "itim";
+          itim_memory.attributes = "wx!rai";
+        } else {
+          ram_memory = *it;
+          ram_memory.name = "ram";
+          ram_memory.attributes = "wxa!ri";
+          ram_mapped = true;
+        }
+      } else {
+        /* Only one sram0, let be creative if we have enough space */
+        if ((*it).size >= 0x10000) {
+          ram_memory = *it;
+          ram_memory.size = (*it).size / 2 - 0x1000;
+          ram_memory.name = "ram";
+          ram_memory.attributes = "wxa!ri";
+          itim_memory = *it;
+          itim_memory.size = (*it).size / 2 + 0x1000;
+          itim_memory.base = (*it).base + ram_memory.size;
+          itim_memory.name = "itim";
+          itim_memory.attributes = "wx!rai";
+        } else {
+          ram_memory = *it;
+          ram_memory.name = "ram";
+          ram_memory.attributes = "wxa!ri";
+        }
+      }
     } else if ((*it).compatible == "sifive,spi0") {
       rom_memory = *it;
       rom_memory.name = "flash";
@@ -43,20 +85,20 @@ LinkerScript DefaultE20ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
   }
 
   /* Generate the layouts */
-  print_chosen_strategy("DefaultE20ArtyStrategy", link_strategy, ram_memory, rom_memory, ram_memory);
+  print_chosen_strategy("DefaultE20ArtyStrategy", link_strategy, ram_memory, rom_memory, itim_memory);
 
   switch (link_strategy) {
   default:
   case LINK_STRATEGY_DEFAULT:
-    return DefaultLayout(dtb, rom_memory, rom_memory, ram_memory, ram_memory);
+    return DefaultLayout(dtb, rom_memory, itim_memory, ram_memory, ram_memory);
     break;
 
   case LINK_STRATEGY_SCRATCHPAD:
-    return ScratchpadLayout(dtb, ram_memory, ram_memory, ram_memory, ram_memory);
+    return ScratchpadLayout(dtb, ram_memory, itim_memory, ram_memory, ram_memory);
     break;
 
   case LINK_STRATEGY_RAMRODATA:
-    return RamrodataLayout(dtb, rom_memory, rom_memory, ram_memory, rom_memory);
+    return RamrodataLayout(dtb, rom_memory, itim_memory, ram_memory, rom_memory);
     break;
   }
 }
