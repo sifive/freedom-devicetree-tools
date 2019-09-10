@@ -156,16 +156,20 @@ void Device::emit_size(const node &n) {
   }
 }
 
-void Device::emit_compat() {
-  string compat = compat_string;
+void Device::emit_compat(string custom_string) {
+  string compat = custom_string;
   std::transform(compat.begin(), compat.end(), compat.begin(),
-      [](unsigned char c) -> char { 
-	if(c == ',' || c == '-') {
-	  return '_';
-	}
-	return toupper(c);
+      [](unsigned char c) -> char {
+        if(c == ',' || c == '-') {
+          return '_';
+        }
+        return toupper(c);
       });
   os << "#define METAL_" << compat << std::endl;
+}
+
+void Device::emit_compat() {
+  emit_compat(compat_string);
 }
 
 void Device::emit_offset(string offset_name, uint32_t offset) {
