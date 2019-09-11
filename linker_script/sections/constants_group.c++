@@ -3,6 +3,8 @@
 
 #include "constants_group.h"
 
+#include <regex>
+
 ConstantsGroup::ConstantsGroup(const fdt &dtb)
   : SectionGroup(Memory(), Phdr(), Memory(), Phdr())
 {
@@ -18,9 +20,14 @@ ConstantsGroup::ConstantsGroup(const fdt &dtb)
     tuple_t<node>(),
     [&](const node n) {
       boot_hart = n.instance();
+    });
 
-      auto cpucompat = n.get_fields<string>("compatible");
-      for(auto it = cpucompat.begin(); it != cpucompat.end(); it++) {
+  dtb.match(
+    std::regex("cpu"),
+    [&](const node n) {
+      auto compatibles = n.get_fields<string>("compatible");
+
+      for (auto it = compatibles.begin(); it != compatibles.end(); it++) {
         if (it->find("bullet") != string::npos) {
           chicken_bit = 1;
           break;
