@@ -3,6 +3,8 @@
 
 #include "constants_group.h"
 
+#include <regex>
+
 ConstantsGroup::ConstantsGroup(const fdt &dtb)
     : SectionGroup(Memory(), Phdr(), Memory(), Phdr()) {
   add_constant("__stack_size = DEFINED(__stack_size) ? __stack_size : 0x400;");
@@ -12,11 +14,13 @@ ConstantsGroup::ConstantsGroup(const fdt &dtb)
   string boot_hart = "0";
   int chicken_bit = 0;
 
-  dtb.chosen("metal,boothart", tuple_t<node>(), [&](const node n) {
-    boot_hart = n.instance();
+  dtb.chosen("metal,boothart", tuple_t<node>(),
+             [&](const node n) { boot_hart = n.instance(); });
 
-    auto cpucompat = n.get_fields<string>("compatible");
-    for (auto it = cpucompat.begin(); it != cpucompat.end(); it++) {
+  dtb.match(std::regex("cpu"), [&](const node n) {
+    auto compatibles = n.get_fields<string>("compatible");
+
+    for (auto it = compatibles.begin(); it != compatibles.end(); it++) {
       if (it->find("bullet") != string::npos) {
         chicken_bit = 1;
         break;
