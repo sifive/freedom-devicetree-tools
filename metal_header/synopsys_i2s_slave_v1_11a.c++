@@ -85,7 +85,7 @@ Inline *base_func;
   dtb.match(std::regex(compat_string), [&](node n) {
     /* Interrupts */
     std::string int_parent_value = "NULL";
-    n.maybe_tuple("slave_interrupt-parent", tuple_t<node>(), [&]() {},
+    n.maybe_tuple("interrupt-parent", tuple_t<node>(), [&]() {},
                   [&](node m) {
                     
                       int_parent_value =
@@ -100,7 +100,7 @@ Inline *base_func;
 
     /* Clock driving the I2C peripheral */
     std::string clock_value = "NULL";
-    n.maybe_tuple("slave_clocks", tuple_t<node>(), [&]() {},
+    n.maybe_tuple("clocks", tuple_t<node>(), [&]() {},
                   [&](node m) {
                     clock_value = "(struct metal_clock *)&__metal_dt_" +
                                   m.handle() + ".clock";
