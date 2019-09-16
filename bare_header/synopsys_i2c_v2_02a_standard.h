@@ -56,6 +56,7 @@ class synopsys_i2c_v2_02a_standard : public Device {
 	emit_offset("IC_CLR_ACTIVITY", 0x5c);
 	emit_offset("IC_CLR_STOP_DET", 0x60);
 	emit_offset("IC_ENABLE", 0x6c);
+	emit_offset("IC_STATUS",0x70);
 	emit_offset("IC_ACK", 0x98);
 	emit_offset("IC_FS_SPKLEN", 0xa0);
 
