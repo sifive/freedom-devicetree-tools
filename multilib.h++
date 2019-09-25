@@ -35,6 +35,8 @@ std::string arch2arch(std::string arch) {
     return "rv32im";
   if (arch == "rv32ima")
     return "rv32im";
+  if (arch == "rv32imaf")
+    return "rv32imaf";
   if (arch == "rv32imc")
     return "rv32imc";
   if (arch == "rv32imf")
@@ -57,6 +59,8 @@ std::string arch2arch(std::string arch) {
     return "rv64im";
   if (arch == "rv64ima")
     return "rv64im";
+  if (arch == "rv64imaf")
+    return "rv64imaf";
   if (arch == "rv64imc")
     return "rv64imc";
   if (arch == "rv64imf")
@@ -69,13 +73,6 @@ std::string arch2arch(std::string arch) {
     return "rv64imafc";
   if (arch == "rv64imafdc")
     return "rv64imafdc";
-
-  /* These architectures are not currently supported by the toolchain's
-   * multilibs */
-  if (arch == "rv32imaf")
-    return "rv32imf";
-  if (arch == "rv64imaf")
-    return "rv64imf";
 
   std::cerr << "arch2arch(): unknown arch " << arch << std::endl;
   abort();
@@ -113,6 +110,8 @@ std::string arch2abi(std::string arch) {
     return "ilp32";
   if (arch == "rv32ima")
     return "ilp32";
+  if (arch == "rv32imaf")
+    return "ilp32f";
   if (arch == "rv32imc")
     return "ilp32";
   if (arch == "rv32imf")
@@ -135,6 +134,8 @@ std::string arch2abi(std::string arch) {
     return "lp64";
   if (arch == "rv64ima")
     return "lp64";
+  if (arch == "rv64imaf")
+    return "lp64f";
   if (arch == "rv64imc")
     return "lp64";
   if (arch == "rv64imf")
@@ -147,13 +148,6 @@ std::string arch2abi(std::string arch) {
     return "lp64f";
   if (arch == "rv64imafdc")
     return "lp64d";
-
-  /* These architectures are not currently supported by the toolchain's
-   * multilibs */
-  if (arch == "rv32imaf")
-    return "ilp32f";
-  if (arch == "rv64imaf")
-    return "lp64f";
 
   std::cerr << "arch2abi(): unknown arch " << arch << std::endl;
   abort();
