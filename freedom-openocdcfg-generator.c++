@@ -483,11 +483,11 @@ static void show_usage(string name) {
       << "Usage: " << name << " <option(s)>\n"
       << "Options:\n"
       << "\t-h,--help\t\t\tShow this help message\n"
-      << "\t-p,--protocol <jtag | cjtag>\t\tSpecify protocol, defaults to jtag\n"
-      << "\t-b,--board <eg. arty | hifive1>\t\tSpecify board type\n"
+      << "\t-p,--protocol <jtag | cjtag>\tSpecify protocol, defaults to jtag\n"
+      << "\t-b,--board <eg. arty | hifive1>\tSpecify board type\n"
       << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
-      << "\t-o,--output <eg. openocd.cfg>\t\tGenerate openocd config file\n"
-      << "\t-s,--show \t\tShow openocd config file on std-output\n"
+      << "\t-o,--output <eg. openocd.cfg>\tGenerate openocd config file\n"
+      << "\t-s,--show \t\t\tShow openocd config file on std-output\n"
       << endl;
 }
 
