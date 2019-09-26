@@ -393,10 +393,14 @@ static void show_dts_memory(void) {
   std::cout << "}" << std::endl;
 }
 
-static void write_config_file(fstream &os, std::string board) {
+static void write_config_file(fstream &os, std::string board, std::string protocol) {
   os << "#" << __FUNCTION__ << std::endl;
   os << "# JTAG adapter setup" << std::endl;
   os << "adapter_khz     10000" << std::endl << std::endl;
+
+  if (protocol == "cjtag")  {
+    os << "source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]" << std::endl << std::endl;
+  }
 
   os << "interface ftdi" << std::endl;
   if (board.find("hifive") != string::npos) {
@@ -551,6 +555,11 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  if ( board.find("hifive") != string::npos && protocol == "cjtag") {
+    std::cerr << "HiFive boards are not capable of using cJTAG." << std::endl;
+    return 1;
+  }
+
   if (dtb_file.empty()) {
     std::cerr << "--dtb option requires file path." << std::endl;
     show_usage(argv[0]);
@@ -573,7 +582,7 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    write_config_file(cfg, board);
+    write_config_file(cfg, board, protocol);
   }
 
   if (show) {
