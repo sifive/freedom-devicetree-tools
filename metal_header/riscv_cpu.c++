@@ -147,6 +147,124 @@ void riscv_cpu::define_structs() {
   });
 }
 
+void riscv_cpu::declare_csr_inlines() {
+  Inline *func;
+  std::list<Inline *> csr_inlines;
+
+  for (int i = 0; i < 0xFFF; i++) {
+    switch (i) {
+    case 0x000:
+      func = create_inline_dec("ustatus_read", "uintptr_t", "void");
+      csr_inlines.push_back(func);
+      func = create_inline_dec("ustatus_write", "void", "uintptr_t value");
+      csr_inlines.push_back(func);
+      break;
+    case 0xC00:
+      func = create_inline_dec("cycle_read", "uintptr_t", "void");
+      csr_inlines.push_back(func);
+      break;
+    case 0xC01:
+      func = create_inline_dec("time_read", "uintptr_t", "void");
+      csr_inlines.push_back(func);
+      break;
+    case 0x340:
+      func = create_inline_dec("mscratch_read", "uintptr_t", "void");
+      csr_inlines.push_back(func);
+      func = create_inline_dec("mscratch_write", "void", "uintptr_t value");
+      csr_inlines.push_back(func);
+      break;
+    case 0xF11:
+      func = create_inline_dec("mvendorid_read", "uintptr_t", "void");
+      csr_inlines.push_back(func);
+      break;
+    case 0xF12:
+      func = create_inline_dec("marchid_read", "uintptr_t", "void");
+      csr_inlines.push_back(func);
+      break;
+    }
+  }
+  os << "\n";
+  os << "/* --------------------- csr ------------ */\n";
+  while (!csr_inlines.empty()) {
+    func = csr_inlines.front();
+    csr_inlines.pop_front();
+    emit_inline_dec(func, "csr");
+    delete func;
+  }
+  os << "\n";
+}
+
+void riscv_cpu::define_csr_inlines() {
+  Inline *func;
+  std::list<Inline *> csr_inlines;
+
+  for (int i = 0; i < 0xFFF; i++) {
+    switch (i) {
+    case 0x000:
+      func = create_inline_def(
+          "ustatus_read", "uintptr_t",
+          "uintptr_t m; __asm__ volatile (\"csrr %0, ustatus\" : \"=r\"(m));",
+          "m", "void");
+      csr_inlines.push_back(func);
+      func = create_inline_def(
+          "ustatus_write", "void",
+          "__asm__ volatile (\"csrw ustatus, %0\" : : \"r\"(value));",
+          "", "uintptr_t value");
+      csr_inlines.push_back(func);
+      break;
+    case 0xC00:
+      func = create_inline_def(
+          "cycle_read", "uintptr_t",
+          "uintptr_t m; __asm__ volatile (\"csrr %0, cycle\" : \"=r\"(m));",
+          "m", "void");
+      csr_inlines.push_back(func);
+      break;
+    case 0xC01:
+      func = create_inline_def(
+          "time_read", "uintptr_t",
+          "uintptr_t m; __asm__ volatile (\"csrr %0, time\" : \"=r\"(m));",
+          "m", "void");
+      csr_inlines.push_back(func);
+      break;
+    case 0x340:
+      func = create_inline_def(
+          "mscratch_read", "uintptr_t",
+          "uintptr_t m; __asm__ volatile (\"csrr %0, mscratch\" : \"=r\"(m));",
+          "m", "void");
+      csr_inlines.push_back(func);
+      func = create_inline_def(
+          "mscratch_write", "void",
+          "__asm__ volatile (\"csrw mscratch, %0\" : : \"r\"(value));",
+          "", "uintptr_t value");
+      csr_inlines.push_back(func);
+      break;
+    case 0xF11:
+      func = create_inline_def(
+          "mvendorid_read", "uintptr_t",
+          "uintptr_t m; __asm__ volatile (\"csrr %0, mvendorid\" : \"=r\"(m));",
+          "m", "void");
+      csr_inlines.push_back(func);
+      break;
+    case 0xF12:
+      func = create_inline_def(
+          "marchid_read", "uintptr_t",
+          "uintptr_t m; __asm__ volatile (\"csrr %0, marchid\" : \"=r\"(m));",
+          "m", "void");
+      csr_inlines.push_back(func);
+      break;
+    }
+  }
+  os << "\n";
+  os << "/* --------------------- csr ------------ */\n";
+  while (!csr_inlines.empty()) {
+    func = csr_inlines.front();
+    csr_inlines.pop_front();
+    emit_csr_def(func, "csr");
+    delete func;
+  }
+  os << "\n";
+}
+
 void riscv_cpu::create_handles() {
   emit_def("__METAL_DT_MAX_HARTS", std::to_string(num_cpus));
 

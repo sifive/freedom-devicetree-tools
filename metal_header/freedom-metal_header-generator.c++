@@ -222,6 +222,11 @@ static void write_h_file(const fdt &dtb, fstream &os, std::string h_file,
   os << std::endl;
 
   for (auto it = devices.begin(); it != devices.end(); it++) {
+    (*it)->define_csr_inlines();
+  }
+  os << std::endl;
+
+  for (auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->create_handles();
   }
 
@@ -249,6 +254,11 @@ static void write_i_file(const fdt &dtb, fstream &os, std::string i_file,
 
   for (auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->declare_inlines();
+  }
+  os << std::endl;
+
+  for (auto it = devices.begin(); it != devices.end(); it++) {
+    (*it)->declare_csr_inlines();
   }
   os << std::endl;
 

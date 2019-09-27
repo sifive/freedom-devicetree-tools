@@ -15,7 +15,7 @@ public:
   std::list<std::string> body_cases;
   std::list<std::string> body_returns;
 
-  enum Stage { Start, Middle, End, Empty };
+  enum Stage { Start, Middle, End, Empty, Full };
 
   Inline(std::string name, std::string return_type)
       : name(name), return_type(return_type) {}

@@ -33,6 +33,8 @@ public:
   virtual void define_inlines() {}
   virtual void declare_structs() {}
   virtual void define_structs() {}
+  virtual void declare_csr_inlines() {}
+  virtual void define_csr_inlines() {}
   virtual void create_handles() {}
 
   void emit_comment(const node &n);
@@ -66,6 +68,7 @@ public:
                         std::string rv);
   void emit_inline_dec(Inline *func, std::string device);
   void emit_inline_def(Inline *func, std::string device);
+  void emit_csr_def(Inline *func, std::string device);
 
   void emit_struct_pointer_begin(std::string type, std::string name,
                                  std::string ext);

@@ -125,6 +125,12 @@ void Device::emit_inline_body(Inline::Stage stage, std::string condition,
     os << "\t}\n";
     os << "}\n\n";
     break;
+  case Inline::Full:
+    os << "{\n";
+    os << "\t" << condition << "\n";
+    os << "\treturn " << return_value << ";\n";
+    os << "}\n\n";
+    break;
   case Inline::Empty:
   defaut:
     os << "{\n";
@@ -177,6 +183,19 @@ void Device::emit_inline_def(Inline *func, std::string device) {
       }
     }
     emit_inline_body(stage, bc, br);
+  }
+}
+
+void Device::emit_csr_def(Inline *func, std::string device) {
+  emit_inline_retun_type(false, func->return_type);
+  emit_inline_name(device, func->name);
+  emit_inline_arg(os, func->args);
+  os << ")\n";
+  if (!func->body_cases.empty()) {
+    emit_inline_body(Inline::Full,
+                     func->body_cases.front(), func->body_returns.front());
+    func->body_cases.pop_front();
+    func->body_returns.pop_front();
   }
 }
 

@@ -18,6 +18,8 @@ public:
   void define_inlines();
   void declare_structs();
   void define_structs();
+  void declare_csr_inlines();
+  void define_csr_inlines();
   void create_handles();
 };
 
