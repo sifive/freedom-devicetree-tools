@@ -148,13 +148,13 @@ void riscv_cpu::define_structs() {
 }
 
 #define DECLARE_CSR_INLINE_READ(CSR)                                           \
-    func = create_inline_dec(#CSR"_read", "uintptr_t", "void");                \
-    csr_inlines.push_back(func);
+  func = create_inline_dec(#CSR"_read", "uintptr_t", "void");                  \
+  csr_inlines.push_back(func);
 #define DECLARE_CSR_INLINE_READ_WRITE(CSR)                                     \
-    func = create_inline_dec(#CSR"_read", "uintptr_t", "void");                \
-    csr_inlines.push_back(func);                                               \
-    func = create_inline_dec(#CSR"_write", "void", "uintptr_t value");         \
-    csr_inlines.push_back(func);
+  func = create_inline_dec(#CSR"_read", "uintptr_t", "void");                  \
+  csr_inlines.push_back(func);                                                 \
+  func = create_inline_dec(#CSR"_write", "void", "uintptr_t value");           \
+  csr_inlines.push_back(func);
 
 void riscv_cpu::declare_csr_inlines() {
   Inline *func;
@@ -194,22 +194,22 @@ void riscv_cpu::declare_csr_inlines() {
 }
 
 #define DEFINE_CSR_INLINE_READ(CSR)                                            \
-    func = create_inline_def(#CSR"_read", "uintptr_t",                         \
-                             "uintptr_t m; __asm__ volatile (\"csrr %0, "#CSR  \
-                             "\" : \"=r\"(m));",                               \
-                             "m", "void");                                     \
-    csr_inlines.push_back(func);
-#define DEFINE_CSR_INLINE_READ_WRITE(CSR) \
-    func = create_inline_def(#CSR"_read", "uintptr_t",                         \
-                             "uintptr_t m; __asm__ volatile (\"csrr %0, "#CSR  \
-                             "\" : \"=r\"(m));",                               \
-                             "m", "void");                                     \
-    csr_inlines.push_back(func);                                               \
-    func = create_inline_def(#CSR"_write", "void",                             \
-                             "__asm__ volatile (\"csrw "#CSR                   \
-                             ", %0\" : : \"r\"(value));",                      \
-                             "", "uintptr_t value");                           \
-    csr_inlines.push_back(func);
+  func = create_inline_def(#CSR"_read", "uintptr_t",                           \
+                           "uintptr_t m; __asm__ volatile (\"csrr %0, "#CSR    \
+                           "\" : \"=r\"(m));",                                 \
+                           "m", "void");                                       \
+  csr_inlines.push_back(func);
+#define DEFINE_CSR_INLINE_READ_WRITE(CSR)                                      \
+  func = create_inline_def(#CSR"_read", "uintptr_t",                           \
+                           "uintptr_t m; __asm__ volatile (\"csrr %0, "#CSR    \
+                           "\" : \"=r\"(m));",                                 \
+                           "m", "void");                                       \
+  csr_inlines.push_back(func);                                                 \
+  func = create_inline_def(#CSR"_write", "void",                               \
+                           "__asm__ volatile (\"csrw "#CSR                     \
+                           ", %0\" : : \"r\"(value));",                        \
+                           "", "uintptr_t value");                             \
+  csr_inlines.push_back(func);
 
 void riscv_cpu::define_csr_inlines() {
   Inline *func;
