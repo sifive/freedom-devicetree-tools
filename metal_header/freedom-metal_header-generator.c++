@@ -34,6 +34,7 @@
 #include <sifive_trace.h>
 #include <sifive_uart0.h>
 #include <sifive_wdog0.h>
+#include <ucb_htif0.h>
 
 /* FE310-G000 Devices */
 #include <sifive_fe310_g000_hfrosc.h>
@@ -159,6 +160,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_trace(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
   devices.push_back(new sifive_wdog0(os, dtb));
+  devices.push_back(new ucb_htif0(os, dtb));
 
   /* FE310-G000 Devices */
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));

@@ -193,7 +193,8 @@ am_freedom_metal_header_generator_OBJECTS =  \
 	metal_header/freedom_metal_header_generator-sifive_uart0.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-sifive_wdog0.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-stdout_path.$(OBJEXT) \
-	metal_header/freedom_metal_header_generator-template_device.$(OBJEXT)
+	metal_header/freedom_metal_header_generator-template_device.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-ucb_htif0.$(OBJEXT)
 freedom_metal_header_generator_OBJECTS =  \
 	$(am_freedom_metal_header_generator_OBJECTS)
 freedom_metal_header_generator_LDADD = $(LDADD)
@@ -745,7 +746,9 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/stdout_path.c++ \
 	metal_header/stdout_path.h \
 	metal_header/template_device.c++ \
-	metal_header/template_device.h
+	metal_header/template_device.h \
+	metal_header/ucb_htif0.c++ \
+	metal_header/ucb_htif0.h
 
 freedom_bare_header_generator_CPPFLAGS = -I$(srcdir) -I$(srcdir)/bare_header
 freedom_bare_header_generator_SOURCES = \
@@ -781,6 +784,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_trace.h \
 	bare_header/sifive_uart0.h \
 	bare_header/sifive_wdog0.h \
+	bare_header/ucb_htif0.h \
 	ranges.c++ \
 	ranges.h
 
@@ -1147,6 +1151,9 @@ metal_header/freedom_metal_header_generator-stdout_path.$(OBJEXT):  \
 metal_header/freedom_metal_header_generator-template_device.$(OBJEXT):  \
 	metal_header/$(am__dirstamp) \
 	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-ucb_htif0.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
 
 freedom-metal_header-generator$(EXEEXT): $(freedom_metal_header_generator_OBJECTS) $(freedom_metal_header_generator_DEPENDENCIES) $(EXTRA_freedom_metal_header_generator_DEPENDENCIES) 
 	@rm -f freedom-metal_header-generator$(EXEEXT)
@@ -1244,6 +1251,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_wdog0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-stdout_path.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-template_device.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-ucb_htif0.Po@am__quote@
 
 .c++.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -2212,6 +2220,20 @@ metal_header/freedom_metal_header_generator-template_device.obj: metal_header/te
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/template_device.c++' object='metal_header/freedom_metal_header_generator-template_device.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-template_device.obj `if test -f 'metal_header/template_device.c++'; then $(CYGPATH_W) 'metal_header/template_device.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/template_device.c++'; fi`
+
+metal_header/freedom_metal_header_generator-ucb_htif0.o: metal_header/ucb_htif0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-ucb_htif0.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-ucb_htif0.Tpo -c -o metal_header/freedom_metal_header_generator-ucb_htif0.o `test -f 'metal_header/ucb_htif0.c++' || echo '$(srcdir)/'`metal_header/ucb_htif0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-ucb_htif0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-ucb_htif0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/ucb_htif0.c++' object='metal_header/freedom_metal_header_generator-ucb_htif0.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-ucb_htif0.o `test -f 'metal_header/ucb_htif0.c++' || echo '$(srcdir)/'`metal_header/ucb_htif0.c++
+
+metal_header/freedom_metal_header_generator-ucb_htif0.obj: metal_header/ucb_htif0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-ucb_htif0.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-ucb_htif0.Tpo -c -o metal_header/freedom_metal_header_generator-ucb_htif0.obj `if test -f 'metal_header/ucb_htif0.c++'; then $(CYGPATH_W) 'metal_header/ucb_htif0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/ucb_htif0.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-ucb_htif0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-ucb_htif0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/ucb_htif0.c++' object='metal_header/freedom_metal_header_generator-ucb_htif0.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-ucb_htif0.obj `if test -f 'metal_header/ucb_htif0.c++'; then $(CYGPATH_W) 'metal_header/ucb_htif0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/ucb_htif0.c++'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

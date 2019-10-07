@@ -39,6 +39,8 @@ public:
   void emit_handle(std::string d, const node &n, std::string v);
 
   void emit_def_handle(std::string handle, const node &n, std::string field);
+  void emit_def_handle(std::string handle, std::string suffix, const node &n,
+                       std::string field);
 
   void emit_def(std::string handle, std::string field);
 
@@ -74,8 +76,10 @@ public:
   void emit_struct_pointer_end(std::string empty);
 
   void emit_struct_decl(std::string type, const node &n);
+  void emit_struct_decl(std::string type, std::string suffix, const node &n);
 
   void emit_struct_begin(std::string type, const node &n);
+  void emit_struct_begin(std::string type, std::string suffix, const node &n);
 
   void emit_struct_field(std::string field, std::string value);
   void emit_struct_field_null(std::string field);
