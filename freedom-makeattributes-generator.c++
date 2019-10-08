@@ -566,6 +566,7 @@ int main(int argc, char *argv[]) {
           if ((board.find("rtl") != std::string::npos) ||
               (board.find("arty") != std::string::npos) ||
               (board.find("spike") != std::string::npos) ||
+              (board.find("qemu") != std::string::npos) ||
               (board.find("hifive") != std::string::npos)) {
             std::cout << "Board type given is " << board << std::endl;
           } else {
