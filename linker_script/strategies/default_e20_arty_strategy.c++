@@ -32,6 +32,7 @@ LinkerScript DefaultE20ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
   Memory itim_memory;
   int sram0_count = 0;
   bool ram_mapped = false;
+  bool has_itim = false;
 
   /* Map the available memories to the ROM, RAM, and ITIM */
 
@@ -50,6 +51,7 @@ LinkerScript DefaultE20ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
          * itim is mapped to the higher-based sram0
          */
         if (ram_mapped) {
+          has_itim = true;
           itim_memory = *it;
           itim_memory.name = "itim";
           itim_memory.attributes = "wx!rai";
@@ -66,6 +68,7 @@ LinkerScript DefaultE20ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
           ram_memory.size = (*it).size / 2 - 0x1000;
           ram_memory.name = "ram";
           ram_memory.attributes = "wxa!ri";
+          has_itim = true;
           itim_memory = *it;
           itim_memory.size = (*it).size / 2 + 0x1000;
           itim_memory.base = (*it).base + ram_memory.size;
@@ -90,15 +93,26 @@ LinkerScript DefaultE20ArtyStrategy::create_layout(const fdt &dtb, list<Memory> 
   switch (link_strategy) {
   default:
   case LINK_STRATEGY_DEFAULT:
-    return DefaultLayout(dtb, rom_memory, itim_memory, ram_memory, ram_memory);
+    if (has_itim) {
+      return DefaultLayout(dtb, rom_memory, itim_memory, ram_memory, ram_memory);
+    } else {
+      return DefaultLayout(dtb, rom_memory, ram_memory, ram_memory, ram_memory);
+    }
     break;
 
   case LINK_STRATEGY_SCRATCHPAD:
-    return ScratchpadLayout(dtb, ram_memory, itim_memory, ram_memory, ram_memory);
+    return ScratchpadLayout(dtb, ram_memory, ram_memory, ram_memory,
+                            ram_memory);
     break;
 
   case LINK_STRATEGY_RAMRODATA:
-    return RamrodataLayout(dtb, rom_memory, itim_memory, ram_memory, rom_memory);
+    if (has_itim) {
+      return RamrodataLayout(dtb, rom_memory, itim_memory, ram_memory,
+                             rom_memory);
+    } else {
+      return RamrodataLayout(dtb, rom_memory, ram_memory, ram_memory,
+                             rom_memory);
+    }
     break;
   }
 }
