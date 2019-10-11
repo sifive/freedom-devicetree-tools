@@ -546,7 +546,9 @@ static void write_config_file(fstream &os, std::string board,
   os << "}" << std::endl;
   os << "halt" << std::endl << std::endl;
 
-  os << "flash protect 0 64 last off" << std::endl;
+  if (has_memory("flash")) {
+    os << "flash protect 0 64 last off" << std::endl;
+  }
   os << "echo \"Ready for Remote Connections\"" << std::endl;
 }
 
@@ -557,7 +559,7 @@ static void show_usage(string name) {
       << "\t-h,--help\t\t\tShow this help message\n"
       << "\t-p,--protocol <jtag | cjtag>\tSpecify protocol, defaults to jtag\n"
       << "\t-t,--tunnel\t\t\tJTAG tunneling (Xilinx BSCAN)"
-      << "\t-b,--board <eg. arty | hifive1>\tSpecify board type\n"
+      << "\t-b,--board <eg. arty | vc707 | hifive1>\t\tSpecify board type\n"
       << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
       << "\t-o,--output <eg. openocd.cfg>\tGenerate openocd config file\n"
       << "\t-s,--show \t\t\tShow openocd config file on std-output\n"
@@ -582,8 +584,10 @@ int main(int argc, char *argv[]) {
         if (i + 1 < argc) {
           board = argv[++i];
           if ((board.find("arty") != string::npos) &&
+              (board.find("vc707") != string::npos) &&
               (board.find("hifive") != string::npos)) {
-            std::cerr << "Possible options are <arty | hifive>." << std::endl;
+            std::cerr << "Possible options are <arty | vc707 | hifive>."
+                      << std::endl;
             return 1;
           }
         }
