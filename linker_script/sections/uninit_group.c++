@@ -54,7 +54,7 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory, Phdr logical_hea
   heap.output_name = "heap";
 
   heap.add_command("PROVIDE( metal_segment_heap_target_start = . );");
-  heap.add_command(". = __heap_size;");
+  heap.add_command(". += __heap_size;");
   heap.add_command("PROVIDE( metal_segment_heap_target_end = . );");
   heap.add_command("PROVIDE( _heap_end = . );");
 
