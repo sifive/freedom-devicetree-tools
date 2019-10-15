@@ -393,13 +393,15 @@ static void show_dts_memory(void) {
   std::cout << "}" << std::endl;
 }
 
-static void write_config_file(fstream &os, std::string board, std::string protocol) {
+static void write_config_file(fstream &os, std::string board,
+                              std::string protocol) {
   os << "#" << __FUNCTION__ << std::endl;
   os << "# JTAG adapter setup" << std::endl;
   os << "adapter_khz     10000" << std::endl << std::endl;
 
-  if (protocol == "cjtag")  {
-    os << "source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]" << std::endl << std::endl;
+  if (protocol == "cjtag") {
+    os << "source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]" << std::endl
+       << std::endl;
   }
 
   os << "interface ftdi" << std::endl;
@@ -537,12 +539,14 @@ int main(int argc, char *argv[]) {
         if (i + 1 < argc) {
           protocol = argv[++i];
           if ((protocol != "jtag") && (protocol != "cjtag")) {
-            std::cerr << "Possible options for --protocol are <jtag | cjtag>." << std::endl;
+            std::cerr << "Possible options for --protocol are <jtag | cjtag>."
+                      << std::endl;
             show_usage(argv[0]);
             return 1;
           }
         } else {
-          std::cerr << "--protocol option requires an argument <jtag | cjtag." << std::endl;
+          std::cerr << "--protocol option requires an argument <jtag | cjtag."
+                    << std::endl;
           show_usage(argv[0]);
           return 1;
         }
@@ -555,7 +559,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if ( board.find("hifive") != string::npos && protocol == "cjtag") {
+  if (board.find("hifive") != string::npos && protocol == "cjtag") {
     std::cerr << "HiFive boards are not capable of using cJTAG." << std::endl;
     return 1;
   }
