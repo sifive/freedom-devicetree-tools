@@ -2,6 +2,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include "chosen_strategy.h"
+#include <ranges.h>
 
 #include <layouts/default_layout.h>
 #include <layouts/ramrodata_layout.h>
@@ -33,6 +34,14 @@ LinkerScript ChosenStrategy::create_layout(const fdt &dtb,
                        m.base = b;
                        m.size = s;
                      });
+    } else if (n.field_exists("ranges")) {
+      ranges_t ranges = get_ranges(n);
+
+      /* TODO: How do we pick which of the ranges entries to use? */
+      if (!ranges.empty()) {
+        m.base = ranges.front().child_address;
+        m.size = ranges.front().size;
+      }
     } else {
       n.maybe_tuple("reg", tuple_t<target_addr, target_size>(), [&]() {},
                     [&](target_addr b, target_size s) {
@@ -51,7 +60,7 @@ LinkerScript ChosenStrategy::create_layout(const fdt &dtb,
     ram_memory.attributes = "wxa!ri";
   });
   dtb.chosen("metal,rom", tuple_t<node>(), [&](node n) {
-    rom_memory.name = "rom";
+    rom_memory.name = "flash";
     extract_node_props(rom_memory, n);
     rom_memory.attributes = "rxai!w";
   });

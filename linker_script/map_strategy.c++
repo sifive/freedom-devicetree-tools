@@ -55,8 +55,10 @@ void MapStrategy::print_chosen_strategy(string name, LinkStrategy layout,
        << endl;
   cout << "\tROM:  " << setw(25) << rom.compatible << " - 0x" << rom.base
        << endl;
-  cout << "\tITIM: " << setw(25) << itim.compatible << " - 0x" << itim.base
-       << endl;
+  if (itim.base != ram.base) {
+      cout << "\tITIM: " << setw(25) << itim.compatible << " - 0x" << itim.base
+           << endl;
+  }
   cout << dec;
 }
 
