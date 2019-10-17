@@ -72,7 +72,9 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/section_group.c++ \
 	linker_script/section_group.h \
 	ranges.c++ \
-	ranges.h
+	ranges.h   \
+	regs.c++ \
+	regs.h
 
 freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++ \
