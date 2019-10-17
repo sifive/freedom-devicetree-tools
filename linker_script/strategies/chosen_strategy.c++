@@ -3,6 +3,7 @@
 
 #include "chosen_strategy.h"
 #include <ranges.h>
+#include <regs.h>
 
 #include <layouts/default_layout.h>
 #include <layouts/scratchpad_layout.h>
@@ -15,14 +16,14 @@ bool ChosenStrategy::valid(const fdt &dtb, list<Memory> available_memories)
 
   dtb.chosen(
     "metal,ram",
-    tuple_t<node>(),
-    [&](node n) {
+    tuple_t<node, uint32_t>(),
+    [&](node n, uint32_t idx) {
       chosen_ram = true;
     });
   dtb.chosen(
     "metal,rom",
-    tuple_t<node>(),
-    [&](node n) {
+    tuple_t<node, uint32_t>(),
+    [&](node n, uint32_t idx) {
       chosen_rom = true;
     });
 
@@ -37,7 +38,7 @@ LinkerScript ChosenStrategy::create_layout(const fdt &dtb, list<Memory> availabl
   Memory itim_memory;
   bool has_itim = false;
 
-  auto extract_node_props = [](Memory &m, const node &n) {
+  auto extract_node_props = [](Memory &m, const node &n, uint32_t idx) {
     if (n.field_exists("reg-names")) {
       n.named_tuples(
         "reg-names",
@@ -52,8 +53,18 @@ LinkerScript ChosenStrategy::create_layout(const fdt &dtb, list<Memory> availabl
 
       /* TODO: How do we pick which of the ranges entries to use? */
       if (!ranges.empty()) {
-        m.base = ranges.front().child_address;
-        m.size = ranges.front().size;
+        auto it = std::next(ranges.begin(), idx);
+        m.base = (*it).child_address;
+        m.size = (*it).size;
+      }
+    } else if (n.field_exists("reg")) {
+      regs_t regs = get_regs(n);
+
+      /* TODO: How do we pick which of the regs entries to use? */
+      if (!regs.empty()) {
+        auto it = std::next(regs.begin(), idx);
+        m.base = (*it).address;
+        m.size = (*it).size;
       }
     }  else {
       n.maybe_tuple(
@@ -77,18 +88,18 @@ LinkerScript ChosenStrategy::create_layout(const fdt &dtb, list<Memory> availabl
 
   dtb.chosen(
     "metal,ram",
-    tuple_t<node>(),
-    [&](node n) {
+    tuple_t<node, uint32_t>(),
+    [&](node n, uint32_t idx) {
       ram_memory.name = "ram";
-      extract_node_props(ram_memory, n);
+      extract_node_props(ram_memory, n, idx);
       ram_memory.attributes = "wxa!ri";
     });
   dtb.chosen(
     "metal,rom",
-    tuple_t<node>(),
-    [&](node n) {
+    tuple_t<node, uint32_t>(),
+    [&](node n, uint32_t idx) {
       rom_memory.name = "flash";
-      extract_node_props(rom_memory, n);
+      extract_node_props(rom_memory, n, idx);
       rom_memory.attributes = "rxai!w";
     });
   dtb.chosen(
@@ -96,7 +107,7 @@ LinkerScript ChosenStrategy::create_layout(const fdt &dtb, list<Memory> availabl
     tuple_t<node>(),
     [&](node n) {
       itim_memory.name = "itim";
-      extract_node_props(itim_memory, n);
+      extract_node_props(itim_memory, n, 0);
       itim_memory.attributes = "wx!rai";
 
       has_itim = true;

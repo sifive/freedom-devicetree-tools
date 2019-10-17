@@ -151,7 +151,8 @@ am_freedom_ldscript_generator_OBJECTS =  \
 	linker_script/freedom_ldscript_generator-phdr.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-section.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-section_group.$(OBJEXT) \
-	freedom_ldscript_generator-ranges.$(OBJEXT)
+	freedom_ldscript_generator-ranges.$(OBJEXT) \
+	freedom_ldscript_generator-regs.$(OBJEXT)
 freedom_ldscript_generator_OBJECTS =  \
 	$(am_freedom_ldscript_generator_OBJECTS)
 freedom_ldscript_generator_LDADD = $(LDADD)
@@ -668,7 +669,9 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/section_group.c++ \
 	linker_script/section_group.h \
 	ranges.c++ \
-	ranges.h
+	ranges.h   \
+	regs.c++ \
+	regs.h
 
 freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++ \
@@ -1180,6 +1183,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom_bare_header_generator-ranges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom_ldscript_generator-fdt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom_ldscript_generator-ranges.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom_ldscript_generator-regs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freedom_metal_header_generator-fdt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@bare_header/$(DEPDIR)/freedom_bare_header_generator-device.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@bare_header/$(DEPDIR)/freedom_bare_header_generator-freedom-bare_header-generator.Po@am__quote@
@@ -1750,6 +1754,20 @@ freedom_ldscript_generator-ranges.obj: ranges.c++
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ranges.c++' object='freedom_ldscript_generator-ranges.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freedom_ldscript_generator-ranges.obj `if test -f 'ranges.c++'; then $(CYGPATH_W) 'ranges.c++'; else $(CYGPATH_W) '$(srcdir)/ranges.c++'; fi`
+
+freedom_ldscript_generator-regs.o: regs.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freedom_ldscript_generator-regs.o -MD -MP -MF $(DEPDIR)/freedom_ldscript_generator-regs.Tpo -c -o freedom_ldscript_generator-regs.o `test -f 'regs.c++' || echo '$(srcdir)/'`regs.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freedom_ldscript_generator-regs.Tpo $(DEPDIR)/freedom_ldscript_generator-regs.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='regs.c++' object='freedom_ldscript_generator-regs.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freedom_ldscript_generator-regs.o `test -f 'regs.c++' || echo '$(srcdir)/'`regs.c++
+
+freedom_ldscript_generator-regs.obj: regs.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freedom_ldscript_generator-regs.obj -MD -MP -MF $(DEPDIR)/freedom_ldscript_generator-regs.Tpo -c -o freedom_ldscript_generator-regs.obj `if test -f 'regs.c++'; then $(CYGPATH_W) 'regs.c++'; else $(CYGPATH_W) '$(srcdir)/regs.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freedom_ldscript_generator-regs.Tpo $(DEPDIR)/freedom_ldscript_generator-regs.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='regs.c++' object='freedom_ldscript_generator-regs.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freedom_ldscript_generator-regs.obj `if test -f 'regs.c++'; then $(CYGPATH_W) 'regs.c++'; else $(CYGPATH_W) '$(srcdir)/regs.c++'; fi`
 
 freedom_metal_header_generator-fdt.o: fdt.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freedom_metal_header_generator-fdt.o -MD -MP -MF $(DEPDIR)/freedom_metal_header_generator-fdt.Tpo -c -o freedom_metal_header_generator-fdt.o `test -f 'fdt.c++' || echo '$(srcdir)/'`fdt.c++
