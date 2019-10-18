@@ -23,8 +23,11 @@ public:
   Memory logical_memory;
   Memory virtual_memory;
   Phdr program_header;
+  Phdr tls_header;
 
   Section(Memory logical_memory, Memory virtual_memory, Phdr program_header);
+  Section(Memory logical_memory, Memory virtual_memory, Phdr program_header,
+          Phdr tls_header);
 
   void add_command(string command);
   void add_trailing_command(string command);

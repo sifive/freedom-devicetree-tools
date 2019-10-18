@@ -17,7 +17,7 @@ using std::string;
 class DataGroup : public SectionGroup {
 public:
   DataGroup(Memory logical_memory, Phdr logical_header, Memory virtual_memory,
-            Phdr virtual_header);
+            Phdr virtual_header, Phdr tls_header);
 };
 
 #endif /* __DATA_GROUP__H */

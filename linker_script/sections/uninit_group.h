@@ -19,7 +19,7 @@ using std::string;
 class UninitGroup : public SectionGroup {
 public:
   UninitGroup(const fdt &dtb, Memory logical_memory, Phdr logical_header,
-              Memory virtual_memory, Phdr virtual_header);
+              Memory virtual_memory, Phdr virtual_header, Phdr tls_header);
 };
 
 #endif /* __UNINIT_GROUP__H */

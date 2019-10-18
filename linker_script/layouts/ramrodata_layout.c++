@@ -30,6 +30,9 @@ RamrodataLayout::RamrodataLayout(const fdt &dtb, Memory rom_memory,
   program_headers.push_back(itim_phdr);
   program_headers.push_back(itim_init_phdr);
 
+  Phdr tls_phdr("tls", "PT_TLS");
+  program_headers.push_back(tls_phdr);
+
   if (itim_memory.size >= MAGIC_RAMRODATA_TEXT_THRESHOLD) {
     section_groups.push_back(ConstantsGroup(dtb));
 
@@ -50,13 +53,14 @@ RamrodataLayout::RamrodataLayout(const fdt &dtb, Memory rom_memory,
 
     section_groups.push_back(
         DataGroup(rom_memory, rom_phdr, /* Data is loaded from ROM */
-                  data_memory,
-                  ram_init_phdr)); /* And copied into the data memory at load */
+                  data_memory, ram_init_phdr,
+                  tls_phdr)); /* And copied into the data memory at load */
 
     section_groups.push_back(UninitGroup(
         dtb, data_memory,
         ram_phdr, /* BSS and unitialized data isn't loaded from ROM */
-        data_memory, ram_phdr)); /* And should end up in the data memory */
+        data_memory, ram_phdr,
+        tls_phdr)); /* And should end up in the data memory */
   } else {
     section_groups.push_back(ConstantsGroup(dtb));
 
@@ -78,12 +82,13 @@ RamrodataLayout::RamrodataLayout(const fdt &dtb, Memory rom_memory,
 
     section_groups.push_back(
         DataGroup(rom_memory, rom_phdr, /* Data is loaded from ROM */
-                  data_memory,
-                  ram_init_phdr)); /* And copied into the data memory at load */
+                  data_memory, ram_init_phdr,
+                  tls_phdr)); /* And copied into the data memory at load */
 
     section_groups.push_back(UninitGroup(
         dtb, data_memory,
         ram_phdr, /* BSS and unitialized data isn't loaded from ROM */
-        data_memory, ram_phdr)); /* And should end up in the data memory */
+        data_memory, ram_phdr,
+        tls_phdr)); /* And should end up in the data memory */
   }
 }

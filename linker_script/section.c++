@@ -4,9 +4,14 @@
 #include "section.h"
 
 Section::Section(Memory logical_memory, Memory virtual_memory,
+                 Phdr program_header, Phdr tls_header)
+    : logical_memory(logical_memory), virtual_memory(virtual_memory),
+      program_header(program_header), tls_header(tls_header), alignment(0) {}
+
+Section::Section(Memory logical_memory, Memory virtual_memory,
                  Phdr program_header)
     : logical_memory(logical_memory), virtual_memory(virtual_memory),
-      program_header(program_header), alignment(0) {}
+      program_header(program_header), tls_header(Phdr()), alignment(0) {}
 
 string Section::describe() {
   string description;
@@ -23,6 +28,8 @@ string Section::describe() {
 
   description += "\t} >" + virtual_memory.name + " ";
   description += "AT>" + logical_memory.name + " ";
+  if (tls_header.name != "")
+    description += ":" + tls_header.name + " ";
   description += ":" + program_header.name + "\n";
 
   for (auto it = trailing_commands.begin(); it != trailing_commands.end();

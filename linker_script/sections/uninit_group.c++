@@ -9,11 +9,33 @@ using std::regex;
 
 UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory,
                          Phdr logical_header, Memory virtual_memory,
-                         Phdr virtual_header)
+                         Phdr virtual_header, Phdr tls_header)
     : SectionGroup(logical_memory, logical_header, virtual_memory,
                    virtual_header) {
   int num_harts = 0;
   dtb.match(regex("cpu"), [&](node n) { num_harts += 1; });
+
+  Section tbss(virtual_memory, virtual_memory, virtual_header, tls_header);
+
+  tbss.output_name = "tbss";
+
+  tbss.add_command("*(.tbss .tbss.* .gnu.linkonce.tb.*)");
+  tbss.add_command("*(.tcommon .tcommon.*)");
+  tbss.add_command("PROVIDE( __tls_end = . );");
+
+  tbss.trailing_commands.push_back("PROVIDE( __tbss_size = SIZEOF(.tbss));");
+  tbss.trailing_commands.push_back(
+      "PROVIDE( __tls_size = __tls_end - __tls_base );");
+
+  sections.push_back(tbss);
+
+  Section tbss_space(virtual_memory, virtual_memory, virtual_header);
+
+  tbss_space.output_name = "tbss_space";
+
+  tbss_space.add_command(". = . + __tbss_size;");
+
+  sections.push_back(tbss_space);
 
   Section bss(virtual_memory, virtual_memory, virtual_header);
 
@@ -27,9 +49,9 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory,
   bss.add_command("*(COMMON)");
 
   bss.trailing_commands.push_back(
-      "PROVIDE( metal_segment_bss_target_start = ADDR(.bss) );");
+      "PROVIDE( metal_segment_bss_target_start = ADDR(.tbss) );");
   bss.trailing_commands.push_back(
-      "PROVIDE( metal_segment_bss_target_end = ADDR(.bss) + SIZEOF(.bss) );");
+      "PROVIDE( metal_segment_bss_target_end = . );");
 
   sections.push_back(bss);
 

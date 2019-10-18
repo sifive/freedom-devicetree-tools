@@ -4,7 +4,8 @@
 #include "data_group.h"
 
 DataGroup::DataGroup(Memory logical_memory, Phdr logical_header,
-                     Memory virtual_memory, Phdr virtual_header)
+                     Memory virtual_memory, Phdr virtual_header,
+                     Phdr tls_header)
     : SectionGroup(logical_memory, logical_header, virtual_memory,
                    virtual_header) {
   Section data(logical_memory, virtual_memory, virtual_header);
@@ -35,6 +36,19 @@ DataGroup::DataGroup(Memory logical_memory, Phdr logical_header,
       "PROVIDE( metal_segment_data_source_start = LOADADDR(.data) );");
   trailing_commands.push_back(
       "PROVIDE( metal_segment_data_target_start = ADDR(.data) );");
-  trailing_commands.push_back("PROVIDE( metal_segment_data_target_end = "
-                              "ADDR(.data) + SIZEOF(.data) );");
+
+  Section tdata(logical_memory, virtual_memory, virtual_header, tls_header);
+
+  tdata.output_name = "tdata";
+
+  tdata.add_command("PROVIDE( __tls_base = . );");
+  tdata.add_command("*(.tdata .tdata.* .gnu.linkonce.td.*)");
+
+  sections.push_back(tdata);
+
+  trailing_commands.push_back("PROVIDE( __tdata_source = LOADADDR(.tdata) );");
+  trailing_commands.push_back("PROVIDE( __tdata_size = SIZEOF(.tdata) );");
+  trailing_commands.push_back("PROVIDE( _edata = . );");
+  trailing_commands.push_back("PROVIDE( edata = . );");
+  trailing_commands.push_back("PROVIDE( metal_segment_data_target_end = . );");
 }
