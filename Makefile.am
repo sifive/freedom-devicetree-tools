@@ -10,6 +10,8 @@ bin_PROGRAMS =  freedom-ldscript-generator \
 		freedom-metal_specs-generator
 
 
+AM_CXXFLAGS = -fpermissive
+
 freedom_ldscript_generator_CPPFLAGS = -I$(srcdir) -I$(srcdir)/linker_script
 
 freedom_ldscript_generator_SOURCES = \
