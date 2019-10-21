@@ -393,10 +393,16 @@ static void show_dts_memory(void) {
   std::cout << "}" << std::endl;
 }
 
-static void write_config_file(fstream &os, std::string board) {
+static void write_config_file(fstream &os, std::string board,
+                              std::string protocol) {
   os << "#" << __FUNCTION__ << std::endl;
   os << "# JTAG adapter setup" << std::endl;
   os << "adapter_khz     10000" << std::endl << std::endl;
+
+  if (protocol == "cjtag") {
+    os << "source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]" << std::endl
+       << std::endl;
+  }
 
   os << "interface ftdi" << std::endl;
   if (board.find("hifive") != string::npos) {
@@ -483,17 +489,18 @@ static void show_usage(string name) {
       << "Usage: " << name << " <option(s)>\n"
       << "Options:\n"
       << "\t-h,--help\t\t\tShow this help message\n"
-      << "\t-b,--board <eg. arty | hifive1>\t\tSpecify board type\n"
+      << "\t-p,--protocol <jtag | cjtag>\tSpecify protocol, defaults to jtag\n"
+      << "\t-b,--board <eg. arty | hifive1>\tSpecify board type\n"
       << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
-      << "\t-o,--output <eg. openocd.cfg>\t\tGenerate openocd config file\n"
-      << "\t-s,--show \t\tShow openocd config file on std-output\n"
+      << "\t-o,--output <eg. openocd.cfg>\tGenerate openocd config file\n"
+      << "\t-s,--show \t\t\tShow openocd config file on std-output\n"
       << endl;
 }
 
 int main(int argc, char *argv[]) {
   bool show = false;
   string board = "arty";
-  ;
+  string protocol = "jtag";
   string dtb_file;
   string config_file;
 
@@ -528,6 +535,21 @@ int main(int argc, char *argv[]) {
           show_usage(argv[0]);
           return 1;
         }
+      } else if ((arg == "-p" || (arg == "--protocol"))) {
+        if (i + 1 < argc) {
+          protocol = argv[++i];
+          if ((protocol != "jtag") && (protocol != "cjtag")) {
+            std::cerr << "Possible options for --protocol are <jtag | cjtag>."
+                      << std::endl;
+            show_usage(argv[0]);
+            return 1;
+          }
+        } else {
+          std::cerr << "--protocol option requires an argument <jtag | cjtag."
+                    << std::endl;
+          show_usage(argv[0]);
+          return 1;
+        }
       } else if ((arg == "-s") || (arg == "--show")) {
         show = true;
       } else {
@@ -535,6 +557,11 @@ int main(int argc, char *argv[]) {
         return 1;
       }
     }
+  }
+
+  if (board.find("hifive") != string::npos && protocol == "cjtag") {
+    std::cerr << "HiFive boards are not capable of using cJTAG." << std::endl;
+    return 1;
   }
 
   if (dtb_file.empty()) {
@@ -559,7 +586,7 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    write_config_file(cfg, board);
+    write_config_file(cfg, board, protocol);
   }
 
   if (show) {
