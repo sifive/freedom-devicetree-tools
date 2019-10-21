@@ -52,7 +52,10 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory,
   heap.output_name = "heap";
 
   heap.add_command("PROVIDE( metal_segment_heap_target_start = . );");
-  heap.add_command(". = __heap_size;");
+  heap.add_command(". = DEFINED(__heap_max) ? LENGTH(" + virtual_memory.name +
+                   ") - ( . - ORIGIN(" + virtual_memory.name +
+                   ") "
+                   ") : __heap_size;");
   heap.add_command("PROVIDE( metal_segment_heap_target_end = . );");
   heap.add_command("PROVIDE( _heap_end = . );");
 
