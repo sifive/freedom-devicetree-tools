@@ -473,6 +473,10 @@ static void write_config_file(fstream &os, std::string board,
   }
 
   os << "init" << std::endl;
+  os << "# If required, the authdata_write command must be added immediately after" << std::endl;
+  os << "# the 'init' command.  Use: " << std::endl;
+  os << "# riscv authdata_write ????????" << std::endl;
+  os << std::endl;
   os << "if {[ info exists pulse_srst]} {" << std::endl;
   os << "\tftdi_set_signal nSRST 0" << std::endl;
   os << "\tftdi_set_signal nSRST z" << std::endl;
