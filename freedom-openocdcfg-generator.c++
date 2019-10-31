@@ -399,31 +399,64 @@ static void write_config_file(fstream &os, std::string board,
   os << "# JTAG adapter setup" << std::endl;
   os << "adapter_khz     10000" << std::endl << std::endl;
 
-  if (protocol == "cjtag") {
-    os << "source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]" << std::endl
-       << std::endl;
-  }
+  os << "set chain_length 5" << std::endl << std::endl;
 
-  os << "interface ftdi" << std::endl;
   if (board.find("hifive") != string::npos) {
+
+    os << "interface ftdi" << std::endl;
     os << "ftdi_device_desc \"Dual RS232-HS\"" << std::endl;
     os << "ftdi_vid_pid 0x0403 0x6010" << std::endl << std::endl;
 
     os << "ftdi_layout_init 0x0008 0x001b" << std::endl;
     os << "ftdi_layout_signal nSRST -oe 0x0020" << std::endl;
     os << "ftdi_layout_signal LED -data 0x0020" << std::endl << std::endl;
-  } else {
-    /* Arty Board by Default */
-    os << "ftdi_device_desc \"Olimex OpenOCD JTAG ARM-USB-TINY-H\""
-       << std::endl;
-    os << "ftdi_vid_pid 0x15ba 0x002a" << std::endl << std::endl;
 
-    os << "ftdi_layout_init 0x0808 0x0a1b" << std::endl;
-    os << "ftdi_layout_signal nSRST -oe 0x0200" << std::endl;
-    os << "ftdi_layout_signal LED -data 0x0800" << std::endl << std::endl;
+  } else {
+
+    /* Arty Board by Default */
+    os << "# protocol = 0|jtag" << std::endl;
+    os << "# protocol = 1|cjtag" << std::endl;
+    os << "# protocol = 2|tunnel" << std::endl;
+
+    os << "# setup default protocol, if not specified on the" << std::endl;
+    os << "# command line using: -c \"set protocol xxx\"" << std::endl;
+    os << "if { [ info exists protocol ] == 0 } {" << std::endl;
+
+    if (protocol == "cjtag") {
+      os << "    set protocol 1" << std::endl;
+    }
+    else if (protocol == "jtagtunnel") {
+      os << "    set protocol 2" << std::endl;
+    }
+    else {
+      os << "    set protocol 0" << std::endl;
+    }
+    os << "}" << std::endl << std::endl;
+
+    os << "# Bring in the correct configuration script for the specified" << std::endl;
+    os << "# protocol" << std::endl;
+    os << "switch -regexp $protocol {" << std::endl;
+    os << "    (0|jtag) {" << std::endl;
+    os << "        echo \"Using JTAG\"" << std::endl;
+    os << "        source [find interface/ftdi/olimex-arm-usb-tiny-h.cfg]" << std::endl;
+    os << "        set chain_length 5" << std::endl;
+    os << "    }" << std::endl;
+    os << "    (1|cjtag) {" << std::endl;
+    os << "        echo \"Using cJTAG\"" << std::endl;
+    os << "        source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]" << std::endl;
+    os << "    }" << std::endl;
+    os << "    (2|tunnel) {" << std::endl;
+    os << "        echo \"Using JTAG tunnel\"" << std::endl;
+    os << "        source [find interface/ftdi/arty-onboard-ftdi.cfg]" << std::endl;
+    os << "        set chain_length 6" << std::endl;
+    os << "    }" << std::endl;
+    os << "    default {" << std::endl;
+    os << "        error \"Unknown protocol specified: $protocol\"" << std::endl;
+    os << "    }" << std::endl;
+    os << "}" << std::endl << std::endl;
   }
   os << "set _CHIPNAME riscv" << std::endl;
-  os << "jtag newtap $_CHIPNAME cpu -irlen 5" << std::endl << std::endl;
+  os << "jtag newtap $_CHIPNAME cpu -irlen $chain_length" << std::endl << std::endl;
 
   os << "set _TARGETNAME $_CHIPNAME.cpu" << std::endl;
   os << "target create $_TARGETNAME.0 riscv -chain-position $_TARGETNAME"
@@ -447,6 +480,10 @@ static void write_config_file(fstream &os, std::string board,
        << " -work-area-size 10000 -work-area-backup 1" << std::endl
        << std::endl;
   }
+
+  os << "if { $chain_length == 6 } {" << std::endl;
+  os << "    riscv use_bscan_tunnel 5" << std::endl;
+  os << "}" << std::endl << std::endl;
 
   /* Define the SPI flash */
   if (has_memory("flash")) {
@@ -473,6 +510,15 @@ static void write_config_file(fstream &os, std::string board,
   }
 
   os << "init" << std::endl;
+
+  os << "# If required, the authdata_write command must be added immediately after" << std::endl;
+  os << "# the 'init' command.  Use: " << std::endl;
+  os << "# riscv authdata_write ????????" << std::endl;
+  os << "if { [info exists authkey] } {" << std::endl;
+  os << "    riscv authdata_write $authkey" << std::endl;
+  os << "}" << std::endl;
+
+  os << std::endl;
   os << "if {[ info exists pulse_srst]} {" << std::endl;
   os << "\tftdi_set_signal nSRST 0" << std::endl;
   os << "\tftdi_set_signal nSRST z" << std::endl;
@@ -489,7 +535,7 @@ static void show_usage(string name) {
       << "Usage: " << name << " <option(s)>\n"
       << "Options:\n"
       << "\t-h,--help\t\t\tShow this help message\n"
-      << "\t-p,--protocol <jtag | cjtag>\tSpecify protocol, defaults to jtag\n"
+      << "\t-p,--protocol <jtag | cjtag | tunnel>\tSpecify protocol, defaults to jtag\n"
       << "\t-b,--board <eg. arty | hifive1>\tSpecify board type\n"
       << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
       << "\t-o,--output <eg. openocd.cfg>\tGenerate openocd config file\n"
@@ -539,13 +585,13 @@ int main(int argc, char *argv[]) {
         if (i + 1 < argc) {
           protocol = argv[++i];
           if ((protocol != "jtag") && (protocol != "cjtag")) {
-            std::cerr << "Possible options for --protocol are <jtag | cjtag>."
+            std::cerr << "Possible options for --protocol are <jtag | cjtag | tunnel>."
                       << std::endl;
             show_usage(argv[0]);
             return 1;
           }
         } else {
-          std::cerr << "--protocol option requires an argument <jtag | cjtag."
+          std::cerr << "--protocol option requires an argument <jtag | cjtag | tunnel."
                     << std::endl;
           show_usage(argv[0]);
           return 1;
@@ -559,7 +605,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (board.find("hifive") != string::npos && protocol == "cjtag") {
+  if ((board.find("hifive") != string::npos) && ((protocol == "cjtag") || (protocol == "tunnel"))) {
     std::cerr << "HiFive boards are not capable of using cJTAG." << std::endl;
     return 1;
   }
