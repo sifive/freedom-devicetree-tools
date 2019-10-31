@@ -424,39 +424,43 @@ static void write_config_file(fstream &os, std::string board,
 
     if (protocol == "cjtag") {
       os << "    set protocol 1" << std::endl;
-    }
-    else if (protocol == "jtagtunnel") {
+    } else if (protocol == "jtagtunnel") {
       os << "    set protocol 2" << std::endl;
-    }
-    else {
+    } else {
       os << "    set protocol 0" << std::endl;
     }
     os << "}" << std::endl << std::endl;
 
-    os << "# Bring in the correct configuration script for the specified" << std::endl;
+    os << "# Bring in the correct configuration script for the specified"
+       << std::endl;
     os << "# protocol" << std::endl;
     os << "switch -regexp $protocol {" << std::endl;
     os << "    (0|jtag) {" << std::endl;
     os << "        echo \"Using JTAG\"" << std::endl;
-    os << "        source [find interface/ftdi/olimex-arm-usb-tiny-h.cfg]" << std::endl;
+    os << "        source [find interface/ftdi/olimex-arm-usb-tiny-h.cfg]"
+       << std::endl;
     os << "        set chain_length 5" << std::endl;
     os << "    }" << std::endl;
     os << "    (1|cjtag) {" << std::endl;
     os << "        echo \"Using cJTAG\"" << std::endl;
-    os << "        source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]" << std::endl;
+    os << "        source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]"
+       << std::endl;
     os << "    }" << std::endl;
     os << "    (2|tunnel) {" << std::endl;
     os << "        echo \"Using JTAG tunnel\"" << std::endl;
-    os << "        source [find interface/ftdi/arty-onboard-ftdi.cfg]" << std::endl;
+    os << "        source [find interface/ftdi/arty-onboard-ftdi.cfg]"
+       << std::endl;
     os << "        set chain_length 6" << std::endl;
     os << "    }" << std::endl;
     os << "    default {" << std::endl;
-    os << "        error \"Unknown protocol specified: $protocol\"" << std::endl;
+    os << "        error \"Unknown protocol specified: $protocol\""
+       << std::endl;
     os << "    }" << std::endl;
     os << "}" << std::endl << std::endl;
   }
   os << "set _CHIPNAME riscv" << std::endl;
-  os << "jtag newtap $_CHIPNAME cpu -irlen $chain_length" << std::endl << std::endl;
+  os << "jtag newtap $_CHIPNAME cpu -irlen $chain_length" << std::endl
+     << std::endl;
 
   os << "set _TARGETNAME $_CHIPNAME.cpu" << std::endl;
   os << "target create $_TARGETNAME.0 riscv -chain-position $_TARGETNAME"
@@ -511,7 +515,9 @@ static void write_config_file(fstream &os, std::string board,
 
   os << "init" << std::endl;
 
-  os << "# If required, the authdata_write command must be added immediately after" << std::endl;
+  os << "# If required, the authdata_write command must be added immediately "
+        "after"
+     << std::endl;
   os << "# the 'init' command.  Use: " << std::endl;
   os << "# riscv authdata_write ????????" << std::endl;
   os << "if { [info exists authkey] } {" << std::endl;
@@ -531,16 +537,16 @@ static void write_config_file(fstream &os, std::string board,
 }
 
 static void show_usage(string name) {
-  std::cerr
-      << "Usage: " << name << " <option(s)>\n"
-      << "Options:\n"
-      << "\t-h,--help\t\t\tShow this help message\n"
-      << "\t-p,--protocol <jtag | cjtag | tunnel>\tSpecify protocol, defaults to jtag\n"
-      << "\t-b,--board <eg. arty | hifive1>\tSpecify board type\n"
-      << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
-      << "\t-o,--output <eg. openocd.cfg>\tGenerate openocd config file\n"
-      << "\t-s,--show \t\t\tShow openocd config file on std-output\n"
-      << endl;
+  std::cerr << "Usage: " << name << " <option(s)>\n"
+            << "Options:\n"
+            << "\t-h,--help\t\t\tShow this help message\n"
+            << "\t-p,--protocol <jtag | cjtag | tunnel>\tSpecify protocol, "
+               "defaults to jtag\n"
+            << "\t-b,--board <eg. arty | hifive1>\tSpecify board type\n"
+            << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
+            << "\t-o,--output <eg. openocd.cfg>\tGenerate openocd config file\n"
+            << "\t-s,--show \t\t\tShow openocd config file on std-output\n"
+            << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -585,13 +591,15 @@ int main(int argc, char *argv[]) {
         if (i + 1 < argc) {
           protocol = argv[++i];
           if ((protocol != "jtag") && (protocol != "cjtag")) {
-            std::cerr << "Possible options for --protocol are <jtag | cjtag | tunnel>."
+            std::cerr << "Possible options for --protocol are <jtag | cjtag | "
+                         "tunnel>."
                       << std::endl;
             show_usage(argv[0]);
             return 1;
           }
         } else {
-          std::cerr << "--protocol option requires an argument <jtag | cjtag | tunnel."
+          std::cerr << "--protocol option requires an argument <jtag | cjtag | "
+                       "tunnel."
                     << std::endl;
           show_usage(argv[0]);
           return 1;
@@ -605,7 +613,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if ((board.find("hifive") != string::npos) && ((protocol == "cjtag") || (protocol == "tunnel"))) {
+  if ((board.find("hifive") != string::npos) &&
+      ((protocol == "cjtag") || (protocol == "tunnel"))) {
     std::cerr << "HiFive boards are not capable of using cJTAG." << std::endl;
     return 1;
   }
