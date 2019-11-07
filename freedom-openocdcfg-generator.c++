@@ -332,6 +332,19 @@ static void dts_memory(void) {
           tl_sys_count++;
         }
       },
+      std::regex("sifive,tl-inter-sys-port"),
+      [&](node n) {
+        if (n.field_exists("ranges")) {
+          target_addr address = get_memory_ranges_address(n);
+          target_size size = get_memory_ranges_size(n);
+          if (tl_sys_count == 0)
+            dts_memory_list.push_back(memory("mem", "tl_sys_ram",
+                                             "sifive,tl-inter-sys-port",
+                                             address, size));
+
+          tl_sys_count++;
+        }
+      },
       std::regex("sifive,sram0"),
       [&](node n) {
         auto name = n.name();

@@ -28,6 +28,7 @@ static list<string> testram_compats = {
     "sifive,periph-port",      "sifive,ahb-sys-port",
     "sifive,apb-sys-port",     "sifive,axi4-sys-port",
     "sifive,sys-port",         "sifive,tl-sys-port",
+    "sifive,inter-sys-port",   "sifive,tl-inter-sys-port",
     "sifive,ahb-mem-port",     "sifive,apb-mem-port",
     "sifive,axi4-mem-port",    "sifive,tl-mem-port",
     "sifive,mem-port",
