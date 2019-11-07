@@ -11,12 +11,10 @@
 using std::list;
 
 struct reg_t {
-  uint64_t address;  /* bus address space */
-  uint64_t size;     /* size of the  address space */
+  uint64_t address; /* bus address space */
+  uint64_t size;    /* size of the  address space */
 
-  reg_t(uint64_t address, uint64_t size)
-    : address(address),
-      size(size) {}
+  reg_t(uint64_t address, uint64_t size) : address(address), size(size) {}
 };
 
 typedef list<reg_t> regs_t;
@@ -24,4 +22,3 @@ typedef list<reg_t> regs_t;
 regs_t get_regs(const node &n);
 
 #endif /* __REGS_H */
-
