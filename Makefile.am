@@ -139,6 +139,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_i2c0.h \
 	metal_header/sifive_local_external_interrupts0.c++ \
 	metal_header/sifive_local_external_interrupts0.h \
+	metal_header/sifive_pwm0.c++ \
+	metal_header/sifive_pwm0.h \
 	metal_header/sifive_rtc0.c++ \
 	metal_header/sifive_rtc0.h \
 	metal_header/sifive_spi0.c++ \
