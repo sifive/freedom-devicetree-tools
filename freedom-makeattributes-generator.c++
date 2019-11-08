@@ -385,6 +385,30 @@ static void memory_port_width() {
 
                         tl_sys_count++;
                       });
+      },
+      std::regex("sifive,tl-inter-sys-port"),
+      [&](node n) {
+        auto name = n.name();
+        if (n.field_exists("sifive,port-width-bytes")) {
+          port_width = 8 * n.get_field<uint32_t>("sifive,port-width-bytes");
+        } else {
+          port_width = 32;
+          std::cout
+              << "No port-width found for sifive,tl-inter-sys-port, default to "
+                 "32bits width!"
+              << std::endl;
+        }
+        n.maybe_tuple("ranges",
+                      tuple_t<target_addr, target_addr, target_size>(),
+                      [&]() {},
+                      [&](target_addr src, target_addr dest, target_size len) {
+                        if (tl_sys_count == 0)
+                          dts_memory_list.push_back(memory(
+                              "mem", "sys_ram", "sifive,tl-inter-sys-port", src,
+                              len, port_width));
+
+                        tl_sys_count++;
+                      });
       });
 }
 

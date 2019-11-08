@@ -28,6 +28,7 @@ static list<string> testram_compats = {
     "sifive,periph-port",      "sifive,ahb-sys-port",
     "sifive,apb-sys-port",     "sifive,axi4-sys-port",
     "sifive,sys-port",         "sifive,tl-sys-port",
+    "sifive,inter-sys-port",   "sifive,tl-inter-sys-port",
     "sifive,ahb-mem-port",     "sifive,apb-mem-port",
     "sifive,axi4-mem-port",    "sifive,tl-mem-port",
     "sifive,mem-port",
@@ -55,8 +56,10 @@ void MapStrategy::print_chosen_strategy(string name, LinkStrategy layout,
        << endl;
   cout << "\tROM:  " << setw(25) << rom.compatible << " - 0x" << rom.base
        << endl;
-  cout << "\tITIM: " << setw(25) << itim.compatible << " - 0x" << itim.base
-       << endl;
+  if (itim.base != ram.base) {
+    cout << "\tITIM: " << setw(25) << itim.compatible << " - 0x" << itim.base
+         << endl;
+  }
   cout << dec;
 }
 

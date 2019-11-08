@@ -161,9 +161,11 @@ int main(int argc, char *argv[]) {
       "sifive,spi0",
       "sifive,sram0",
       "sifive,sys-port",
+      "sifive,inter-sys-port",
       "sifive,tl-mem-port",
       "sifive,tl-periph-port",
       "sifive,tl-sys-port",
+      "sifive,tl-inter-sys-port",
   };
   list<Memory> memories;
 
