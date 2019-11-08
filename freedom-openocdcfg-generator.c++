@@ -449,11 +449,12 @@ static void write_config_file(fstream &os, std::string board,
     os << "        set chain_length 6" << std::endl;
     os << "    }" << std::endl;
     os << "    cjtag_tunnel {" << std::endl;
-    os << "        error \"Configuration not implemented in this release: ${debug_config}\"" 
+    os << "        error \"Configuration not implemented in this release: "
+          "${debug_config}\""
        << std::endl;
     os << "    }" << std::endl;
     os << "    default {" << std::endl;
-    os << "        error \"Unknown configuration specified: ${debug_config}\"" 
+    os << "        error \"Unknown configuration specified: ${debug_config}\""
        << std::endl;
     os << "    }" << std::endl;
     os << "}" << std::endl << std::endl;
