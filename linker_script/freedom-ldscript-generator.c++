@@ -133,6 +133,18 @@ int main(int argc, char *argv[]) {
     }
   };
 
+  auto spi_has_flash = [&](const node &spi_node) -> bool {
+    bool has_flash = false;
+    dtb.match(std::regex("jedec,spi-nor"), [&](const node flash_node) {
+      /* Check that the flash node we've found is a child of the SPI node */
+      if (flash_node.parent().instance() == spi_node.instance()) {
+        has_flash = true;
+      }
+    });
+
+    return has_flash;
+  };
+
   /* Memory Devices Compatible Strings
    *
    * These are the devices to extract from the DeviceTree to consider in
@@ -182,6 +194,12 @@ int main(int argc, char *argv[]) {
   for (auto it = memory_devices.begin(); it != memory_devices.end(); it++) {
     dtb.match(std::regex(*it), [&](const node n) {
       Memory mem(*it);
+
+      /* Skip SPI devices without a connected flash chip */
+      if (it->find("spi") != string::npos && !spi_has_flash(n)) {
+        return;
+      }
+
       extract_mem_map(mem, n);
 
       /* If we've requested an offset, add it to the node */
