@@ -407,7 +407,8 @@ static void show_dts_memory(void) {
 }
 
 static void write_config_file(fstream &os, std::string board,
-                              std::string protocol) {
+                              std::string protocol, string connection) {
+
   os << "#" << __FUNCTION__ << std::endl;
   os << "# JTAG adapter setup" << std::endl;
   os << "adapter_khz     10000" << std::endl << std::endl;
@@ -425,48 +426,48 @@ static void write_config_file(fstream &os, std::string board,
     os << "ftdi_layout_signal LED -data 0x0020" << std::endl << std::endl;
 
   } else {
-
-    /* Arty Board by Default */
-    os << "# protocol = 0|jtag" << std::endl;
-    os << "# protocol = 1|cjtag" << std::endl;
-    os << "# protocol = 2|tunnel" << std::endl;
-
-    os << "# setup default protocol, if not specified on the" << std::endl;
-    os << "# command line using: -c \"set protocol xxx\"" << std::endl;
     os << "if { [ info exists protocol ] == 0 } {" << std::endl;
-
-    if (protocol == "cjtag") {
-      os << "    set protocol 1" << std::endl;
-    } else if (protocol == "jtagtunnel") {
-      os << "    set protocol 2" << std::endl;
-    } else {
-      os << "    set protocol 0" << std::endl;
-    }
+    os << "    # If not specified on the cmd line, default to " << protocol
+       << std::endl;
+    os << "    set protocol " << protocol << std::endl;
     os << "}" << std::endl << std::endl;
+
+    os << "if { [ info exists connection ] == 0 } {" << std::endl;
+    os << "    # If not specified on the cmd line, default to " << connection
+       << std::endl;
+    os << "    set connection " << connection << std::endl;
+    os << "}" << std::endl << std::endl;
+
+    os << "set debug_config \"${protocol}_${connection}\"" << std::endl;
 
     os << "# Bring in the correct configuration script for the specified"
        << std::endl;
-    os << "# protocol" << std::endl;
-    os << "switch -regexp $protocol {" << std::endl;
-    os << "    (0|jtag) {" << std::endl;
+    os << "# debug_config" << std::endl;
+    os << "switch ${debug_config} {" << std::endl;
+    os << "    jtag_probe {" << std::endl;
     os << "        echo \"Using JTAG\"" << std::endl;
     os << "        source [find interface/ftdi/olimex-arm-usb-tiny-h.cfg]"
        << std::endl;
     os << "        set chain_length 5" << std::endl;
     os << "    }" << std::endl;
-    os << "    (1|cjtag) {" << std::endl;
+    os << "    cjtag_probe {" << std::endl;
     os << "        echo \"Using cJTAG\"" << std::endl;
     os << "        source [find interface/ftdi/olimex-arm-jtag-cjtag.cfg]"
        << std::endl;
     os << "    }" << std::endl;
-    os << "    (2|tunnel) {" << std::endl;
+    os << "    jtag_tunnel {" << std::endl;
     os << "        echo \"Using JTAG tunnel\"" << std::endl;
     os << "        source [find interface/ftdi/arty-onboard-ftdi.cfg]"
        << std::endl;
     os << "        set chain_length 6" << std::endl;
     os << "    }" << std::endl;
+    os << "    cjtag_tunnel {" << std::endl;
+    os << "        error \"Configuration not implemented in this release: "
+          "${debug_config}\""
+       << std::endl;
+    os << "    }" << std::endl;
     os << "    default {" << std::endl;
-    os << "        error \"Unknown protocol specified: $protocol\""
+    os << "        error \"Unknown configuration specified: ${debug_config}\""
        << std::endl;
     os << "    }" << std::endl;
     os << "}" << std::endl << std::endl;
@@ -550,16 +551,17 @@ static void write_config_file(fstream &os, std::string board,
 }
 
 static void show_usage(string name) {
-  std::cerr << "Usage: " << name << " <option(s)>\n"
-            << "Options:\n"
-            << "\t-h,--help\t\t\tShow this help message\n"
-            << "\t-p,--protocol <jtag | cjtag | tunnel>\tSpecify protocol, "
-               "defaults to jtag\n"
-            << "\t-b,--board <eg. arty | hifive1>\tSpecify board type\n"
-            << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
-            << "\t-o,--output <eg. openocd.cfg>\tGenerate openocd config file\n"
-            << "\t-s,--show \t\t\tShow openocd config file on std-output\n"
-            << endl;
+  std::cerr
+      << "Usage: " << name << " <option(s)>\n"
+      << "Options:\n"
+      << "\t-h,--help\t\t\tShow this help message\n"
+      << "\t-p,--protocol <jtag | cjtag>\tSpecify protocol, defaults to jtag\n"
+      << "\t-t,--tunnel\t\t\tJTAG tunneling (Xilinx BSCAN)"
+      << "\t-b,--board <eg. arty | hifive1>\tSpecify board type\n"
+      << "\t-d,--dtb <eg. xxx.dtb>\t\tSpecify fullpath to the DTB file\n"
+      << "\t-o,--output <eg. openocd.cfg>\tGenerate openocd config file\n"
+      << "\t-s,--show \t\t\tShow openocd config file on std-output\n"
+      << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -568,6 +570,7 @@ int main(int argc, char *argv[]) {
   string protocol = "jtag";
   string dtb_file;
   string config_file;
+  string connection = "probe";
 
   if ((argc < 2) && (argc > 5)) {
     show_usage(argv[0]);
@@ -604,8 +607,7 @@ int main(int argc, char *argv[]) {
         if (i + 1 < argc) {
           protocol = argv[++i];
           if ((protocol != "jtag") && (protocol != "cjtag")) {
-            std::cerr << "Possible options for --protocol are <jtag | cjtag | "
-                         "tunnel>."
+            std::cerr << "Possible options for --protocol are <jtag | cjtag>."
                       << std::endl;
             show_usage(argv[0]);
             return 1;
@@ -619,6 +621,8 @@ int main(int argc, char *argv[]) {
         }
       } else if ((arg == "-s") || (arg == "--show")) {
         show = true;
+      } else if ((arg == "-t") || (arg == "--tunnel")) {
+        connection = "tunnel";
       } else {
         show_usage(argv[0]);
         return 1;
@@ -626,8 +630,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if ((board.find("hifive") != string::npos) &&
-      ((protocol == "cjtag") || (protocol == "tunnel"))) {
+  if ((board.find("hifive") != string::npos) && ((protocol == "cjtag"))) {
     std::cerr << "HiFive boards are not capable of using cJTAG." << std::endl;
     return 1;
   }
@@ -654,7 +657,7 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    write_config_file(cfg, board, protocol);
+    write_config_file(cfg, board, protocol, connection);
   }
 
   if (show) {
