@@ -44,7 +44,9 @@ public:
   void emit_size(const node &n);
 
   void emit_compat();
+  void emit_compat(string compat);
 
+  void emit_offset(string name, string offset_name, uint32_t offset);
   void emit_offset(string offset_name, uint32_t offset);
 
   void emit_property_u32(const node &n, string property_name, uint32_t value);
