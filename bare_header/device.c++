@@ -44,7 +44,7 @@ void Device::emit_comment(const node &n) {
 }
 
 string Device::def_handle(const node &n) {
-  string name = compat_string;
+  string name = n.get_fields<string>("compatible")[0];
   string instance = n.instance();
 
   std::transform(name.begin(), name.end(), name.begin(),
@@ -60,7 +60,7 @@ string Device::def_handle(const node &n) {
 }
 
 string Device::def_handle_index(const node &n) {
-  string name = compat_string;
+  string name = n.get_fields<string>("compatible")[0];
   string instance = std::to_string(get_index(n));
 
   std::transform(name.begin(), name.end(), name.begin(),
@@ -144,8 +144,9 @@ void Device::emit_size(const node &n) {
   }
 }
 
-void Device::emit_compat() {
-  string compat = compat_string;
+void Device::emit_compat() { emit_compat(compat_string); }
+
+void Device::emit_compat(string compat) {
   std::transform(compat.begin(), compat.end(), compat.begin(),
                  [](unsigned char c) -> char {
                    if (c == ',' || c == '-') {
@@ -156,8 +157,7 @@ void Device::emit_compat() {
   os << "#define METAL_" << compat << std::endl;
 }
 
-void Device::emit_offset(string offset_name, uint32_t offset) {
-  string name = compat_string;
+void Device::emit_offset(string name, string offset_name, uint32_t offset) {
   std::transform(name.begin(), name.end(), name.begin(),
                  [](unsigned char c) -> char {
                    if (c == ',' || c == '-') {
@@ -168,6 +168,10 @@ void Device::emit_offset(string offset_name, uint32_t offset) {
 
   os << "#define METAL_" << name << "_" << offset_name << " " << offset << "UL"
      << std::endl;
+}
+
+void Device::emit_offset(string offset_name, uint32_t offset) {
+  emit_offset(compat_string, offset_name, offset);
 }
 
 void Device::emit_property_u32(const node &n, string property_name,

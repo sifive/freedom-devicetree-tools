@@ -6,7 +6,7 @@
 #include <regex>
 
 sifive_wdog0::sifive_wdog0(std::ostream &os, const fdt &dtb)
-    : Device(os, dtb, "sifive,(wdog0|aon0)") {
+    : Device(os, dtb, "sifive,(wdog0|aon0|wdt0)") {
   num_wdogs = 0;
   dtb.match(std::regex(compat_string), [&](node n) { num_wdogs += 1; });
 }
