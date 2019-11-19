@@ -21,7 +21,7 @@ ConstantsGroup::ConstantsGroup(const fdt &dtb)
     auto compatibles = n.get_fields<string>("compatible");
 
     for (auto it = compatibles.begin(); it != compatibles.end(); it++) {
-      if (it->find("bullet") != string::npos) {
+      if (std::regex_match(*it, std::regex("(sifive,)(.*)"))) {
         chicken_bit = 1;
         break;
       }
