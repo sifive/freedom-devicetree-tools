@@ -108,11 +108,12 @@ static mem_map_t extract_mem_map(const node &n) {
       m.size = ranges.front().size;
     }
   } else {
-    n.maybe_tuple("reg", tuple_t<target_addr, target_size>(), [&]() {},
-                  [&](target_addr b, target_size s) {
-                    m.base = b;
-                    m.size = s;
-                  });
+    auto regs = n.get_fields<std::tuple<target_addr, target_size>>("reg");
+
+    if (!regs.empty()) {
+      m.base = std::get<0>(regs.front());
+      m.size = std::get<1>(regs.front());
+    }
   }
 
   return m;
