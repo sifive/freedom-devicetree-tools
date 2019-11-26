@@ -57,14 +57,12 @@ void memory::define_structs()
 	  emit_struct_field_ts("_size", size);
 	});
     } else {
-      n.maybe_tuple(
-	"reg",
-	tuple_t<target_addr, target_size>(),
-	[&]() {},
-	[&](target_addr base, target_size size) {
-	  emit_struct_field_ta("_base_address", base);
-	  emit_struct_field_ts("_size", size);
-	});
+      auto regs = n.get_fields<std::tuple<target_addr, target_size>>("reg");
+
+      if (!regs.empty()) {
+        emit_struct_field_ta("_base_address", std::get<0>(regs.front()));
+        emit_struct_field_ts("_size", std::get<1>(regs.front()));
+      }
     }
 
     n.maybe_tuple(
