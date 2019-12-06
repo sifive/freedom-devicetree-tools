@@ -136,15 +136,10 @@ am_freedom_ldscript_generator_OBJECTS =  \
 	linker_script/sections/freedom_ldscript_generator-text_group.$(OBJEXT) \
 	linker_script/sections/freedom_ldscript_generator-uninit_group.$(OBJEXT) \
 	linker_script/strategies/freedom_ldscript_generator-chosen_strategy.$(OBJEXT) \
-	linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.$(OBJEXT) \
 	linker_script/strategies/freedom_ldscript_generator-default_bullet_strategy.$(OBJEXT) \
-	linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.$(OBJEXT) \
 	linker_script/strategies/freedom_ldscript_generator-default_e20_strategy.$(OBJEXT) \
-	linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.$(OBJEXT) \
 	linker_script/strategies/freedom_ldscript_generator-default_e21_strategy.$(OBJEXT) \
-	linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.$(OBJEXT) \
 	linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.$(OBJEXT) \
-	linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-linker_script.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-map_strategy.$(OBJEXT) \
 	linker_script/freedom_ldscript_generator-memory.$(OBJEXT) \
@@ -640,24 +635,14 @@ freedom_ldscript_generator_SOURCES = \
 	linker_script/sections/uninit_group.h \
 	linker_script/strategies/chosen_strategy.c++ \
 	linker_script/strategies/chosen_strategy.h \
-	linker_script/strategies/default_bullet_arty.c++ \
-	linker_script/strategies/default_bullet_arty.h \
 	linker_script/strategies/default_bullet_strategy.c++ \
 	linker_script/strategies/default_bullet_strategy.h \
-	linker_script/strategies/default_e20_arty_strategy.c++ \
-	linker_script/strategies/default_e20_arty_strategy.h \
 	linker_script/strategies/default_e20_strategy.c++ \
 	linker_script/strategies/default_e20_strategy.h \
-	linker_script/strategies/default_e21_arty_strategy.c++ \
-	linker_script/strategies/default_e21_arty_strategy.h \
 	linker_script/strategies/default_e21_strategy.c++ \
 	linker_script/strategies/default_e21_strategy.h \
-	linker_script/strategies/default_rocket_arty.c++ \
-	linker_script/strategies/default_rocket_arty.h \
 	linker_script/strategies/default_rocket_strategy.c++ \
 	linker_script/strategies/default_rocket_strategy.h \
-	linker_script/strategies/memory_only_strategy.c++ \
-	linker_script/strategies/memory_only_strategy.h \
 	linker_script/linker_script.c++ \
 	linker_script/linker_script.h \
 	linker_script/map_strategy.c++ \
@@ -802,44 +787,286 @@ AM_TESTS_ENVIRONMENT = \
   export SOURCE_DIR=$(abspath $(srcdir)); \
   export WORK_DIR=$(abspath .);
 
-#TESTS      += tests/e31-eval-ldscript.bash
-#TESTS      += tests/e31-eval-makeattributes.bash
-#TESTS      += tests/e34-eval-ldscript.bash
-#TESTS      += tests/e34-eval-makeattributes.bash
-#TESTS      += tests/e31-memory-makeattributes.bash
-#TESTS      += tests/e31-ranges-ldscript.bash
-TESTS = tests/e31-arty-ldscript.bash tests/e31-arty-openocd.bash \
-	tests/e31-arty-makeattributes.bash \
-	tests/e31-arty-metal_header.bash tests/e51-arty-ldscript.bash \
-	tests/e51-arty-openocd.bash tests/e51-arty-makeattributes.bash \
-	tests/e51-arty-metal_header.bash \
-	tests/qemu-sifive_e-32-ldscript.bash \
-	tests/qemu-sifive_e-32-openocd.bash \
-	tests/qemu-sifive_e-32-makeattributes.bash \
-	tests/qemu-sifive_e-32-metal_header.bash \
-	tests/hifive1-ldscript.bash tests/hifive1-openocd.bash \
-	tests/hifive1-makeattributes.bash \
-	tests/hifive1-metal_header.bash tests/hifive1-metal_specs.bash \
-	tests/e31-eval-openocd.bash tests/e31-eval-metal_header.bash \
-	tests/multi-e31-arty-ldscript.bash \
-	tests/multi-e31-arty-openocd.bash \
-	tests/multi-e31-arty-makeattributes.bash \
-	tests/multi-e31-arty-metal_header.bash \
-	tests/e31-bigmem-ldscript.bash tests/e31-bigmem-openocd.bash \
-	tests/e31-bigmem-makeattributes.bash \
-	tests/e31-bigmem-metal_header.bash tests/e34-eval-openocd.bash \
-	tests/e34-eval-metal_header.bash \
-	tests/e34-eval-metal_specs.bash tests/e31-memory-ldscript.bash \
-	tests/e31-memory-openocd.bash \
-	tests/e31-memory-metal_header.bash \
-	tests/e31-ranges-openocd.bash \
-	tests/e31-ranges-makeattributes.bash \
-	tests/e31-ranges-metal_header.bash
-EXTRA_DIST = tests/e31-arty.dts tests/e51-arty.dts \
-	tests/qemu-sifive_e-32.dts tests/hifive1.dts \
-	tests/e31-eval.dts tests/multi-e31-arty.dts \
-	tests/e31-bigmem.dts tests/e34-eval.dts tests/e31-memory.dts \
-	tests/e31-ranges.dts $(TESTS) README.md fdt.h++ libfdt.h++ \
+
+# Generic test scripts called by tests
+TESTS = tests/freedom-e310-arty/test-bare_header-generator.bash \
+	tests/freedom-e310-arty/test-ldscript-generator.bash \
+	tests/freedom-e310-arty/test-makeattributes-generator.bash \
+	tests/freedom-e310-arty/test-metal_header-generator.bash \
+	tests/freedom-e310-arty/test-openocdcfg-generator.bash \
+	tests/qemu-sifive-e31/test-bare_header-generator.bash \
+	tests/qemu-sifive-e31/test-ldscript-generator.bash \
+	tests/qemu-sifive-e31/test-makeattributes-generator.bash \
+	tests/qemu-sifive-e31/test-metal_header-generator.bash \
+	tests/qemu-sifive-s51/test-bare_header-generator.bash \
+	tests/qemu-sifive-s51/test-ldscript-generator.bash \
+	tests/qemu-sifive-s51/test-makeattributes-generator.bash \
+	tests/qemu-sifive-s51/test-metal_header-generator.bash \
+	tests/qemu-sifive-u54/test-bare_header-generator.bash \
+	tests/qemu-sifive-u54/test-ldscript-generator.bash \
+	tests/qemu-sifive-u54/test-makeattributes-generator.bash \
+	tests/qemu-sifive-u54/test-metal_header-generator.bash \
+	tests/qemu-sifive-u54mc/test-bare_header-generator.bash \
+	tests/qemu-sifive-u54mc/test-ldscript-generator.bash \
+	tests/qemu-sifive-u54mc/test-makeattributes-generator.bash \
+	tests/qemu-sifive-u54mc/test-metal_header-generator.bash \
+	tests/sifive-hifive1/test-bare_header-generator.bash \
+	tests/sifive-hifive1/test-ldscript-generator.bash \
+	tests/sifive-hifive1/test-makeattributes-generator.bash \
+	tests/sifive-hifive1/test-metal_header-generator.bash \
+	tests/sifive-hifive1/test-openocdcfg-generator.bash \
+	tests/sifive-hifive1-revb/test-bare_header-generator.bash \
+	tests/sifive-hifive1-revb/test-ldscript-generator.bash \
+	tests/sifive-hifive1-revb/test-makeattributes-generator.bash \
+	tests/sifive-hifive1-revb/test-metal_header-generator.bash \
+	tests/sifive-hifive-unleashed/test-bare_header-generator.bash \
+	tests/sifive-hifive-unleashed/test-ldscript-generator.bash \
+	tests/sifive-hifive-unleashed/test-makeattributes-generator.bash \
+	tests/sifive-hifive-unleashed/test-metal_header-generator.bash \
+	tests/sifive-hifive-unleashed/test-openocdcfg-generator.bash \
+	tests/spike/test-bare_header-generator.bash \
+	tests/spike/test-ldscript-generator.bash \
+	tests/spike/test-makeattributes-generator.bash \
+	tests/spike/test-metal_header-generator.bash \
+	tests/e20-arty/test-bare_header-generator.bash \
+	tests/e20-arty/test-ldscript-generator.bash \
+	tests/e20-arty/test-makeattributes-generator.bash \
+	tests/e20-arty/test-metal_header-generator.bash \
+	tests/e20-arty/test-openocdcfg-generator.bash \
+	tests/e20-rtl/test-bare_header-generator.bash \
+	tests/e20-rtl/test-ldscript-generator.bash \
+	tests/e20-rtl/test-makeattributes-generator.bash \
+	tests/e20-rtl/test-metal_header-generator.bash \
+	tests/e21-arty/test-bare_header-generator.bash \
+	tests/e21-arty/test-ldscript-generator.bash \
+	tests/e21-arty/test-makeattributes-generator.bash \
+	tests/e21-arty/test-metal_header-generator.bash \
+	tests/e21-arty/test-openocdcfg-generator.bash \
+	tests/e21-rtl/test-bare_header-generator.bash \
+	tests/e21-rtl/test-ldscript-generator.bash \
+	tests/e21-rtl/test-makeattributes-generator.bash \
+	tests/e21-rtl/test-metal_header-generator.bash \
+	tests/e24-arty/test-bare_header-generator.bash \
+	tests/e24-arty/test-ldscript-generator.bash \
+	tests/e24-arty/test-makeattributes-generator.bash \
+	tests/e24-arty/test-metal_header-generator.bash \
+	tests/e24-arty/test-openocdcfg-generator.bash \
+	tests/e24-rtl/test-bare_header-generator.bash \
+	tests/e24-rtl/test-ldscript-generator.bash \
+	tests/e24-rtl/test-makeattributes-generator.bash \
+	tests/e24-rtl/test-metal_header-generator.bash \
+	tests/e31-arty/test-bare_header-generator.bash \
+	tests/e31-arty/test-ldscript-generator.bash \
+	tests/e31-arty/test-makeattributes-generator.bash \
+	tests/e31-arty/test-metal_header-generator.bash \
+	tests/e31-arty/test-openocdcfg-generator.bash \
+	tests/e31-rtl/test-bare_header-generator.bash \
+	tests/e31-rtl/test-ldscript-generator.bash \
+	tests/e31-rtl/test-makeattributes-generator.bash \
+	tests/e31-rtl/test-metal_header-generator.bash \
+	tests/e34-arty/test-bare_header-generator.bash \
+	tests/e34-arty/test-ldscript-generator.bash \
+	tests/e34-arty/test-makeattributes-generator.bash \
+	tests/e34-arty/test-metal_header-generator.bash \
+	tests/e34-arty/test-openocdcfg-generator.bash \
+	tests/e34-rtl/test-bare_header-generator.bash \
+	tests/e34-rtl/test-ldscript-generator.bash \
+	tests/e34-rtl/test-makeattributes-generator.bash \
+	tests/e34-rtl/test-metal_header-generator.bash \
+	tests/e76-arty/test-bare_header-generator.bash \
+	tests/e76-arty/test-ldscript-generator.bash \
+	tests/e76-arty/test-makeattributes-generator.bash \
+	tests/e76-arty/test-metal_header-generator.bash \
+	tests/e76-arty/test-openocdcfg-generator.bash \
+	tests/e76mc-arty/test-bare_header-generator.bash \
+	tests/e76mc-arty/test-ldscript-generator.bash \
+	tests/e76mc-arty/test-makeattributes-generator.bash \
+	tests/e76mc-arty/test-metal_header-generator.bash \
+	tests/e76mc-arty/test-openocdcfg-generator.bash \
+	tests/e76mc-rtl/test-bare_header-generator.bash \
+	tests/e76mc-rtl/test-ldscript-generator.bash \
+	tests/e76mc-rtl/test-makeattributes-generator.bash \
+	tests/e76mc-rtl/test-metal_header-generator.bash \
+	tests/e76-rtl/test-bare_header-generator.bash \
+	tests/e76-rtl/test-ldscript-generator.bash \
+	tests/e76-rtl/test-makeattributes-generator.bash \
+	tests/e76-rtl/test-metal_header-generator.bash \
+	tests/s21-arty/test-bare_header-generator.bash \
+	tests/s21-arty/test-ldscript-generator.bash \
+	tests/s21-arty/test-makeattributes-generator.bash \
+	tests/s21-arty/test-metal_header-generator.bash \
+	tests/s21-arty/test-openocdcfg-generator.bash \
+	tests/s21-rtl/test-bare_header-generator.bash \
+	tests/s21-rtl/test-ldscript-generator.bash \
+	tests/s21-rtl/test-makeattributes-generator.bash \
+	tests/s21-rtl/test-metal_header-generator.bash \
+	tests/s51-arty/test-bare_header-generator.bash \
+	tests/s51-arty/test-ldscript-generator.bash \
+	tests/s51-arty/test-makeattributes-generator.bash \
+	tests/s51-arty/test-metal_header-generator.bash \
+	tests/s51-arty/test-openocdcfg-generator.bash \
+	tests/s51-rtl/test-bare_header-generator.bash \
+	tests/s51-rtl/test-ldscript-generator.bash \
+	tests/s51-rtl/test-makeattributes-generator.bash \
+	tests/s51-rtl/test-metal_header-generator.bash \
+	tests/s54-arty/test-bare_header-generator.bash \
+	tests/s54-arty/test-ldscript-generator.bash \
+	tests/s54-arty/test-makeattributes-generator.bash \
+	tests/s54-arty/test-metal_header-generator.bash \
+	tests/s54-arty/test-openocdcfg-generator.bash \
+	tests/s54-rtl/test-bare_header-generator.bash \
+	tests/s54-rtl/test-ldscript-generator.bash \
+	tests/s54-rtl/test-makeattributes-generator.bash \
+	tests/s54-rtl/test-metal_header-generator.bash \
+	tests/s76-arty/test-bare_header-generator.bash \
+	tests/s76-arty/test-ldscript-generator.bash \
+	tests/s76-arty/test-makeattributes-generator.bash \
+	tests/s76-arty/test-metal_header-generator.bash \
+	tests/s76-arty/test-openocdcfg-generator.bash \
+	tests/s76mc-arty/test-bare_header-generator.bash \
+	tests/s76mc-arty/test-ldscript-generator.bash \
+	tests/s76mc-arty/test-makeattributes-generator.bash \
+	tests/s76mc-arty/test-metal_header-generator.bash \
+	tests/s76mc-arty/test-openocdcfg-generator.bash \
+	tests/s76mc-rtl/test-bare_header-generator.bash \
+	tests/s76mc-rtl/test-ldscript-generator.bash \
+	tests/s76mc-rtl/test-makeattributes-generator.bash \
+	tests/s76mc-rtl/test-metal_header-generator.bash \
+	tests/s76-rtl/test-bare_header-generator.bash \
+	tests/s76-rtl/test-ldscript-generator.bash \
+	tests/s76-rtl/test-makeattributes-generator.bash \
+	tests/s76-rtl/test-metal_header-generator.bash \
+	tests/u54-arty/test-bare_header-generator.bash \
+	tests/u54-arty/test-ldscript-generator.bash \
+	tests/u54-arty/test-makeattributes-generator.bash \
+	tests/u54-arty/test-metal_header-generator.bash \
+	tests/u54-arty/test-openocdcfg-generator.bash \
+	tests/u54mc-arty/test-bare_header-generator.bash \
+	tests/u54mc-arty/test-ldscript-generator.bash \
+	tests/u54mc-arty/test-makeattributes-generator.bash \
+	tests/u54mc-arty/test-metal_header-generator.bash \
+	tests/u54mc-arty/test-openocdcfg-generator.bash \
+	tests/u54mc-rtl/test-bare_header-generator.bash \
+	tests/u54mc-rtl/test-ldscript-generator.bash \
+	tests/u54mc-rtl/test-makeattributes-generator.bash \
+	tests/u54mc-rtl/test-metal_header-generator.bash \
+	tests/u54-rtl/test-bare_header-generator.bash \
+	tests/u54-rtl/test-ldscript-generator.bash \
+	tests/u54-rtl/test-makeattributes-generator.bash \
+	tests/u54-rtl/test-metal_header-generator.bash \
+	tests/u74-arty/test-bare_header-generator.bash \
+	tests/u74-arty/test-ldscript-generator.bash \
+	tests/u74-arty/test-makeattributes-generator.bash \
+	tests/u74-arty/test-metal_header-generator.bash \
+	tests/u74-arty/test-openocdcfg-generator.bash \
+	tests/u74mc-arty/test-bare_header-generator.bash \
+	tests/u74mc-arty/test-ldscript-generator.bash \
+	tests/u74mc-arty/test-makeattributes-generator.bash \
+	tests/u74mc-arty/test-metal_header-generator.bash \
+	tests/u74mc-arty/test-openocdcfg-generator.bash \
+	tests/u74mc-rtl/test-bare_header-generator.bash \
+	tests/u74mc-rtl/test-ldscript-generator.bash \
+	tests/u74mc-rtl/test-makeattributes-generator.bash \
+	tests/u74mc-rtl/test-metal_header-generator.bash \
+	tests/u74-rtl/test-bare_header-generator.bash \
+	tests/u74-rtl/test-ldscript-generator.bash \
+	tests/u74-rtl/test-makeattributes-generator.bash \
+	tests/u74-rtl/test-metal_header-generator.bash
+
+# freedom-e310-arty
+# qemu-sifive-e31
+# qemu-sifive-s51
+# qemu-sifive-u54
+# qemu-sifive-u54mc
+# sifive-hifive1
+# sifive-hifive1-revb
+# sifive-hifive-unleashed
+# spike
+# e20-arty
+# e20-rtl
+# e21-arty
+# e21-rtl
+# e24-arty
+# e24-rtl
+# e31-arty
+# e31-rtl
+# e34-arty
+# e34-rtl
+# e76-arty
+# e76mc-arty
+# e76mc-rtl
+# e76-rtl
+# s21-arty
+# s21-rtl
+# s51-arty
+# s51-rtl
+# s54-arty
+# s54-rtl
+# s76-arty
+# s76mc-arty
+# s76mc-rtl
+# s76-rtl
+# u54-arty
+# u54mc-arty
+# u54mc-rtl
+# u54-rtl
+# u74-arty
+# u74mc-arty
+# u74mc-rtl
+# u74-rtl
+EXTRA_DIST = tests/test-bare_header-generator.bash \
+	tests/test-ldscript-generator.bash \
+	tests/test-makeattributes-generator.bash \
+	tests/test-metal_header-generator.bash \
+	tests/test-openocdcfg-generator.bash \
+	tests/freedom-e310-arty/core.dts \
+	tests/freedom-e310-arty/design.dts \
+	tests/qemu-sifive-e31/core.dts \
+	tests/qemu-sifive-e31/design.dts \
+	tests/qemu-sifive-s51/core.dts \
+	tests/qemu-sifive-s51/design.dts \
+	tests/qemu-sifive-u54/core.dts \
+	tests/qemu-sifive-u54/design.dts \
+	tests/qemu-sifive-u54mc/core.dts \
+	tests/qemu-sifive-u54mc/design.dts \
+	tests/sifive-hifive1/core.dts tests/sifive-hifive1/design.dts \
+	tests/sifive-hifive1-revb/core.dts \
+	tests/sifive-hifive1-revb/design.dts \
+	tests/sifive-hifive-unleashed/core.dts \
+	tests/sifive-hifive-unleashed/design.dts tests/spike/core.dts \
+	tests/spike/design.dts tests/e20-arty/core.dts \
+	tests/e20-arty/design.dts tests/e20-rtl/core.dts \
+	tests/e20-rtl/design.dts tests/e21-arty/core.dts \
+	tests/e21-arty/design.dts tests/e21-rtl/core.dts \
+	tests/e21-rtl/design.dts tests/e24-arty/core.dts \
+	tests/e24-arty/design.dts tests/e24-rtl/core.dts \
+	tests/e24-rtl/design.dts tests/e31-arty/core.dts \
+	tests/e31-arty/design.dts tests/e31-rtl/core.dts \
+	tests/e31-rtl/design.dts tests/e34-arty/core.dts \
+	tests/e34-arty/design.dts tests/e34-rtl/core.dts \
+	tests/e34-rtl/design.dts tests/e76-arty/core.dts \
+	tests/e76-arty/design.dts tests/e76mc-arty/core.dts \
+	tests/e76mc-arty/design.dts tests/e76mc-rtl/core.dts \
+	tests/e76mc-rtl/design.dts tests/e76-rtl/core.dts \
+	tests/e76-rtl/design.dts tests/s21-arty/core.dts \
+	tests/s21-arty/design.dts tests/s21-rtl/core.dts \
+	tests/s21-rtl/design.dts tests/s51-arty/core.dts \
+	tests/s51-arty/design.dts tests/s51-rtl/core.dts \
+	tests/s51-rtl/design.dts tests/s54-arty/core.dts \
+	tests/s54-arty/design.dts tests/s54-rtl/core.dts \
+	tests/s54-rtl/design.dts tests/s76-arty/core.dts \
+	tests/s76-arty/design.dts tests/s76mc-arty/core.dts \
+	tests/s76mc-arty/design.dts tests/s76mc-rtl/core.dts \
+	tests/s76mc-rtl/design.dts tests/s76-rtl/core.dts \
+	tests/s76-rtl/design.dts tests/u54-arty/core.dts \
+	tests/u54-arty/design.dts tests/u54mc-arty/core.dts \
+	tests/u54mc-arty/design.dts tests/u54mc-rtl/core.dts \
+	tests/u54mc-rtl/design.dts tests/u54-rtl/core.dts \
+	tests/u54-rtl/design.dts tests/u74-arty/core.dts \
+	tests/u74-arty/design.dts tests/u74mc-arty/core.dts \
+	tests/u74mc-arty/design.dts tests/u74mc-rtl/core.dts \
+	tests/u74mc-rtl/design.dts tests/u74-rtl/core.dts \
+	tests/u74-rtl/design.dts $(TESTS) README.md fdt.h++ libfdt.h++ \
 	multilib.h++
 all: all-am
 
@@ -1002,31 +1229,16 @@ linker_script/strategies/$(DEPDIR)/$(am__dirstamp):
 linker_script/strategies/freedom_ldscript_generator-chosen_strategy.$(OBJEXT):  \
 	linker_script/strategies/$(am__dirstamp) \
 	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
-linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.$(OBJEXT):  \
-	linker_script/strategies/$(am__dirstamp) \
-	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
 linker_script/strategies/freedom_ldscript_generator-default_bullet_strategy.$(OBJEXT):  \
-	linker_script/strategies/$(am__dirstamp) \
-	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
-linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.$(OBJEXT):  \
 	linker_script/strategies/$(am__dirstamp) \
 	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
 linker_script/strategies/freedom_ldscript_generator-default_e20_strategy.$(OBJEXT):  \
 	linker_script/strategies/$(am__dirstamp) \
 	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
-linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.$(OBJEXT):  \
-	linker_script/strategies/$(am__dirstamp) \
-	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
 linker_script/strategies/freedom_ldscript_generator-default_e21_strategy.$(OBJEXT):  \
 	linker_script/strategies/$(am__dirstamp) \
 	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
-linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.$(OBJEXT):  \
-	linker_script/strategies/$(am__dirstamp) \
-	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
 linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.$(OBJEXT):  \
-	linker_script/strategies/$(am__dirstamp) \
-	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
-linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.$(OBJEXT):  \
 	linker_script/strategies/$(am__dirstamp) \
 	linker_script/strategies/$(DEPDIR)/$(am__dirstamp)
 linker_script/freedom_ldscript_generator-linker_script.$(OBJEXT):  \
@@ -1220,15 +1432,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-text_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/sections/$(DEPDIR)/freedom_ldscript_generator-uninit_group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-chosen_strategy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_arty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_strategy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_arty_strategy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_strategy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_arty_strategy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_strategy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_strategy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-memory_only_strategy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-device.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-fixed_clock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-fixed_factor_clock.Po@am__quote@
@@ -1546,20 +1753,6 @@ linker_script/strategies/freedom_ldscript_generator-chosen_strategy.obj: linker_
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-chosen_strategy.obj `if test -f 'linker_script/strategies/chosen_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/chosen_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/chosen_strategy.c++'; fi`
 
-linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.o: linker_script/strategies/default_bullet_arty.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_arty.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.o `test -f 'linker_script/strategies/default_bullet_arty.c++' || echo '$(srcdir)/'`linker_script/strategies/default_bullet_arty.c++
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_arty.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_arty.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_bullet_arty.c++' object='linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.o `test -f 'linker_script/strategies/default_bullet_arty.c++' || echo '$(srcdir)/'`linker_script/strategies/default_bullet_arty.c++
-
-linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.obj: linker_script/strategies/default_bullet_arty.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_arty.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.obj `if test -f 'linker_script/strategies/default_bullet_arty.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_bullet_arty.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_bullet_arty.c++'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_arty.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_arty.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_bullet_arty.c++' object='linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_bullet_arty.obj `if test -f 'linker_script/strategies/default_bullet_arty.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_bullet_arty.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_bullet_arty.c++'; fi`
-
 linker_script/strategies/freedom_ldscript_generator-default_bullet_strategy.o: linker_script/strategies/default_bullet_strategy.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_bullet_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_bullet_strategy.o `test -f 'linker_script/strategies/default_bullet_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_bullet_strategy.c++
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_bullet_strategy.Po
@@ -1573,20 +1766,6 @@ linker_script/strategies/freedom_ldscript_generator-default_bullet_strategy.obj:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_bullet_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-default_bullet_strategy.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_bullet_strategy.obj `if test -f 'linker_script/strategies/default_bullet_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_bullet_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_bullet_strategy.c++'; fi`
-
-linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.o: linker_script/strategies/default_e20_arty_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_arty_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.o `test -f 'linker_script/strategies/default_e20_arty_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e20_arty_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_arty_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_arty_strategy.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e20_arty_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.o `test -f 'linker_script/strategies/default_e20_arty_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e20_arty_strategy.c++
-
-linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.obj: linker_script/strategies/default_e20_arty_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_arty_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.obj `if test -f 'linker_script/strategies/default_e20_arty_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e20_arty_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e20_arty_strategy.c++'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_arty_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_arty_strategy.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e20_arty_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_e20_arty_strategy.obj `if test -f 'linker_script/strategies/default_e20_arty_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e20_arty_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e20_arty_strategy.c++'; fi`
 
 linker_script/strategies/freedom_ldscript_generator-default_e20_strategy.o: linker_script/strategies/default_e20_strategy.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_e20_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e20_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_e20_strategy.o `test -f 'linker_script/strategies/default_e20_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e20_strategy.c++
@@ -1602,20 +1781,6 @@ linker_script/strategies/freedom_ldscript_generator-default_e20_strategy.obj: li
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_e20_strategy.obj `if test -f 'linker_script/strategies/default_e20_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e20_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e20_strategy.c++'; fi`
 
-linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.o: linker_script/strategies/default_e21_arty_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_arty_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.o `test -f 'linker_script/strategies/default_e21_arty_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e21_arty_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_arty_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_arty_strategy.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e21_arty_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.o `test -f 'linker_script/strategies/default_e21_arty_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e21_arty_strategy.c++
-
-linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.obj: linker_script/strategies/default_e21_arty_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_arty_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.obj `if test -f 'linker_script/strategies/default_e21_arty_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e21_arty_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e21_arty_strategy.c++'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_arty_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_arty_strategy.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_e21_arty_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_e21_arty_strategy.obj `if test -f 'linker_script/strategies/default_e21_arty_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e21_arty_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e21_arty_strategy.c++'; fi`
-
 linker_script/strategies/freedom_ldscript_generator-default_e21_strategy.o: linker_script/strategies/default_e21_strategy.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_e21_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_e21_strategy.o `test -f 'linker_script/strategies/default_e21_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_e21_strategy.c++
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_e21_strategy.Po
@@ -1630,20 +1795,6 @@ linker_script/strategies/freedom_ldscript_generator-default_e21_strategy.obj: li
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_e21_strategy.obj `if test -f 'linker_script/strategies/default_e21_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_e21_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_e21_strategy.c++'; fi`
 
-linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.o: linker_script/strategies/default_rocket_arty.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.o `test -f 'linker_script/strategies/default_rocket_arty.c++' || echo '$(srcdir)/'`linker_script/strategies/default_rocket_arty.c++
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_rocket_arty.c++' object='linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.o `test -f 'linker_script/strategies/default_rocket_arty.c++' || echo '$(srcdir)/'`linker_script/strategies/default_rocket_arty.c++
-
-linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.obj: linker_script/strategies/default_rocket_arty.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.obj `if test -f 'linker_script/strategies/default_rocket_arty.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_rocket_arty.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_rocket_arty.c++'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_arty.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_rocket_arty.c++' object='linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_rocket_arty.obj `if test -f 'linker_script/strategies/default_rocket_arty.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_rocket_arty.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_rocket_arty.c++'; fi`
-
 linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.o: linker_script/strategies/default_rocket_strategy.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.o `test -f 'linker_script/strategies/default_rocket_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/default_rocket_strategy.c++
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-default_rocket_strategy.Po
@@ -1657,20 +1808,6 @@ linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.obj:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/default_rocket_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-default_rocket_strategy.obj `if test -f 'linker_script/strategies/default_rocket_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/default_rocket_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/default_rocket_strategy.c++'; fi`
-
-linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.o: linker_script/strategies/memory_only_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.o -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-memory_only_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.o `test -f 'linker_script/strategies/memory_only_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/memory_only_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-memory_only_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-memory_only_strategy.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/memory_only_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.o `test -f 'linker_script/strategies/memory_only_strategy.c++' || echo '$(srcdir)/'`linker_script/strategies/memory_only_strategy.c++
-
-linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.obj: linker_script/strategies/memory_only_strategy.c++
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.obj -MD -MP -MF linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-memory_only_strategy.Tpo -c -o linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.obj `if test -f 'linker_script/strategies/memory_only_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/memory_only_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/memory_only_strategy.c++'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-memory_only_strategy.Tpo linker_script/strategies/$(DEPDIR)/freedom_ldscript_generator-memory_only_strategy.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linker_script/strategies/memory_only_strategy.c++' object='linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o linker_script/strategies/freedom_ldscript_generator-memory_only_strategy.obj `if test -f 'linker_script/strategies/memory_only_strategy.c++'; then $(CYGPATH_W) 'linker_script/strategies/memory_only_strategy.c++'; else $(CYGPATH_W) '$(srcdir)/linker_script/strategies/memory_only_strategy.c++'; fi`
 
 linker_script/freedom_ldscript_generator-linker_script.o: linker_script/linker_script.c++
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_ldscript_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT linker_script/freedom_ldscript_generator-linker_script.o -MD -MP -MF linker_script/$(DEPDIR)/freedom_ldscript_generator-linker_script.Tpo -c -o linker_script/freedom_ldscript_generator-linker_script.o `test -f 'linker_script/linker_script.c++' || echo '$(srcdir)/'`linker_script/linker_script.c++
@@ -2474,254 +2611,1283 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-tests/e31-arty-ldscript.bash.log: tests/e31-arty-ldscript.bash
-	@p='tests/e31-arty-ldscript.bash'; \
-	b='tests/e31-arty-ldscript.bash'; \
+tests/freedom-e310-arty/test-bare_header-generator.bash.log: tests/freedom-e310-arty/test-bare_header-generator.bash
+	@p='tests/freedom-e310-arty/test-bare_header-generator.bash'; \
+	b='tests/freedom-e310-arty/test-bare_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-arty-openocd.bash.log: tests/e31-arty-openocd.bash
-	@p='tests/e31-arty-openocd.bash'; \
-	b='tests/e31-arty-openocd.bash'; \
+tests/freedom-e310-arty/test-ldscript-generator.bash.log: tests/freedom-e310-arty/test-ldscript-generator.bash
+	@p='tests/freedom-e310-arty/test-ldscript-generator.bash'; \
+	b='tests/freedom-e310-arty/test-ldscript-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-arty-makeattributes.bash.log: tests/e31-arty-makeattributes.bash
-	@p='tests/e31-arty-makeattributes.bash'; \
-	b='tests/e31-arty-makeattributes.bash'; \
+tests/freedom-e310-arty/test-makeattributes-generator.bash.log: tests/freedom-e310-arty/test-makeattributes-generator.bash
+	@p='tests/freedom-e310-arty/test-makeattributes-generator.bash'; \
+	b='tests/freedom-e310-arty/test-makeattributes-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-arty-metal_header.bash.log: tests/e31-arty-metal_header.bash
-	@p='tests/e31-arty-metal_header.bash'; \
-	b='tests/e31-arty-metal_header.bash'; \
+tests/freedom-e310-arty/test-metal_header-generator.bash.log: tests/freedom-e310-arty/test-metal_header-generator.bash
+	@p='tests/freedom-e310-arty/test-metal_header-generator.bash'; \
+	b='tests/freedom-e310-arty/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e51-arty-ldscript.bash.log: tests/e51-arty-ldscript.bash
-	@p='tests/e51-arty-ldscript.bash'; \
-	b='tests/e51-arty-ldscript.bash'; \
+tests/freedom-e310-arty/test-openocdcfg-generator.bash.log: tests/freedom-e310-arty/test-openocdcfg-generator.bash
+	@p='tests/freedom-e310-arty/test-openocdcfg-generator.bash'; \
+	b='tests/freedom-e310-arty/test-openocdcfg-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e51-arty-openocd.bash.log: tests/e51-arty-openocd.bash
-	@p='tests/e51-arty-openocd.bash'; \
-	b='tests/e51-arty-openocd.bash'; \
+tests/qemu-sifive-e31/test-bare_header-generator.bash.log: tests/qemu-sifive-e31/test-bare_header-generator.bash
+	@p='tests/qemu-sifive-e31/test-bare_header-generator.bash'; \
+	b='tests/qemu-sifive-e31/test-bare_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e51-arty-makeattributes.bash.log: tests/e51-arty-makeattributes.bash
-	@p='tests/e51-arty-makeattributes.bash'; \
-	b='tests/e51-arty-makeattributes.bash'; \
+tests/qemu-sifive-e31/test-ldscript-generator.bash.log: tests/qemu-sifive-e31/test-ldscript-generator.bash
+	@p='tests/qemu-sifive-e31/test-ldscript-generator.bash'; \
+	b='tests/qemu-sifive-e31/test-ldscript-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e51-arty-metal_header.bash.log: tests/e51-arty-metal_header.bash
-	@p='tests/e51-arty-metal_header.bash'; \
-	b='tests/e51-arty-metal_header.bash'; \
+tests/qemu-sifive-e31/test-makeattributes-generator.bash.log: tests/qemu-sifive-e31/test-makeattributes-generator.bash
+	@p='tests/qemu-sifive-e31/test-makeattributes-generator.bash'; \
+	b='tests/qemu-sifive-e31/test-makeattributes-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/qemu-sifive_e-32-ldscript.bash.log: tests/qemu-sifive_e-32-ldscript.bash
-	@p='tests/qemu-sifive_e-32-ldscript.bash'; \
-	b='tests/qemu-sifive_e-32-ldscript.bash'; \
+tests/qemu-sifive-e31/test-metal_header-generator.bash.log: tests/qemu-sifive-e31/test-metal_header-generator.bash
+	@p='tests/qemu-sifive-e31/test-metal_header-generator.bash'; \
+	b='tests/qemu-sifive-e31/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/qemu-sifive_e-32-openocd.bash.log: tests/qemu-sifive_e-32-openocd.bash
-	@p='tests/qemu-sifive_e-32-openocd.bash'; \
-	b='tests/qemu-sifive_e-32-openocd.bash'; \
+tests/qemu-sifive-s51/test-bare_header-generator.bash.log: tests/qemu-sifive-s51/test-bare_header-generator.bash
+	@p='tests/qemu-sifive-s51/test-bare_header-generator.bash'; \
+	b='tests/qemu-sifive-s51/test-bare_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/qemu-sifive_e-32-makeattributes.bash.log: tests/qemu-sifive_e-32-makeattributes.bash
-	@p='tests/qemu-sifive_e-32-makeattributes.bash'; \
-	b='tests/qemu-sifive_e-32-makeattributes.bash'; \
+tests/qemu-sifive-s51/test-ldscript-generator.bash.log: tests/qemu-sifive-s51/test-ldscript-generator.bash
+	@p='tests/qemu-sifive-s51/test-ldscript-generator.bash'; \
+	b='tests/qemu-sifive-s51/test-ldscript-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/qemu-sifive_e-32-metal_header.bash.log: tests/qemu-sifive_e-32-metal_header.bash
-	@p='tests/qemu-sifive_e-32-metal_header.bash'; \
-	b='tests/qemu-sifive_e-32-metal_header.bash'; \
+tests/qemu-sifive-s51/test-makeattributes-generator.bash.log: tests/qemu-sifive-s51/test-makeattributes-generator.bash
+	@p='tests/qemu-sifive-s51/test-makeattributes-generator.bash'; \
+	b='tests/qemu-sifive-s51/test-makeattributes-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/hifive1-ldscript.bash.log: tests/hifive1-ldscript.bash
-	@p='tests/hifive1-ldscript.bash'; \
-	b='tests/hifive1-ldscript.bash'; \
+tests/qemu-sifive-s51/test-metal_header-generator.bash.log: tests/qemu-sifive-s51/test-metal_header-generator.bash
+	@p='tests/qemu-sifive-s51/test-metal_header-generator.bash'; \
+	b='tests/qemu-sifive-s51/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/hifive1-openocd.bash.log: tests/hifive1-openocd.bash
-	@p='tests/hifive1-openocd.bash'; \
-	b='tests/hifive1-openocd.bash'; \
+tests/qemu-sifive-u54/test-bare_header-generator.bash.log: tests/qemu-sifive-u54/test-bare_header-generator.bash
+	@p='tests/qemu-sifive-u54/test-bare_header-generator.bash'; \
+	b='tests/qemu-sifive-u54/test-bare_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/hifive1-makeattributes.bash.log: tests/hifive1-makeattributes.bash
-	@p='tests/hifive1-makeattributes.bash'; \
-	b='tests/hifive1-makeattributes.bash'; \
+tests/qemu-sifive-u54/test-ldscript-generator.bash.log: tests/qemu-sifive-u54/test-ldscript-generator.bash
+	@p='tests/qemu-sifive-u54/test-ldscript-generator.bash'; \
+	b='tests/qemu-sifive-u54/test-ldscript-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/hifive1-metal_header.bash.log: tests/hifive1-metal_header.bash
-	@p='tests/hifive1-metal_header.bash'; \
-	b='tests/hifive1-metal_header.bash'; \
+tests/qemu-sifive-u54/test-makeattributes-generator.bash.log: tests/qemu-sifive-u54/test-makeattributes-generator.bash
+	@p='tests/qemu-sifive-u54/test-makeattributes-generator.bash'; \
+	b='tests/qemu-sifive-u54/test-makeattributes-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/hifive1-metal_specs.bash.log: tests/hifive1-metal_specs.bash
-	@p='tests/hifive1-metal_specs.bash'; \
-	b='tests/hifive1-metal_specs.bash'; \
+tests/qemu-sifive-u54/test-metal_header-generator.bash.log: tests/qemu-sifive-u54/test-metal_header-generator.bash
+	@p='tests/qemu-sifive-u54/test-metal_header-generator.bash'; \
+	b='tests/qemu-sifive-u54/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-eval-openocd.bash.log: tests/e31-eval-openocd.bash
-	@p='tests/e31-eval-openocd.bash'; \
-	b='tests/e31-eval-openocd.bash'; \
+tests/qemu-sifive-u54mc/test-bare_header-generator.bash.log: tests/qemu-sifive-u54mc/test-bare_header-generator.bash
+	@p='tests/qemu-sifive-u54mc/test-bare_header-generator.bash'; \
+	b='tests/qemu-sifive-u54mc/test-bare_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-eval-metal_header.bash.log: tests/e31-eval-metal_header.bash
-	@p='tests/e31-eval-metal_header.bash'; \
-	b='tests/e31-eval-metal_header.bash'; \
+tests/qemu-sifive-u54mc/test-ldscript-generator.bash.log: tests/qemu-sifive-u54mc/test-ldscript-generator.bash
+	@p='tests/qemu-sifive-u54mc/test-ldscript-generator.bash'; \
+	b='tests/qemu-sifive-u54mc/test-ldscript-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/multi-e31-arty-ldscript.bash.log: tests/multi-e31-arty-ldscript.bash
-	@p='tests/multi-e31-arty-ldscript.bash'; \
-	b='tests/multi-e31-arty-ldscript.bash'; \
+tests/qemu-sifive-u54mc/test-makeattributes-generator.bash.log: tests/qemu-sifive-u54mc/test-makeattributes-generator.bash
+	@p='tests/qemu-sifive-u54mc/test-makeattributes-generator.bash'; \
+	b='tests/qemu-sifive-u54mc/test-makeattributes-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/multi-e31-arty-openocd.bash.log: tests/multi-e31-arty-openocd.bash
-	@p='tests/multi-e31-arty-openocd.bash'; \
-	b='tests/multi-e31-arty-openocd.bash'; \
+tests/qemu-sifive-u54mc/test-metal_header-generator.bash.log: tests/qemu-sifive-u54mc/test-metal_header-generator.bash
+	@p='tests/qemu-sifive-u54mc/test-metal_header-generator.bash'; \
+	b='tests/qemu-sifive-u54mc/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/multi-e31-arty-makeattributes.bash.log: tests/multi-e31-arty-makeattributes.bash
-	@p='tests/multi-e31-arty-makeattributes.bash'; \
-	b='tests/multi-e31-arty-makeattributes.bash'; \
+tests/sifive-hifive1/test-bare_header-generator.bash.log: tests/sifive-hifive1/test-bare_header-generator.bash
+	@p='tests/sifive-hifive1/test-bare_header-generator.bash'; \
+	b='tests/sifive-hifive1/test-bare_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/multi-e31-arty-metal_header.bash.log: tests/multi-e31-arty-metal_header.bash
-	@p='tests/multi-e31-arty-metal_header.bash'; \
-	b='tests/multi-e31-arty-metal_header.bash'; \
+tests/sifive-hifive1/test-ldscript-generator.bash.log: tests/sifive-hifive1/test-ldscript-generator.bash
+	@p='tests/sifive-hifive1/test-ldscript-generator.bash'; \
+	b='tests/sifive-hifive1/test-ldscript-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-bigmem-ldscript.bash.log: tests/e31-bigmem-ldscript.bash
-	@p='tests/e31-bigmem-ldscript.bash'; \
-	b='tests/e31-bigmem-ldscript.bash'; \
+tests/sifive-hifive1/test-makeattributes-generator.bash.log: tests/sifive-hifive1/test-makeattributes-generator.bash
+	@p='tests/sifive-hifive1/test-makeattributes-generator.bash'; \
+	b='tests/sifive-hifive1/test-makeattributes-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-bigmem-openocd.bash.log: tests/e31-bigmem-openocd.bash
-	@p='tests/e31-bigmem-openocd.bash'; \
-	b='tests/e31-bigmem-openocd.bash'; \
+tests/sifive-hifive1/test-metal_header-generator.bash.log: tests/sifive-hifive1/test-metal_header-generator.bash
+	@p='tests/sifive-hifive1/test-metal_header-generator.bash'; \
+	b='tests/sifive-hifive1/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-bigmem-makeattributes.bash.log: tests/e31-bigmem-makeattributes.bash
-	@p='tests/e31-bigmem-makeattributes.bash'; \
-	b='tests/e31-bigmem-makeattributes.bash'; \
+tests/sifive-hifive1/test-openocdcfg-generator.bash.log: tests/sifive-hifive1/test-openocdcfg-generator.bash
+	@p='tests/sifive-hifive1/test-openocdcfg-generator.bash'; \
+	b='tests/sifive-hifive1/test-openocdcfg-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-bigmem-metal_header.bash.log: tests/e31-bigmem-metal_header.bash
-	@p='tests/e31-bigmem-metal_header.bash'; \
-	b='tests/e31-bigmem-metal_header.bash'; \
+tests/sifive-hifive1-revb/test-bare_header-generator.bash.log: tests/sifive-hifive1-revb/test-bare_header-generator.bash
+	@p='tests/sifive-hifive1-revb/test-bare_header-generator.bash'; \
+	b='tests/sifive-hifive1-revb/test-bare_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e34-eval-openocd.bash.log: tests/e34-eval-openocd.bash
-	@p='tests/e34-eval-openocd.bash'; \
-	b='tests/e34-eval-openocd.bash'; \
+tests/sifive-hifive1-revb/test-ldscript-generator.bash.log: tests/sifive-hifive1-revb/test-ldscript-generator.bash
+	@p='tests/sifive-hifive1-revb/test-ldscript-generator.bash'; \
+	b='tests/sifive-hifive1-revb/test-ldscript-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e34-eval-metal_header.bash.log: tests/e34-eval-metal_header.bash
-	@p='tests/e34-eval-metal_header.bash'; \
-	b='tests/e34-eval-metal_header.bash'; \
+tests/sifive-hifive1-revb/test-makeattributes-generator.bash.log: tests/sifive-hifive1-revb/test-makeattributes-generator.bash
+	@p='tests/sifive-hifive1-revb/test-makeattributes-generator.bash'; \
+	b='tests/sifive-hifive1-revb/test-makeattributes-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e34-eval-metal_specs.bash.log: tests/e34-eval-metal_specs.bash
-	@p='tests/e34-eval-metal_specs.bash'; \
-	b='tests/e34-eval-metal_specs.bash'; \
+tests/sifive-hifive1-revb/test-metal_header-generator.bash.log: tests/sifive-hifive1-revb/test-metal_header-generator.bash
+	@p='tests/sifive-hifive1-revb/test-metal_header-generator.bash'; \
+	b='tests/sifive-hifive1-revb/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-memory-ldscript.bash.log: tests/e31-memory-ldscript.bash
-	@p='tests/e31-memory-ldscript.bash'; \
-	b='tests/e31-memory-ldscript.bash'; \
+tests/sifive-hifive-unleashed/test-bare_header-generator.bash.log: tests/sifive-hifive-unleashed/test-bare_header-generator.bash
+	@p='tests/sifive-hifive-unleashed/test-bare_header-generator.bash'; \
+	b='tests/sifive-hifive-unleashed/test-bare_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-memory-openocd.bash.log: tests/e31-memory-openocd.bash
-	@p='tests/e31-memory-openocd.bash'; \
-	b='tests/e31-memory-openocd.bash'; \
+tests/sifive-hifive-unleashed/test-ldscript-generator.bash.log: tests/sifive-hifive-unleashed/test-ldscript-generator.bash
+	@p='tests/sifive-hifive-unleashed/test-ldscript-generator.bash'; \
+	b='tests/sifive-hifive-unleashed/test-ldscript-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-memory-metal_header.bash.log: tests/e31-memory-metal_header.bash
-	@p='tests/e31-memory-metal_header.bash'; \
-	b='tests/e31-memory-metal_header.bash'; \
+tests/sifive-hifive-unleashed/test-makeattributes-generator.bash.log: tests/sifive-hifive-unleashed/test-makeattributes-generator.bash
+	@p='tests/sifive-hifive-unleashed/test-makeattributes-generator.bash'; \
+	b='tests/sifive-hifive-unleashed/test-makeattributes-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-ranges-openocd.bash.log: tests/e31-ranges-openocd.bash
-	@p='tests/e31-ranges-openocd.bash'; \
-	b='tests/e31-ranges-openocd.bash'; \
+tests/sifive-hifive-unleashed/test-metal_header-generator.bash.log: tests/sifive-hifive-unleashed/test-metal_header-generator.bash
+	@p='tests/sifive-hifive-unleashed/test-metal_header-generator.bash'; \
+	b='tests/sifive-hifive-unleashed/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-ranges-makeattributes.bash.log: tests/e31-ranges-makeattributes.bash
-	@p='tests/e31-ranges-makeattributes.bash'; \
-	b='tests/e31-ranges-makeattributes.bash'; \
+tests/sifive-hifive-unleashed/test-openocdcfg-generator.bash.log: tests/sifive-hifive-unleashed/test-openocdcfg-generator.bash
+	@p='tests/sifive-hifive-unleashed/test-openocdcfg-generator.bash'; \
+	b='tests/sifive-hifive-unleashed/test-openocdcfg-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-tests/e31-ranges-metal_header.bash.log: tests/e31-ranges-metal_header.bash
-	@p='tests/e31-ranges-metal_header.bash'; \
-	b='tests/e31-ranges-metal_header.bash'; \
+tests/spike/test-bare_header-generator.bash.log: tests/spike/test-bare_header-generator.bash
+	@p='tests/spike/test-bare_header-generator.bash'; \
+	b='tests/spike/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/spike/test-ldscript-generator.bash.log: tests/spike/test-ldscript-generator.bash
+	@p='tests/spike/test-ldscript-generator.bash'; \
+	b='tests/spike/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/spike/test-makeattributes-generator.bash.log: tests/spike/test-makeattributes-generator.bash
+	@p='tests/spike/test-makeattributes-generator.bash'; \
+	b='tests/spike/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/spike/test-metal_header-generator.bash.log: tests/spike/test-metal_header-generator.bash
+	@p='tests/spike/test-metal_header-generator.bash'; \
+	b='tests/spike/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-arty/test-bare_header-generator.bash.log: tests/e20-arty/test-bare_header-generator.bash
+	@p='tests/e20-arty/test-bare_header-generator.bash'; \
+	b='tests/e20-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-arty/test-ldscript-generator.bash.log: tests/e20-arty/test-ldscript-generator.bash
+	@p='tests/e20-arty/test-ldscript-generator.bash'; \
+	b='tests/e20-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-arty/test-makeattributes-generator.bash.log: tests/e20-arty/test-makeattributes-generator.bash
+	@p='tests/e20-arty/test-makeattributes-generator.bash'; \
+	b='tests/e20-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-arty/test-metal_header-generator.bash.log: tests/e20-arty/test-metal_header-generator.bash
+	@p='tests/e20-arty/test-metal_header-generator.bash'; \
+	b='tests/e20-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-arty/test-openocdcfg-generator.bash.log: tests/e20-arty/test-openocdcfg-generator.bash
+	@p='tests/e20-arty/test-openocdcfg-generator.bash'; \
+	b='tests/e20-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-rtl/test-bare_header-generator.bash.log: tests/e20-rtl/test-bare_header-generator.bash
+	@p='tests/e20-rtl/test-bare_header-generator.bash'; \
+	b='tests/e20-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-rtl/test-ldscript-generator.bash.log: tests/e20-rtl/test-ldscript-generator.bash
+	@p='tests/e20-rtl/test-ldscript-generator.bash'; \
+	b='tests/e20-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-rtl/test-makeattributes-generator.bash.log: tests/e20-rtl/test-makeattributes-generator.bash
+	@p='tests/e20-rtl/test-makeattributes-generator.bash'; \
+	b='tests/e20-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e20-rtl/test-metal_header-generator.bash.log: tests/e20-rtl/test-metal_header-generator.bash
+	@p='tests/e20-rtl/test-metal_header-generator.bash'; \
+	b='tests/e20-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-arty/test-bare_header-generator.bash.log: tests/e21-arty/test-bare_header-generator.bash
+	@p='tests/e21-arty/test-bare_header-generator.bash'; \
+	b='tests/e21-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-arty/test-ldscript-generator.bash.log: tests/e21-arty/test-ldscript-generator.bash
+	@p='tests/e21-arty/test-ldscript-generator.bash'; \
+	b='tests/e21-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-arty/test-makeattributes-generator.bash.log: tests/e21-arty/test-makeattributes-generator.bash
+	@p='tests/e21-arty/test-makeattributes-generator.bash'; \
+	b='tests/e21-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-arty/test-metal_header-generator.bash.log: tests/e21-arty/test-metal_header-generator.bash
+	@p='tests/e21-arty/test-metal_header-generator.bash'; \
+	b='tests/e21-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-arty/test-openocdcfg-generator.bash.log: tests/e21-arty/test-openocdcfg-generator.bash
+	@p='tests/e21-arty/test-openocdcfg-generator.bash'; \
+	b='tests/e21-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-rtl/test-bare_header-generator.bash.log: tests/e21-rtl/test-bare_header-generator.bash
+	@p='tests/e21-rtl/test-bare_header-generator.bash'; \
+	b='tests/e21-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-rtl/test-ldscript-generator.bash.log: tests/e21-rtl/test-ldscript-generator.bash
+	@p='tests/e21-rtl/test-ldscript-generator.bash'; \
+	b='tests/e21-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-rtl/test-makeattributes-generator.bash.log: tests/e21-rtl/test-makeattributes-generator.bash
+	@p='tests/e21-rtl/test-makeattributes-generator.bash'; \
+	b='tests/e21-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e21-rtl/test-metal_header-generator.bash.log: tests/e21-rtl/test-metal_header-generator.bash
+	@p='tests/e21-rtl/test-metal_header-generator.bash'; \
+	b='tests/e21-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-arty/test-bare_header-generator.bash.log: tests/e24-arty/test-bare_header-generator.bash
+	@p='tests/e24-arty/test-bare_header-generator.bash'; \
+	b='tests/e24-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-arty/test-ldscript-generator.bash.log: tests/e24-arty/test-ldscript-generator.bash
+	@p='tests/e24-arty/test-ldscript-generator.bash'; \
+	b='tests/e24-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-arty/test-makeattributes-generator.bash.log: tests/e24-arty/test-makeattributes-generator.bash
+	@p='tests/e24-arty/test-makeattributes-generator.bash'; \
+	b='tests/e24-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-arty/test-metal_header-generator.bash.log: tests/e24-arty/test-metal_header-generator.bash
+	@p='tests/e24-arty/test-metal_header-generator.bash'; \
+	b='tests/e24-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-arty/test-openocdcfg-generator.bash.log: tests/e24-arty/test-openocdcfg-generator.bash
+	@p='tests/e24-arty/test-openocdcfg-generator.bash'; \
+	b='tests/e24-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-rtl/test-bare_header-generator.bash.log: tests/e24-rtl/test-bare_header-generator.bash
+	@p='tests/e24-rtl/test-bare_header-generator.bash'; \
+	b='tests/e24-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-rtl/test-ldscript-generator.bash.log: tests/e24-rtl/test-ldscript-generator.bash
+	@p='tests/e24-rtl/test-ldscript-generator.bash'; \
+	b='tests/e24-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-rtl/test-makeattributes-generator.bash.log: tests/e24-rtl/test-makeattributes-generator.bash
+	@p='tests/e24-rtl/test-makeattributes-generator.bash'; \
+	b='tests/e24-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e24-rtl/test-metal_header-generator.bash.log: tests/e24-rtl/test-metal_header-generator.bash
+	@p='tests/e24-rtl/test-metal_header-generator.bash'; \
+	b='tests/e24-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-arty/test-bare_header-generator.bash.log: tests/e31-arty/test-bare_header-generator.bash
+	@p='tests/e31-arty/test-bare_header-generator.bash'; \
+	b='tests/e31-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-arty/test-ldscript-generator.bash.log: tests/e31-arty/test-ldscript-generator.bash
+	@p='tests/e31-arty/test-ldscript-generator.bash'; \
+	b='tests/e31-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-arty/test-makeattributes-generator.bash.log: tests/e31-arty/test-makeattributes-generator.bash
+	@p='tests/e31-arty/test-makeattributes-generator.bash'; \
+	b='tests/e31-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-arty/test-metal_header-generator.bash.log: tests/e31-arty/test-metal_header-generator.bash
+	@p='tests/e31-arty/test-metal_header-generator.bash'; \
+	b='tests/e31-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-arty/test-openocdcfg-generator.bash.log: tests/e31-arty/test-openocdcfg-generator.bash
+	@p='tests/e31-arty/test-openocdcfg-generator.bash'; \
+	b='tests/e31-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-rtl/test-bare_header-generator.bash.log: tests/e31-rtl/test-bare_header-generator.bash
+	@p='tests/e31-rtl/test-bare_header-generator.bash'; \
+	b='tests/e31-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-rtl/test-ldscript-generator.bash.log: tests/e31-rtl/test-ldscript-generator.bash
+	@p='tests/e31-rtl/test-ldscript-generator.bash'; \
+	b='tests/e31-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-rtl/test-makeattributes-generator.bash.log: tests/e31-rtl/test-makeattributes-generator.bash
+	@p='tests/e31-rtl/test-makeattributes-generator.bash'; \
+	b='tests/e31-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e31-rtl/test-metal_header-generator.bash.log: tests/e31-rtl/test-metal_header-generator.bash
+	@p='tests/e31-rtl/test-metal_header-generator.bash'; \
+	b='tests/e31-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-arty/test-bare_header-generator.bash.log: tests/e34-arty/test-bare_header-generator.bash
+	@p='tests/e34-arty/test-bare_header-generator.bash'; \
+	b='tests/e34-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-arty/test-ldscript-generator.bash.log: tests/e34-arty/test-ldscript-generator.bash
+	@p='tests/e34-arty/test-ldscript-generator.bash'; \
+	b='tests/e34-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-arty/test-makeattributes-generator.bash.log: tests/e34-arty/test-makeattributes-generator.bash
+	@p='tests/e34-arty/test-makeattributes-generator.bash'; \
+	b='tests/e34-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-arty/test-metal_header-generator.bash.log: tests/e34-arty/test-metal_header-generator.bash
+	@p='tests/e34-arty/test-metal_header-generator.bash'; \
+	b='tests/e34-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-arty/test-openocdcfg-generator.bash.log: tests/e34-arty/test-openocdcfg-generator.bash
+	@p='tests/e34-arty/test-openocdcfg-generator.bash'; \
+	b='tests/e34-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-rtl/test-bare_header-generator.bash.log: tests/e34-rtl/test-bare_header-generator.bash
+	@p='tests/e34-rtl/test-bare_header-generator.bash'; \
+	b='tests/e34-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-rtl/test-ldscript-generator.bash.log: tests/e34-rtl/test-ldscript-generator.bash
+	@p='tests/e34-rtl/test-ldscript-generator.bash'; \
+	b='tests/e34-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-rtl/test-makeattributes-generator.bash.log: tests/e34-rtl/test-makeattributes-generator.bash
+	@p='tests/e34-rtl/test-makeattributes-generator.bash'; \
+	b='tests/e34-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e34-rtl/test-metal_header-generator.bash.log: tests/e34-rtl/test-metal_header-generator.bash
+	@p='tests/e34-rtl/test-metal_header-generator.bash'; \
+	b='tests/e34-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-arty/test-bare_header-generator.bash.log: tests/e76-arty/test-bare_header-generator.bash
+	@p='tests/e76-arty/test-bare_header-generator.bash'; \
+	b='tests/e76-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-arty/test-ldscript-generator.bash.log: tests/e76-arty/test-ldscript-generator.bash
+	@p='tests/e76-arty/test-ldscript-generator.bash'; \
+	b='tests/e76-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-arty/test-makeattributes-generator.bash.log: tests/e76-arty/test-makeattributes-generator.bash
+	@p='tests/e76-arty/test-makeattributes-generator.bash'; \
+	b='tests/e76-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-arty/test-metal_header-generator.bash.log: tests/e76-arty/test-metal_header-generator.bash
+	@p='tests/e76-arty/test-metal_header-generator.bash'; \
+	b='tests/e76-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-arty/test-openocdcfg-generator.bash.log: tests/e76-arty/test-openocdcfg-generator.bash
+	@p='tests/e76-arty/test-openocdcfg-generator.bash'; \
+	b='tests/e76-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-arty/test-bare_header-generator.bash.log: tests/e76mc-arty/test-bare_header-generator.bash
+	@p='tests/e76mc-arty/test-bare_header-generator.bash'; \
+	b='tests/e76mc-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-arty/test-ldscript-generator.bash.log: tests/e76mc-arty/test-ldscript-generator.bash
+	@p='tests/e76mc-arty/test-ldscript-generator.bash'; \
+	b='tests/e76mc-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-arty/test-makeattributes-generator.bash.log: tests/e76mc-arty/test-makeattributes-generator.bash
+	@p='tests/e76mc-arty/test-makeattributes-generator.bash'; \
+	b='tests/e76mc-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-arty/test-metal_header-generator.bash.log: tests/e76mc-arty/test-metal_header-generator.bash
+	@p='tests/e76mc-arty/test-metal_header-generator.bash'; \
+	b='tests/e76mc-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-arty/test-openocdcfg-generator.bash.log: tests/e76mc-arty/test-openocdcfg-generator.bash
+	@p='tests/e76mc-arty/test-openocdcfg-generator.bash'; \
+	b='tests/e76mc-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-rtl/test-bare_header-generator.bash.log: tests/e76mc-rtl/test-bare_header-generator.bash
+	@p='tests/e76mc-rtl/test-bare_header-generator.bash'; \
+	b='tests/e76mc-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-rtl/test-ldscript-generator.bash.log: tests/e76mc-rtl/test-ldscript-generator.bash
+	@p='tests/e76mc-rtl/test-ldscript-generator.bash'; \
+	b='tests/e76mc-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-rtl/test-makeattributes-generator.bash.log: tests/e76mc-rtl/test-makeattributes-generator.bash
+	@p='tests/e76mc-rtl/test-makeattributes-generator.bash'; \
+	b='tests/e76mc-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76mc-rtl/test-metal_header-generator.bash.log: tests/e76mc-rtl/test-metal_header-generator.bash
+	@p='tests/e76mc-rtl/test-metal_header-generator.bash'; \
+	b='tests/e76mc-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-rtl/test-bare_header-generator.bash.log: tests/e76-rtl/test-bare_header-generator.bash
+	@p='tests/e76-rtl/test-bare_header-generator.bash'; \
+	b='tests/e76-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-rtl/test-ldscript-generator.bash.log: tests/e76-rtl/test-ldscript-generator.bash
+	@p='tests/e76-rtl/test-ldscript-generator.bash'; \
+	b='tests/e76-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-rtl/test-makeattributes-generator.bash.log: tests/e76-rtl/test-makeattributes-generator.bash
+	@p='tests/e76-rtl/test-makeattributes-generator.bash'; \
+	b='tests/e76-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/e76-rtl/test-metal_header-generator.bash.log: tests/e76-rtl/test-metal_header-generator.bash
+	@p='tests/e76-rtl/test-metal_header-generator.bash'; \
+	b='tests/e76-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-arty/test-bare_header-generator.bash.log: tests/s21-arty/test-bare_header-generator.bash
+	@p='tests/s21-arty/test-bare_header-generator.bash'; \
+	b='tests/s21-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-arty/test-ldscript-generator.bash.log: tests/s21-arty/test-ldscript-generator.bash
+	@p='tests/s21-arty/test-ldscript-generator.bash'; \
+	b='tests/s21-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-arty/test-makeattributes-generator.bash.log: tests/s21-arty/test-makeattributes-generator.bash
+	@p='tests/s21-arty/test-makeattributes-generator.bash'; \
+	b='tests/s21-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-arty/test-metal_header-generator.bash.log: tests/s21-arty/test-metal_header-generator.bash
+	@p='tests/s21-arty/test-metal_header-generator.bash'; \
+	b='tests/s21-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-arty/test-openocdcfg-generator.bash.log: tests/s21-arty/test-openocdcfg-generator.bash
+	@p='tests/s21-arty/test-openocdcfg-generator.bash'; \
+	b='tests/s21-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-rtl/test-bare_header-generator.bash.log: tests/s21-rtl/test-bare_header-generator.bash
+	@p='tests/s21-rtl/test-bare_header-generator.bash'; \
+	b='tests/s21-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-rtl/test-ldscript-generator.bash.log: tests/s21-rtl/test-ldscript-generator.bash
+	@p='tests/s21-rtl/test-ldscript-generator.bash'; \
+	b='tests/s21-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-rtl/test-makeattributes-generator.bash.log: tests/s21-rtl/test-makeattributes-generator.bash
+	@p='tests/s21-rtl/test-makeattributes-generator.bash'; \
+	b='tests/s21-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s21-rtl/test-metal_header-generator.bash.log: tests/s21-rtl/test-metal_header-generator.bash
+	@p='tests/s21-rtl/test-metal_header-generator.bash'; \
+	b='tests/s21-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-arty/test-bare_header-generator.bash.log: tests/s51-arty/test-bare_header-generator.bash
+	@p='tests/s51-arty/test-bare_header-generator.bash'; \
+	b='tests/s51-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-arty/test-ldscript-generator.bash.log: tests/s51-arty/test-ldscript-generator.bash
+	@p='tests/s51-arty/test-ldscript-generator.bash'; \
+	b='tests/s51-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-arty/test-makeattributes-generator.bash.log: tests/s51-arty/test-makeattributes-generator.bash
+	@p='tests/s51-arty/test-makeattributes-generator.bash'; \
+	b='tests/s51-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-arty/test-metal_header-generator.bash.log: tests/s51-arty/test-metal_header-generator.bash
+	@p='tests/s51-arty/test-metal_header-generator.bash'; \
+	b='tests/s51-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-arty/test-openocdcfg-generator.bash.log: tests/s51-arty/test-openocdcfg-generator.bash
+	@p='tests/s51-arty/test-openocdcfg-generator.bash'; \
+	b='tests/s51-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-rtl/test-bare_header-generator.bash.log: tests/s51-rtl/test-bare_header-generator.bash
+	@p='tests/s51-rtl/test-bare_header-generator.bash'; \
+	b='tests/s51-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-rtl/test-ldscript-generator.bash.log: tests/s51-rtl/test-ldscript-generator.bash
+	@p='tests/s51-rtl/test-ldscript-generator.bash'; \
+	b='tests/s51-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-rtl/test-makeattributes-generator.bash.log: tests/s51-rtl/test-makeattributes-generator.bash
+	@p='tests/s51-rtl/test-makeattributes-generator.bash'; \
+	b='tests/s51-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s51-rtl/test-metal_header-generator.bash.log: tests/s51-rtl/test-metal_header-generator.bash
+	@p='tests/s51-rtl/test-metal_header-generator.bash'; \
+	b='tests/s51-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-arty/test-bare_header-generator.bash.log: tests/s54-arty/test-bare_header-generator.bash
+	@p='tests/s54-arty/test-bare_header-generator.bash'; \
+	b='tests/s54-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-arty/test-ldscript-generator.bash.log: tests/s54-arty/test-ldscript-generator.bash
+	@p='tests/s54-arty/test-ldscript-generator.bash'; \
+	b='tests/s54-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-arty/test-makeattributes-generator.bash.log: tests/s54-arty/test-makeattributes-generator.bash
+	@p='tests/s54-arty/test-makeattributes-generator.bash'; \
+	b='tests/s54-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-arty/test-metal_header-generator.bash.log: tests/s54-arty/test-metal_header-generator.bash
+	@p='tests/s54-arty/test-metal_header-generator.bash'; \
+	b='tests/s54-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-arty/test-openocdcfg-generator.bash.log: tests/s54-arty/test-openocdcfg-generator.bash
+	@p='tests/s54-arty/test-openocdcfg-generator.bash'; \
+	b='tests/s54-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-rtl/test-bare_header-generator.bash.log: tests/s54-rtl/test-bare_header-generator.bash
+	@p='tests/s54-rtl/test-bare_header-generator.bash'; \
+	b='tests/s54-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-rtl/test-ldscript-generator.bash.log: tests/s54-rtl/test-ldscript-generator.bash
+	@p='tests/s54-rtl/test-ldscript-generator.bash'; \
+	b='tests/s54-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-rtl/test-makeattributes-generator.bash.log: tests/s54-rtl/test-makeattributes-generator.bash
+	@p='tests/s54-rtl/test-makeattributes-generator.bash'; \
+	b='tests/s54-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s54-rtl/test-metal_header-generator.bash.log: tests/s54-rtl/test-metal_header-generator.bash
+	@p='tests/s54-rtl/test-metal_header-generator.bash'; \
+	b='tests/s54-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-arty/test-bare_header-generator.bash.log: tests/s76-arty/test-bare_header-generator.bash
+	@p='tests/s76-arty/test-bare_header-generator.bash'; \
+	b='tests/s76-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-arty/test-ldscript-generator.bash.log: tests/s76-arty/test-ldscript-generator.bash
+	@p='tests/s76-arty/test-ldscript-generator.bash'; \
+	b='tests/s76-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-arty/test-makeattributes-generator.bash.log: tests/s76-arty/test-makeattributes-generator.bash
+	@p='tests/s76-arty/test-makeattributes-generator.bash'; \
+	b='tests/s76-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-arty/test-metal_header-generator.bash.log: tests/s76-arty/test-metal_header-generator.bash
+	@p='tests/s76-arty/test-metal_header-generator.bash'; \
+	b='tests/s76-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-arty/test-openocdcfg-generator.bash.log: tests/s76-arty/test-openocdcfg-generator.bash
+	@p='tests/s76-arty/test-openocdcfg-generator.bash'; \
+	b='tests/s76-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-arty/test-bare_header-generator.bash.log: tests/s76mc-arty/test-bare_header-generator.bash
+	@p='tests/s76mc-arty/test-bare_header-generator.bash'; \
+	b='tests/s76mc-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-arty/test-ldscript-generator.bash.log: tests/s76mc-arty/test-ldscript-generator.bash
+	@p='tests/s76mc-arty/test-ldscript-generator.bash'; \
+	b='tests/s76mc-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-arty/test-makeattributes-generator.bash.log: tests/s76mc-arty/test-makeattributes-generator.bash
+	@p='tests/s76mc-arty/test-makeattributes-generator.bash'; \
+	b='tests/s76mc-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-arty/test-metal_header-generator.bash.log: tests/s76mc-arty/test-metal_header-generator.bash
+	@p='tests/s76mc-arty/test-metal_header-generator.bash'; \
+	b='tests/s76mc-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-arty/test-openocdcfg-generator.bash.log: tests/s76mc-arty/test-openocdcfg-generator.bash
+	@p='tests/s76mc-arty/test-openocdcfg-generator.bash'; \
+	b='tests/s76mc-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-rtl/test-bare_header-generator.bash.log: tests/s76mc-rtl/test-bare_header-generator.bash
+	@p='tests/s76mc-rtl/test-bare_header-generator.bash'; \
+	b='tests/s76mc-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-rtl/test-ldscript-generator.bash.log: tests/s76mc-rtl/test-ldscript-generator.bash
+	@p='tests/s76mc-rtl/test-ldscript-generator.bash'; \
+	b='tests/s76mc-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-rtl/test-makeattributes-generator.bash.log: tests/s76mc-rtl/test-makeattributes-generator.bash
+	@p='tests/s76mc-rtl/test-makeattributes-generator.bash'; \
+	b='tests/s76mc-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76mc-rtl/test-metal_header-generator.bash.log: tests/s76mc-rtl/test-metal_header-generator.bash
+	@p='tests/s76mc-rtl/test-metal_header-generator.bash'; \
+	b='tests/s76mc-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-rtl/test-bare_header-generator.bash.log: tests/s76-rtl/test-bare_header-generator.bash
+	@p='tests/s76-rtl/test-bare_header-generator.bash'; \
+	b='tests/s76-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-rtl/test-ldscript-generator.bash.log: tests/s76-rtl/test-ldscript-generator.bash
+	@p='tests/s76-rtl/test-ldscript-generator.bash'; \
+	b='tests/s76-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-rtl/test-makeattributes-generator.bash.log: tests/s76-rtl/test-makeattributes-generator.bash
+	@p='tests/s76-rtl/test-makeattributes-generator.bash'; \
+	b='tests/s76-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/s76-rtl/test-metal_header-generator.bash.log: tests/s76-rtl/test-metal_header-generator.bash
+	@p='tests/s76-rtl/test-metal_header-generator.bash'; \
+	b='tests/s76-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-arty/test-bare_header-generator.bash.log: tests/u54-arty/test-bare_header-generator.bash
+	@p='tests/u54-arty/test-bare_header-generator.bash'; \
+	b='tests/u54-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-arty/test-ldscript-generator.bash.log: tests/u54-arty/test-ldscript-generator.bash
+	@p='tests/u54-arty/test-ldscript-generator.bash'; \
+	b='tests/u54-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-arty/test-makeattributes-generator.bash.log: tests/u54-arty/test-makeattributes-generator.bash
+	@p='tests/u54-arty/test-makeattributes-generator.bash'; \
+	b='tests/u54-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-arty/test-metal_header-generator.bash.log: tests/u54-arty/test-metal_header-generator.bash
+	@p='tests/u54-arty/test-metal_header-generator.bash'; \
+	b='tests/u54-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-arty/test-openocdcfg-generator.bash.log: tests/u54-arty/test-openocdcfg-generator.bash
+	@p='tests/u54-arty/test-openocdcfg-generator.bash'; \
+	b='tests/u54-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-arty/test-bare_header-generator.bash.log: tests/u54mc-arty/test-bare_header-generator.bash
+	@p='tests/u54mc-arty/test-bare_header-generator.bash'; \
+	b='tests/u54mc-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-arty/test-ldscript-generator.bash.log: tests/u54mc-arty/test-ldscript-generator.bash
+	@p='tests/u54mc-arty/test-ldscript-generator.bash'; \
+	b='tests/u54mc-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-arty/test-makeattributes-generator.bash.log: tests/u54mc-arty/test-makeattributes-generator.bash
+	@p='tests/u54mc-arty/test-makeattributes-generator.bash'; \
+	b='tests/u54mc-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-arty/test-metal_header-generator.bash.log: tests/u54mc-arty/test-metal_header-generator.bash
+	@p='tests/u54mc-arty/test-metal_header-generator.bash'; \
+	b='tests/u54mc-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-arty/test-openocdcfg-generator.bash.log: tests/u54mc-arty/test-openocdcfg-generator.bash
+	@p='tests/u54mc-arty/test-openocdcfg-generator.bash'; \
+	b='tests/u54mc-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-rtl/test-bare_header-generator.bash.log: tests/u54mc-rtl/test-bare_header-generator.bash
+	@p='tests/u54mc-rtl/test-bare_header-generator.bash'; \
+	b='tests/u54mc-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-rtl/test-ldscript-generator.bash.log: tests/u54mc-rtl/test-ldscript-generator.bash
+	@p='tests/u54mc-rtl/test-ldscript-generator.bash'; \
+	b='tests/u54mc-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-rtl/test-makeattributes-generator.bash.log: tests/u54mc-rtl/test-makeattributes-generator.bash
+	@p='tests/u54mc-rtl/test-makeattributes-generator.bash'; \
+	b='tests/u54mc-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54mc-rtl/test-metal_header-generator.bash.log: tests/u54mc-rtl/test-metal_header-generator.bash
+	@p='tests/u54mc-rtl/test-metal_header-generator.bash'; \
+	b='tests/u54mc-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-rtl/test-bare_header-generator.bash.log: tests/u54-rtl/test-bare_header-generator.bash
+	@p='tests/u54-rtl/test-bare_header-generator.bash'; \
+	b='tests/u54-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-rtl/test-ldscript-generator.bash.log: tests/u54-rtl/test-ldscript-generator.bash
+	@p='tests/u54-rtl/test-ldscript-generator.bash'; \
+	b='tests/u54-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-rtl/test-makeattributes-generator.bash.log: tests/u54-rtl/test-makeattributes-generator.bash
+	@p='tests/u54-rtl/test-makeattributes-generator.bash'; \
+	b='tests/u54-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u54-rtl/test-metal_header-generator.bash.log: tests/u54-rtl/test-metal_header-generator.bash
+	@p='tests/u54-rtl/test-metal_header-generator.bash'; \
+	b='tests/u54-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-arty/test-bare_header-generator.bash.log: tests/u74-arty/test-bare_header-generator.bash
+	@p='tests/u74-arty/test-bare_header-generator.bash'; \
+	b='tests/u74-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-arty/test-ldscript-generator.bash.log: tests/u74-arty/test-ldscript-generator.bash
+	@p='tests/u74-arty/test-ldscript-generator.bash'; \
+	b='tests/u74-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-arty/test-makeattributes-generator.bash.log: tests/u74-arty/test-makeattributes-generator.bash
+	@p='tests/u74-arty/test-makeattributes-generator.bash'; \
+	b='tests/u74-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-arty/test-metal_header-generator.bash.log: tests/u74-arty/test-metal_header-generator.bash
+	@p='tests/u74-arty/test-metal_header-generator.bash'; \
+	b='tests/u74-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-arty/test-openocdcfg-generator.bash.log: tests/u74-arty/test-openocdcfg-generator.bash
+	@p='tests/u74-arty/test-openocdcfg-generator.bash'; \
+	b='tests/u74-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-arty/test-bare_header-generator.bash.log: tests/u74mc-arty/test-bare_header-generator.bash
+	@p='tests/u74mc-arty/test-bare_header-generator.bash'; \
+	b='tests/u74mc-arty/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-arty/test-ldscript-generator.bash.log: tests/u74mc-arty/test-ldscript-generator.bash
+	@p='tests/u74mc-arty/test-ldscript-generator.bash'; \
+	b='tests/u74mc-arty/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-arty/test-makeattributes-generator.bash.log: tests/u74mc-arty/test-makeattributes-generator.bash
+	@p='tests/u74mc-arty/test-makeattributes-generator.bash'; \
+	b='tests/u74mc-arty/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-arty/test-metal_header-generator.bash.log: tests/u74mc-arty/test-metal_header-generator.bash
+	@p='tests/u74mc-arty/test-metal_header-generator.bash'; \
+	b='tests/u74mc-arty/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-arty/test-openocdcfg-generator.bash.log: tests/u74mc-arty/test-openocdcfg-generator.bash
+	@p='tests/u74mc-arty/test-openocdcfg-generator.bash'; \
+	b='tests/u74mc-arty/test-openocdcfg-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-rtl/test-bare_header-generator.bash.log: tests/u74mc-rtl/test-bare_header-generator.bash
+	@p='tests/u74mc-rtl/test-bare_header-generator.bash'; \
+	b='tests/u74mc-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-rtl/test-ldscript-generator.bash.log: tests/u74mc-rtl/test-ldscript-generator.bash
+	@p='tests/u74mc-rtl/test-ldscript-generator.bash'; \
+	b='tests/u74mc-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-rtl/test-makeattributes-generator.bash.log: tests/u74mc-rtl/test-makeattributes-generator.bash
+	@p='tests/u74mc-rtl/test-makeattributes-generator.bash'; \
+	b='tests/u74mc-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74mc-rtl/test-metal_header-generator.bash.log: tests/u74mc-rtl/test-metal_header-generator.bash
+	@p='tests/u74mc-rtl/test-metal_header-generator.bash'; \
+	b='tests/u74mc-rtl/test-metal_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-rtl/test-bare_header-generator.bash.log: tests/u74-rtl/test-bare_header-generator.bash
+	@p='tests/u74-rtl/test-bare_header-generator.bash'; \
+	b='tests/u74-rtl/test-bare_header-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-rtl/test-ldscript-generator.bash.log: tests/u74-rtl/test-ldscript-generator.bash
+	@p='tests/u74-rtl/test-ldscript-generator.bash'; \
+	b='tests/u74-rtl/test-ldscript-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-rtl/test-makeattributes-generator.bash.log: tests/u74-rtl/test-makeattributes-generator.bash
+	@p='tests/u74-rtl/test-makeattributes-generator.bash'; \
+	b='tests/u74-rtl/test-makeattributes-generator.bash'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/u74-rtl/test-metal_header-generator.bash.log: tests/u74-rtl/test-metal_header-generator.bash
+	@p='tests/u74-rtl/test-metal_header-generator.bash'; \
+	b='tests/u74-rtl/test-metal_header-generator.bash'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
