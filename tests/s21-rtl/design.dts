@@ -1,0 +1,21 @@
+/include/ "core.dts"
+/ {
+	chosen {
+		metal,entry = <&testram0 0 0>;
+		metal,boothart = <&L4>;
+	};
+};
+&L11 {
+	testram0: testram@20000000 {
+		compatible = "sifive,testram0";
+		reg = <0x20000000 0x1fffffff>;
+		reg-names = "mem";
+	};
+};
+&L10 {
+	testram1: testram@40000000 {
+		compatible = "sifive,testram0";
+		reg = <0x40000000 0x1fffffff>;
+		reg-names = "mem";
+	};
+};

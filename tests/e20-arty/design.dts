@@ -1,0 +1,8 @@
+/include/ "core.dts"
+/ {
+	chosen {
+		metal,entry = <&L6 0 4194304>;
+		metal,boothart = <&L3>;
+		stdout-path = "/soc/serial@20000000:115200";
+	};
+};
