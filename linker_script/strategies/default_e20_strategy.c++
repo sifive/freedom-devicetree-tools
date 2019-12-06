@@ -9,13 +9,13 @@
 
 bool DefaultE20Strategy::valid(const fdt &dtb,
                                list<Memory> available_memories) {
-  return has_testram(available_memories);
+  return has_entry(dtb);
 }
 
 LinkerScript DefaultE20Strategy::create_layout(const fdt &dtb,
                                                list<Memory> available_memories,
                                                LinkStrategy link_strategy) {
-  Memory rom_memory = find_testram(available_memories);
+  Memory rom_memory = get_entry_memory(dtb);
   rom_memory.name = "ram";
   rom_memory.attributes = "wxa!ri";
 

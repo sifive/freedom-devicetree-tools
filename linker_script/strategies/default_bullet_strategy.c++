@@ -9,7 +9,6 @@
 
 bool DefaultBulletStrategy::valid(const fdt &dtb,
                                   list<Memory> available_memories) {
-  bool testram = has_testram(available_memories);
   bool has_memory = false;
 
   /* Look through the available memories to determine if this is a valid
@@ -21,7 +20,7 @@ bool DefaultBulletStrategy::valid(const fdt &dtb,
     }
   }
 
-  return (testram && has_memory);
+  return (has_entry(dtb) && has_memory);
 }
 
 LinkerScript
@@ -34,9 +33,7 @@ DefaultBulletStrategy::create_layout(const fdt &dtb,
 
   /* Map the available memories to the ROM, RAM, and ITIM */
 
-  Memory rom_memory = find_testram(available_memories);
-  rom_memory.name = "flash";
-  rom_memory.attributes = "rxai!w";
+  Memory rom_memory = get_entry_memory(dtb);
 
   for (auto it = available_memories.begin(); it != available_memories.end();
        it++) {
@@ -54,12 +51,16 @@ DefaultBulletStrategy::create_layout(const fdt &dtb,
     }
   }
 
+  if (rom_memory.base == ram_memory.base) {
+    rom_memory = ram_memory;
+  }
+
   if (!has_itim) {
     itim_memory = ram_memory;
   }
 
   /* Generate the layouts */
-  print_chosen_strategy("DefaultBulletStrategy", link_strategy, rom_memory,
+  print_chosen_strategy("DefaultBulletStrategy", link_strategy, ram_memory,
                         rom_memory, itim_memory);
 
   switch (link_strategy) {

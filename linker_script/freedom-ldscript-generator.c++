@@ -11,16 +11,12 @@
 
 #include <memory.h>
 #include <ranges.h>
+#include <regs.h>
 #include <strategies/chosen_strategy.h>
-#include <strategies/default_bullet_arty.h>
 #include <strategies/default_bullet_strategy.h>
-#include <strategies/default_e20_arty_strategy.h>
 #include <strategies/default_e20_strategy.h>
-#include <strategies/default_e21_arty_strategy.h>
 #include <strategies/default_e21_strategy.h>
-#include <strategies/default_rocket_arty.h>
 #include <strategies/default_rocket_strategy.h>
-#include <strategies/memory_only_strategy.h>
 
 using std::cerr;
 using std::cout;
@@ -124,11 +120,11 @@ int main(int argc, char *argv[]) {
         m.size = ranges.front().size;
       }
     } else {
-      auto regs = n.get_fields<std::tuple<target_addr, target_size>>("reg");
+      regs_t regs = get_regs(n);
 
       if (!regs.empty()) {
-        m.base = std::get<0>(regs.front());
-        m.size = std::get<1>(regs.front());
+        m.base = regs.front().address;
+        m.size = regs.front().size;
       }
     }
   };
@@ -181,32 +177,11 @@ int main(int argc, char *argv[]) {
   };
   list<Memory> memories;
 
-  /* Get the node pointed to by metal,entry */
-  string entry_handle;
-  uint32_t entry_offset = 0;
-  ;
-  dtb.chosen("metal,entry", tuple_t<node, uint32_t>(),
-             [&](node n, uint32_t offset) {
-               entry_handle = n.handle();
-               entry_offset = offset;
-             });
-
   for (auto it = memory_devices.begin(); it != memory_devices.end(); it++) {
     dtb.match(std::regex(*it), [&](const node n) {
       Memory mem(*it);
 
-      /* Skip SPI devices without a connected flash chip */
-      if (it->find("spi") != string::npos && !spi_has_flash(n)) {
-        return;
-      }
-
       extract_mem_map(mem, n);
-
-      /* If we've requested an offset, add it to the node */
-      if (n.handle() == entry_handle) {
-        mem.base += entry_offset;
-        mem.size -= entry_offset;
-      }
 
       memories.push_back(mem);
     });
@@ -231,23 +206,16 @@ int main(int argc, char *argv[]) {
   strategies.push_back(new ChosenStrategy());
 
   /* E21 is idiosyncratic (mapping two srams to dtim and itim) */
-  strategies.push_back(new DefaultE21ArtyStrategy());
   strategies.push_back(new DefaultE21Strategy());
 
   /* Bullet and other targets prioritize the memory node */
-  strategies.push_back(new DefaultBulletArtyStrategy());
   strategies.push_back(new DefaultBulletStrategy());
 
   /* Rocket is pretty straightforward */
-  strategies.push_back(new DefaultRocketArtyStrategy());
   strategies.push_back(new DefaultRocketStrategy());
 
   /* E20 strategy goes after because it only uses one sram */
-  strategies.push_back(new DefaultE20ArtyStrategy());
   strategies.push_back(new DefaultE20Strategy());
-
-  /* If all else fails, just use the memory port (and optionally an itim) */
-  strategies.push_back(new MemoryOnlyStrategy());
 
   ofstream os;
   os.open(linker_file);

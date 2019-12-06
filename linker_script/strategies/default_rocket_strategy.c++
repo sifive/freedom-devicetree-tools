@@ -9,7 +9,6 @@
 
 bool DefaultRocketStrategy::valid(const fdt &dtb,
                                   list<Memory> available_memories) {
-  bool testram = has_testram(available_memories);
   bool has_dtim = false;
   /* ITIM is optional */
 
@@ -20,7 +19,7 @@ bool DefaultRocketStrategy::valid(const fdt &dtb,
     }
   }
 
-  return (testram && has_dtim);
+  return (has_entry(dtb) && has_dtim);
 }
 
 LinkerScript
@@ -31,9 +30,7 @@ DefaultRocketStrategy::create_layout(const fdt &dtb,
   Memory itim_memory;
   bool has_itim = false;
 
-  Memory rom_memory = find_testram(available_memories);
-  rom_memory.name = "flash";
-  rom_memory.attributes = "rxai!w";
+  Memory rom_memory = get_entry_memory(dtb);
 
   for (auto it = available_memories.begin(); it != available_memories.end();
        it++) {

@@ -26,9 +26,10 @@ public:
   void print_chosen_strategy(string name, LinkStrategy layout, Memory ram,
                              Memory rom, Memory itim);
 
-  /* Generic helpers for identifying testrams */
-  bool has_testram(list<Memory> memories);
-  Memory find_testram(list<Memory> memories);
+  void extract_node_props(Memory &m, const node &n, uint32_t index,
+                          uint32_t offset);
+  bool has_entry(const fdt &dtb);
+  Memory get_entry_memory(const fdt &dtb);
 
   virtual bool valid(const fdt &dtb, list<Memory> available_memories) = 0;
 

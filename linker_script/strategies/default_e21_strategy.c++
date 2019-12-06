@@ -10,7 +10,6 @@
 bool DefaultE21Strategy::valid(const fdt &dtb,
                                list<Memory> available_memories) {
   int sram_count = 0;
-  bool testram = has_testram(available_memories);
 
   /* Look through the available memories to determine if this is a valid
    * strategy */
@@ -21,15 +20,13 @@ bool DefaultE21Strategy::valid(const fdt &dtb,
     }
   }
 
-  return ((sram_count == 2) && testram);
+  return ((sram_count == 2) && has_entry(dtb));
 }
 
 LinkerScript DefaultE21Strategy::create_layout(const fdt &dtb,
                                                list<Memory> available_memories,
                                                LinkStrategy link_strategy) {
-  Memory rom_memory = find_testram(available_memories);
-  rom_memory.name = "flash";
-  rom_memory.attributes = "rxai!w";
+  Memory rom_memory = get_entry_memory(dtb);
 
   bool ram_mapped = false;
   Memory ram_memory;

@@ -16,13 +16,13 @@ bool TemplateStrategy::valid(const fdt &dtb, list<Memory> available_memories) {
        it++) {
   }
 
-  return valid;
+  return (valid && has_entry(dtb));
 }
 
 LinkerScript TemplateStrategy::create_layout(const fdt &dtb,
                                              list<Memory> available_memories,
                                              LinkStrategy link_strategy) {
-  Memory rom_memory;
+  Memory rom_memory = get_entry_memory(dtb);
   Memory ram_memory;
   Memory itim_memory;
   bool has_itim = false;
