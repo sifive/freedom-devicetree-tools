@@ -19,8 +19,18 @@ void sifive_pwm0::create_defines() {
     if (num_interrupts > max_interrupts) {
       max_interrupts = num_interrupts;
     }
+
+    uint32_t ncmp = 1;
+    if (n.field_exists("sifive,ncomparators")) {
+      ncmp = n.get_fields<uint32_t>("sifive,ncomparators").back();
+    }
+    if (ncmp > max_ncmp) {
+      max_ncmp = ncmp;
+    }
   });
+
   emit_def("METAL_MAX_PWM0_INTERRUPTS", std::to_string(max_interrupts));
+  emit_def("METAL_MAX_PWM0_NCMP", std::to_string(max_ncmp));
 }
 
 void sifive_pwm0::include_headers() {
@@ -119,23 +129,26 @@ void sifive_pwm0::define_inlines() {
     std::string pinmux_value = "NULL";
     uint32_t pinmux_dest = 0;
     uint32_t pinmux_source = 0;
-    n.maybe_tuple("pinmux", tuple_t<node, uint32_t, uint32_t>(), [&]() {},
-                  [&](node m, uint32_t dest, uint32_t source) {
-                    pinmux_value =
-                        "(struct __metal_driver_sifive_gpio0 *)&__metal_dt_" +
-                        m.handle();
-                    pinmux_dest = dest;
-                    pinmux_source = source;
-                  });
+    if (n.field_exists("pinmux")) {
+      n.maybe_tuple("pinmux", tuple_t<node, uint32_t, uint32_t>(), [&]() {},
+                    [&](node m, uint32_t dest, uint32_t source) {
+                      pinmux_value =
+                          "(struct __metal_driver_sifive_gpio0 *)&__metal_dt_" +
+                          m.handle();
+                      pinmux_dest = dest;
+                      pinmux_source = source;
+                    });
+    }
 
     /* Comparator count and width */
-    uint32_t cmpwidth = 0;
-    uint32_t ncmp = 0;
-    n.maybe_tuple("ncmp_cmpwidth", tuple_t<uint32_t, uint32_t>(), [&]() {},
-                  [&](uint32_t ncmp_, uint32_t cmpwidth_) {
-                    cmpwidth = cmpwidth_;
-                    ncmp = ncmp_;
-                  });
+    uint32_t ncmp = 1;
+    if (n.field_exists("sifive,ncomparators")) {
+      ncmp = n.get_fields<uint32_t>("sifive,ncomparators").back();
+    }
+    uint32_t cmpwidth = 16;
+    if (n.field_exists("sifive,comparator-widthbits")) {
+      cmpwidth = n.get_fields<uint32_t>("sifive,comparator-widthbits").back();
+    }
 
     /* Interrupt parent controller */
     std::string int_parent_value = "NULL";

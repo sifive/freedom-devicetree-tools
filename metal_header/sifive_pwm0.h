@@ -11,6 +11,7 @@ class sifive_pwm0 : public Device {
 public:
   int num_pwms;
   uint32_t max_interrupts = 0;
+  uint32_t max_ncmp = 0;
 
   sifive_pwm0(std::ostream &os, const fdt &dtb);
   void create_defines();
