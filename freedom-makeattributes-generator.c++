@@ -547,6 +547,10 @@ static void write_config_file(fstream &os, std::string board,
     os << "TARGET_TAGS=fpga openocd" << std::endl;
     os << "TARGET_DHRY_ITERS=20000000" << std::endl;
     os << "TARGET_CORE_ITERS=5000" << std::endl;
+  } else if (board.find("vc707") != std::string::npos) {
+    os << "TARGET_TAGS=fpga openocd" << std::endl;
+    os << "TARGET_DHRY_ITERS=20000000" << std::endl;
+    os << "TARGET_CORE_ITERS=5000" << std::endl;
   } else if (board.find("hifive1-revb") != std::string::npos) {
     os << "TARGET_TAGS=board jlink" << std::endl;
     os << "TARGET_DHRY_ITERS=20000000" << std::endl;
@@ -589,6 +593,7 @@ int main(int argc, char *argv[]) {
           board = argv[++i];
           if ((board.find("rtl") != std::string::npos) ||
               (board.find("arty") != std::string::npos) ||
+              (board.find("vc707") != std::string::npos) ||
               (board.find("spike") != std::string::npos) ||
               (board.find("qemu") != std::string::npos) ||
               (board.find("hifive") != std::string::npos)) {
