@@ -36,6 +36,7 @@ UninitGroup::UninitGroup(const fdt &dtb, Memory logical_memory,
   Section stack(virtual_memory, virtual_memory, virtual_header);
 
   stack.output_name = "stack";
+  stack.alignment = 8;
 
   stack.add_command("PROVIDE(metal_segment_stack_begin = .);");
   stack.add_command(". += __stack_size;");
