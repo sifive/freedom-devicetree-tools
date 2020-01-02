@@ -359,6 +359,15 @@ static void write_coreip_memory_width (fstream &os)
 {
     uint32_t port_width = 0;
 
+    for (auto entry : dts_memory_list) {
+      std::cout << entry.mem_alias << " " << entry.mem_name << " "
+                << std::to_string(entry.mem_port_width) << " " << __FUNCTION__ << std::endl;
+      if (entry.mem_alias.compare("memory") == 0) {
+         port_width = entry.mem_port_width;
+         break;
+      }
+    }
+   if (port_width == 0) {
     /* Periph memory has first preference */
     for (auto entry : dts_memory_list) {
       std::cout << entry.mem_alias << " " << entry.mem_name << " "
@@ -383,6 +392,7 @@ static void write_coreip_memory_width (fstream &os)
         }
       }
     }
+   }
     if (port_width == 0) {
       /* Follows by Sys memory, second preference */
       for (auto entry : dts_memory_list) {

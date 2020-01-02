@@ -143,7 +143,7 @@ int main (int argc, char* argv[])
    * identification in RTL simulation.
    */
   list<string> memory_devices = {
-    "memory",
+    "sifive,mem-port",
     "sifive,ahb-mem-port",
     "sifive,ahb-periph-port",
     "sifive,ahb-sys-port",
@@ -163,6 +163,7 @@ int main (int argc, char* argv[])
     "sifive,tl-mem-port",
     "sifive,tl-periph-port",
     "sifive,tl-sys-port",
+    "memory",
   };
   list<Memory> memories;
 

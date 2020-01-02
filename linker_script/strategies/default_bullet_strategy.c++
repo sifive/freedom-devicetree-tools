@@ -9,7 +9,6 @@
 
 bool DefaultBulletStrategy::valid(const fdt &dtb, list<Memory> available_memories)
 {
-  bool testram = has_testram(available_memories);
   bool has_memory = false;
 
   /* Look through the available memories to determine if this is a valid strategy */
@@ -19,7 +18,7 @@ bool DefaultBulletStrategy::valid(const fdt &dtb, list<Memory> available_memorie
     }
   }
 
-  return (testram && has_memory);
+  return (has_memory);
 }
 
 LinkerScript DefaultBulletStrategy::create_layout(const fdt &dtb, list<Memory> available_memories,
@@ -30,10 +29,6 @@ LinkerScript DefaultBulletStrategy::create_layout(const fdt &dtb, list<Memory> a
   bool has_itim = false;
 
   /* Map the available memories to the ROM, RAM, and ITIM */
-
-  Memory rom_memory = find_testram(available_memories);
-  rom_memory.name = "flash";
-  rom_memory.attributes = "rxai!w";
 
   for (auto it = available_memories.begin(); it != available_memories.end(); it++) {
     if ((*it).compatible == "memory") {
@@ -54,12 +49,12 @@ LinkerScript DefaultBulletStrategy::create_layout(const fdt &dtb, list<Memory> a
   }
 
   /* Generate the layouts */
-  print_chosen_strategy("DefaultBulletStrategy", link_strategy, rom_memory, rom_memory, itim_memory);
+  print_chosen_strategy("DefaultBulletStrategy", link_strategy, ram_memory, ram_memory, itim_memory);
 
   switch (link_strategy) {
   default:
   case LINK_STRATEGY_DEFAULT:
-    return DefaultLayout(dtb, rom_memory, itim_memory, ram_memory, ram_memory);
+    return DefaultLayout(dtb, ram_memory, itim_memory, ram_memory, ram_memory);
     break;
 
   case LINK_STRATEGY_SCRATCHPAD:
@@ -67,7 +62,7 @@ LinkerScript DefaultBulletStrategy::create_layout(const fdt &dtb, list<Memory> a
     break;
 
   case LINK_STRATEGY_RAMRODATA:
-    return RamrodataLayout(dtb, rom_memory, itim_memory, ram_memory, rom_memory);
+    return RamrodataLayout(dtb, ram_memory, itim_memory, ram_memory, ram_memory);
     break;
   }
 }
