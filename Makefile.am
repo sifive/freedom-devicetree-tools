@@ -364,4 +364,3 @@ EXTRA_DIST += $(TESTS)
 EXTRA_DIST += README.md
 EXTRA_DIST += fdt.h++
 EXTRA_DIST += libfdt.h++
-EXTRA_DIST += multilib.h++
