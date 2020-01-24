@@ -2,79 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # A linker script generator for SiFive's Freedom platform.
-bin_PROGRAMS =  freedom-ldscript-generator \
-		freedom-openocdcfg-generator \
+bin_PROGRAMS =  freedom-openocdcfg-generator \
 		freedom-makeattributes-generator \
 		freedom-metal_header-generator \
 		freedom-bare_header-generator \
 		freedom-metal_specs-generator
 
-
-freedom_ldscript_generator_CPPFLAGS = -I$(srcdir) -I$(srcdir)/linker_script
-
-freedom_ldscript_generator_SOURCES = \
-	fdt.c++ \
-	linker_script/freedom-ldscript-generator.c++ \
-	linker_script/layouts/default_layout.c++ \
-	linker_script/layouts/default_layout.h \
-	linker_script/layouts/ramrodata_layout.c++ \
-	linker_script/layouts/ramrodata_layout.h \
-	linker_script/layouts/scratchpad_layout.c++ \
-	linker_script/layouts/scratchpad_layout.h \
-	linker_script/sections/constants_group.c++ \
-	linker_script/sections/constants_group.h \
-	linker_script/sections/ctors_group.c++ \
-	linker_script/sections/ctors_group.h \
-	linker_script/sections/data_group.c++ \
-	linker_script/sections/data_group.h \
-	linker_script/sections/init_text_group.c++ \
-	linker_script/sections/init_text_group.h \
-	linker_script/sections/itim_text_group.c++ \
-	linker_script/sections/itim_text_group.h \
-	linker_script/sections/itim_group.c++ \
-	linker_script/sections/itim_group.h \
-	linker_script/sections/rodata_group.c++ \
-	linker_script/sections/rodata_group.h \
-	linker_script/sections/text_group.c++ \
-	linker_script/sections/text_group.h \
-	linker_script/sections/uninit_group.c++ \
-	linker_script/sections/uninit_group.h \
-	linker_script/strategies/chosen_strategy.c++ \
-	linker_script/strategies/chosen_strategy.h \
-	linker_script/strategies/default_bullet_arty.c++ \
-	linker_script/strategies/default_bullet_arty.h \
-	linker_script/strategies/default_bullet_strategy.c++ \
-	linker_script/strategies/default_bullet_strategy.h \
-	linker_script/strategies/default_e20_arty_strategy.c++ \
-	linker_script/strategies/default_e20_arty_strategy.h \
-	linker_script/strategies/default_e20_strategy.c++ \
-	linker_script/strategies/default_e20_strategy.h \
-	linker_script/strategies/default_e21_arty_strategy.c++ \
-	linker_script/strategies/default_e21_arty_strategy.h \
-	linker_script/strategies/default_e21_strategy.c++ \
-	linker_script/strategies/default_e21_strategy.h \
-	linker_script/strategies/default_rocket_arty.c++ \
-	linker_script/strategies/default_rocket_arty.h \
-	linker_script/strategies/default_rocket_strategy.c++ \
-	linker_script/strategies/default_rocket_strategy.h \
-	linker_script/strategies/memory_only_strategy.c++ \
-	linker_script/strategies/memory_only_strategy.h \
-	linker_script/linker_script.c++ \
-	linker_script/linker_script.h \
-	linker_script/map_strategy.c++ \
-	linker_script/map_strategy.h \
-	linker_script/memory.c++ \
-	linker_script/memory.h \
-	linker_script/phdr.c++ \
-	linker_script/phdr.h \
-	linker_script/section.c++ \
-	linker_script/section.h \
-	linker_script/section_group.c++ \
-	linker_script/section_group.h \
-	ranges.c++ \
-	ranges.h   \
-	regs.c++ \
-	regs.h
 
 freedom_openocdcfg_generator_SOURCES = \
 	freedom-openocdcfg-generator.c++ \
@@ -208,7 +141,6 @@ AM_TESTS_ENVIRONMENT = \
 # Generic test scripts called by tests
 TESTS       =
 EXTRA_DIST  = tests/test-bare_header-generator.bash
-EXTRA_DIST += tests/test-ldscript-generator.bash
 EXTRA_DIST += tests/test-makeattributes-generator.bash
 EXTRA_DIST += tests/test-metal_header-generator.bash
 EXTRA_DIST += tests/test-openocdcfg-generator.bash
@@ -217,7 +149,6 @@ EXTRA_DIST += tests/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/freedom-e310-arty/core.dts
 EXTRA_DIST += tests/freedom-e310-arty/design.dts
 TESTS      += tests/freedom-e310-arty/test-bare_header-generator.bash
-TESTS      += tests/freedom-e310-arty/test-ldscript-generator.bash
 TESTS      += tests/freedom-e310-arty/test-makeattributes-generator.bash
 TESTS      += tests/freedom-e310-arty/test-metal_header-generator.bash
 TESTS      += tests/freedom-e310-arty/test-openocdcfg-generator.bash
@@ -225,35 +156,30 @@ TESTS      += tests/freedom-e310-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/qemu-sifive-e31/core.dts
 EXTRA_DIST += tests/qemu-sifive-e31/design.dts
 TESTS      += tests/qemu-sifive-e31/test-bare_header-generator.bash
-TESTS      += tests/qemu-sifive-e31/test-ldscript-generator.bash
 TESTS      += tests/qemu-sifive-e31/test-makeattributes-generator.bash
 TESTS      += tests/qemu-sifive-e31/test-metal_header-generator.bash
 # qemu-sifive-s51
 EXTRA_DIST += tests/qemu-sifive-s51/core.dts
 EXTRA_DIST += tests/qemu-sifive-s51/design.dts
 TESTS      += tests/qemu-sifive-s51/test-bare_header-generator.bash
-TESTS      += tests/qemu-sifive-s51/test-ldscript-generator.bash
 TESTS      += tests/qemu-sifive-s51/test-makeattributes-generator.bash
 TESTS      += tests/qemu-sifive-s51/test-metal_header-generator.bash
 # qemu-sifive-u54
 EXTRA_DIST += tests/qemu-sifive-u54/core.dts
 EXTRA_DIST += tests/qemu-sifive-u54/design.dts
 TESTS      += tests/qemu-sifive-u54/test-bare_header-generator.bash
-TESTS      += tests/qemu-sifive-u54/test-ldscript-generator.bash
 TESTS      += tests/qemu-sifive-u54/test-makeattributes-generator.bash
 TESTS      += tests/qemu-sifive-u54/test-metal_header-generator.bash
 # qemu-sifive-u54mc
 EXTRA_DIST += tests/qemu-sifive-u54mc/core.dts
 EXTRA_DIST += tests/qemu-sifive-u54mc/design.dts
 TESTS      += tests/qemu-sifive-u54mc/test-bare_header-generator.bash
-TESTS      += tests/qemu-sifive-u54mc/test-ldscript-generator.bash
 TESTS      += tests/qemu-sifive-u54mc/test-makeattributes-generator.bash
 TESTS      += tests/qemu-sifive-u54mc/test-metal_header-generator.bash
 # sifive-hifive1
 EXTRA_DIST += tests/sifive-hifive1/core.dts
 EXTRA_DIST += tests/sifive-hifive1/design.dts
 TESTS      += tests/sifive-hifive1/test-bare_header-generator.bash
-TESTS      += tests/sifive-hifive1/test-ldscript-generator.bash
 TESTS      += tests/sifive-hifive1/test-makeattributes-generator.bash
 TESTS      += tests/sifive-hifive1/test-metal_header-generator.bash
 TESTS      += tests/sifive-hifive1/test-openocdcfg-generator.bash
@@ -261,14 +187,12 @@ TESTS      += tests/sifive-hifive1/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/sifive-hifive1-revb/core.dts
 EXTRA_DIST += tests/sifive-hifive1-revb/design.dts
 TESTS      += tests/sifive-hifive1-revb/test-bare_header-generator.bash
-TESTS      += tests/sifive-hifive1-revb/test-ldscript-generator.bash
 TESTS      += tests/sifive-hifive1-revb/test-makeattributes-generator.bash
 TESTS      += tests/sifive-hifive1-revb/test-metal_header-generator.bash
 # sifive-hifive-unleashed
 EXTRA_DIST += tests/sifive-hifive-unleashed/core.dts
 EXTRA_DIST += tests/sifive-hifive-unleashed/design.dts
 TESTS      += tests/sifive-hifive-unleashed/test-bare_header-generator.bash
-TESTS      += tests/sifive-hifive-unleashed/test-ldscript-generator.bash
 TESTS      += tests/sifive-hifive-unleashed/test-makeattributes-generator.bash
 TESTS      += tests/sifive-hifive-unleashed/test-metal_header-generator.bash
 TESTS      += tests/sifive-hifive-unleashed/test-openocdcfg-generator.bash
@@ -276,14 +200,12 @@ TESTS      += tests/sifive-hifive-unleashed/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/spike/core.dts
 EXTRA_DIST += tests/spike/design.dts
 TESTS      += tests/spike/test-bare_header-generator.bash
-TESTS      += tests/spike/test-ldscript-generator.bash
 TESTS      += tests/spike/test-makeattributes-generator.bash
 TESTS      += tests/spike/test-metal_header-generator.bash
 # e20-arty
 EXTRA_DIST += tests/e20-arty/core.dts
 EXTRA_DIST += tests/e20-arty/design.dts
 TESTS      += tests/e20-arty/test-bare_header-generator.bash
-TESTS      += tests/e20-arty/test-ldscript-generator.bash
 TESTS      += tests/e20-arty/test-makeattributes-generator.bash
 TESTS      += tests/e20-arty/test-metal_header-generator.bash
 TESTS      += tests/e20-arty/test-openocdcfg-generator.bash
@@ -291,14 +213,12 @@ TESTS      += tests/e20-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/e20-rtl/core.dts
 EXTRA_DIST += tests/e20-rtl/design.dts
 TESTS      += tests/e20-rtl/test-bare_header-generator.bash
-TESTS      += tests/e20-rtl/test-ldscript-generator.bash
 TESTS      += tests/e20-rtl/test-makeattributes-generator.bash
 TESTS      += tests/e20-rtl/test-metal_header-generator.bash
 # e21-arty
 EXTRA_DIST += tests/e21-arty/core.dts
 EXTRA_DIST += tests/e21-arty/design.dts
 TESTS      += tests/e21-arty/test-bare_header-generator.bash
-TESTS      += tests/e21-arty/test-ldscript-generator.bash
 TESTS      += tests/e21-arty/test-makeattributes-generator.bash
 TESTS      += tests/e21-arty/test-metal_header-generator.bash
 TESTS      += tests/e21-arty/test-openocdcfg-generator.bash
@@ -306,14 +226,12 @@ TESTS      += tests/e21-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/e21-rtl/core.dts
 EXTRA_DIST += tests/e21-rtl/design.dts
 TESTS      += tests/e21-rtl/test-bare_header-generator.bash
-TESTS      += tests/e21-rtl/test-ldscript-generator.bash
 TESTS      += tests/e21-rtl/test-makeattributes-generator.bash
 TESTS      += tests/e21-rtl/test-metal_header-generator.bash
 # e24-arty
 EXTRA_DIST += tests/e24-arty/core.dts
 EXTRA_DIST += tests/e24-arty/design.dts
 TESTS      += tests/e24-arty/test-bare_header-generator.bash
-TESTS      += tests/e24-arty/test-ldscript-generator.bash
 TESTS      += tests/e24-arty/test-makeattributes-generator.bash
 TESTS      += tests/e24-arty/test-metal_header-generator.bash
 TESTS      += tests/e24-arty/test-openocdcfg-generator.bash
@@ -321,14 +239,12 @@ TESTS      += tests/e24-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/e24-rtl/core.dts
 EXTRA_DIST += tests/e24-rtl/design.dts
 TESTS      += tests/e24-rtl/test-bare_header-generator.bash
-TESTS      += tests/e24-rtl/test-ldscript-generator.bash
 TESTS      += tests/e24-rtl/test-makeattributes-generator.bash
 TESTS      += tests/e24-rtl/test-metal_header-generator.bash
 # e31-arty
 EXTRA_DIST += tests/e31-arty/core.dts
 EXTRA_DIST += tests/e31-arty/design.dts
 TESTS      += tests/e31-arty/test-bare_header-generator.bash
-TESTS      += tests/e31-arty/test-ldscript-generator.bash
 TESTS      += tests/e31-arty/test-makeattributes-generator.bash
 TESTS      += tests/e31-arty/test-metal_header-generator.bash
 TESTS      += tests/e31-arty/test-openocdcfg-generator.bash
@@ -336,14 +252,12 @@ TESTS      += tests/e31-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/e31-rtl/core.dts
 EXTRA_DIST += tests/e31-rtl/design.dts
 TESTS      += tests/e31-rtl/test-bare_header-generator.bash
-TESTS      += tests/e31-rtl/test-ldscript-generator.bash
 TESTS      += tests/e31-rtl/test-makeattributes-generator.bash
 TESTS      += tests/e31-rtl/test-metal_header-generator.bash
 # e34-arty
 EXTRA_DIST += tests/e34-arty/core.dts
 EXTRA_DIST += tests/e34-arty/design.dts
 TESTS      += tests/e34-arty/test-bare_header-generator.bash
-TESTS      += tests/e34-arty/test-ldscript-generator.bash
 TESTS      += tests/e34-arty/test-makeattributes-generator.bash
 TESTS      += tests/e34-arty/test-metal_header-generator.bash
 TESTS      += tests/e34-arty/test-openocdcfg-generator.bash
@@ -351,14 +265,12 @@ TESTS      += tests/e34-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/e34-rtl/core.dts
 EXTRA_DIST += tests/e34-rtl/design.dts
 TESTS      += tests/e34-rtl/test-bare_header-generator.bash
-TESTS      += tests/e34-rtl/test-ldscript-generator.bash
 TESTS      += tests/e34-rtl/test-makeattributes-generator.bash
 TESTS      += tests/e34-rtl/test-metal_header-generator.bash
 # e76-arty
 EXTRA_DIST += tests/e76-arty/core.dts
 EXTRA_DIST += tests/e76-arty/design.dts
 TESTS      += tests/e76-arty/test-bare_header-generator.bash
-TESTS      += tests/e76-arty/test-ldscript-generator.bash
 TESTS      += tests/e76-arty/test-makeattributes-generator.bash
 TESTS      += tests/e76-arty/test-metal_header-generator.bash
 TESTS      += tests/e76-arty/test-openocdcfg-generator.bash
@@ -366,7 +278,6 @@ TESTS      += tests/e76-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/e76mc-arty/core.dts
 EXTRA_DIST += tests/e76mc-arty/design.dts
 TESTS      += tests/e76mc-arty/test-bare_header-generator.bash
-TESTS      += tests/e76mc-arty/test-ldscript-generator.bash
 TESTS      += tests/e76mc-arty/test-makeattributes-generator.bash
 TESTS      += tests/e76mc-arty/test-metal_header-generator.bash
 TESTS      += tests/e76mc-arty/test-openocdcfg-generator.bash
@@ -374,21 +285,18 @@ TESTS      += tests/e76mc-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/e76mc-rtl/core.dts
 EXTRA_DIST += tests/e76mc-rtl/design.dts
 TESTS      += tests/e76mc-rtl/test-bare_header-generator.bash
-TESTS      += tests/e76mc-rtl/test-ldscript-generator.bash
 TESTS      += tests/e76mc-rtl/test-makeattributes-generator.bash
 TESTS      += tests/e76mc-rtl/test-metal_header-generator.bash
 # e76-rtl
 EXTRA_DIST += tests/e76-rtl/core.dts
 EXTRA_DIST += tests/e76-rtl/design.dts
 TESTS      += tests/e76-rtl/test-bare_header-generator.bash
-TESTS      += tests/e76-rtl/test-ldscript-generator.bash
 TESTS      += tests/e76-rtl/test-makeattributes-generator.bash
 TESTS      += tests/e76-rtl/test-metal_header-generator.bash
 # s21-arty
 EXTRA_DIST += tests/s21-arty/core.dts
 EXTRA_DIST += tests/s21-arty/design.dts
 TESTS      += tests/s21-arty/test-bare_header-generator.bash
-TESTS      += tests/s21-arty/test-ldscript-generator.bash
 TESTS      += tests/s21-arty/test-makeattributes-generator.bash
 TESTS      += tests/s21-arty/test-metal_header-generator.bash
 TESTS      += tests/s21-arty/test-openocdcfg-generator.bash
@@ -396,14 +304,12 @@ TESTS      += tests/s21-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/s21-rtl/core.dts
 EXTRA_DIST += tests/s21-rtl/design.dts
 TESTS      += tests/s21-rtl/test-bare_header-generator.bash
-TESTS      += tests/s21-rtl/test-ldscript-generator.bash
 TESTS      += tests/s21-rtl/test-makeattributes-generator.bash
 TESTS      += tests/s21-rtl/test-metal_header-generator.bash
 # s51-arty
 EXTRA_DIST += tests/s51-arty/core.dts
 EXTRA_DIST += tests/s51-arty/design.dts
 TESTS      += tests/s51-arty/test-bare_header-generator.bash
-TESTS      += tests/s51-arty/test-ldscript-generator.bash
 TESTS      += tests/s51-arty/test-makeattributes-generator.bash
 TESTS      += tests/s51-arty/test-metal_header-generator.bash
 TESTS      += tests/s51-arty/test-openocdcfg-generator.bash
@@ -411,14 +317,12 @@ TESTS      += tests/s51-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/s51-rtl/core.dts
 EXTRA_DIST += tests/s51-rtl/design.dts
 TESTS      += tests/s51-rtl/test-bare_header-generator.bash
-TESTS      += tests/s51-rtl/test-ldscript-generator.bash
 TESTS      += tests/s51-rtl/test-makeattributes-generator.bash
 TESTS      += tests/s51-rtl/test-metal_header-generator.bash
 # s54-arty
 EXTRA_DIST += tests/s54-arty/core.dts
 EXTRA_DIST += tests/s54-arty/design.dts
 TESTS      += tests/s54-arty/test-bare_header-generator.bash
-TESTS      += tests/s54-arty/test-ldscript-generator.bash
 TESTS      += tests/s54-arty/test-makeattributes-generator.bash
 TESTS      += tests/s54-arty/test-metal_header-generator.bash
 TESTS      += tests/s54-arty/test-openocdcfg-generator.bash
@@ -426,14 +330,12 @@ TESTS      += tests/s54-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/s54-rtl/core.dts
 EXTRA_DIST += tests/s54-rtl/design.dts
 TESTS      += tests/s54-rtl/test-bare_header-generator.bash
-TESTS      += tests/s54-rtl/test-ldscript-generator.bash
 TESTS      += tests/s54-rtl/test-makeattributes-generator.bash
 TESTS      += tests/s54-rtl/test-metal_header-generator.bash
 # s76-arty
 EXTRA_DIST += tests/s76-arty/core.dts
 EXTRA_DIST += tests/s76-arty/design.dts
 TESTS      += tests/s76-arty/test-bare_header-generator.bash
-TESTS      += tests/s76-arty/test-ldscript-generator.bash
 TESTS      += tests/s76-arty/test-makeattributes-generator.bash
 TESTS      += tests/s76-arty/test-metal_header-generator.bash
 TESTS      += tests/s76-arty/test-openocdcfg-generator.bash
@@ -441,7 +343,6 @@ TESTS      += tests/s76-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/s76mc-arty/core.dts
 EXTRA_DIST += tests/s76mc-arty/design.dts
 TESTS      += tests/s76mc-arty/test-bare_header-generator.bash
-TESTS      += tests/s76mc-arty/test-ldscript-generator.bash
 TESTS      += tests/s76mc-arty/test-makeattributes-generator.bash
 TESTS      += tests/s76mc-arty/test-metal_header-generator.bash
 TESTS      += tests/s76mc-arty/test-openocdcfg-generator.bash
@@ -449,21 +350,18 @@ TESTS      += tests/s76mc-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/s76mc-rtl/core.dts
 EXTRA_DIST += tests/s76mc-rtl/design.dts
 TESTS      += tests/s76mc-rtl/test-bare_header-generator.bash
-TESTS      += tests/s76mc-rtl/test-ldscript-generator.bash
 TESTS      += tests/s76mc-rtl/test-makeattributes-generator.bash
 TESTS      += tests/s76mc-rtl/test-metal_header-generator.bash
 # s76-rtl
 EXTRA_DIST += tests/s76-rtl/core.dts
 EXTRA_DIST += tests/s76-rtl/design.dts
 TESTS      += tests/s76-rtl/test-bare_header-generator.bash
-TESTS      += tests/s76-rtl/test-ldscript-generator.bash
 TESTS      += tests/s76-rtl/test-makeattributes-generator.bash
 TESTS      += tests/s76-rtl/test-metal_header-generator.bash
 # u54-arty
 EXTRA_DIST += tests/u54-arty/core.dts
 EXTRA_DIST += tests/u54-arty/design.dts
 TESTS      += tests/u54-arty/test-bare_header-generator.bash
-TESTS      += tests/u54-arty/test-ldscript-generator.bash
 TESTS      += tests/u54-arty/test-makeattributes-generator.bash
 TESTS      += tests/u54-arty/test-metal_header-generator.bash
 TESTS      += tests/u54-arty/test-openocdcfg-generator.bash
@@ -471,7 +369,6 @@ TESTS      += tests/u54-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/u54mc-arty/core.dts
 EXTRA_DIST += tests/u54mc-arty/design.dts
 TESTS      += tests/u54mc-arty/test-bare_header-generator.bash
-TESTS      += tests/u54mc-arty/test-ldscript-generator.bash
 TESTS      += tests/u54mc-arty/test-makeattributes-generator.bash
 TESTS      += tests/u54mc-arty/test-metal_header-generator.bash
 TESTS      += tests/u54mc-arty/test-openocdcfg-generator.bash
@@ -479,21 +376,18 @@ TESTS      += tests/u54mc-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/u54mc-rtl/core.dts
 EXTRA_DIST += tests/u54mc-rtl/design.dts
 TESTS      += tests/u54mc-rtl/test-bare_header-generator.bash
-TESTS      += tests/u54mc-rtl/test-ldscript-generator.bash
 TESTS      += tests/u54mc-rtl/test-makeattributes-generator.bash
 TESTS      += tests/u54mc-rtl/test-metal_header-generator.bash
 # u54-rtl
 EXTRA_DIST += tests/u54-rtl/core.dts
 EXTRA_DIST += tests/u54-rtl/design.dts
 TESTS      += tests/u54-rtl/test-bare_header-generator.bash
-TESTS      += tests/u54-rtl/test-ldscript-generator.bash
 TESTS      += tests/u54-rtl/test-makeattributes-generator.bash
 TESTS      += tests/u54-rtl/test-metal_header-generator.bash
 # u74-arty
 EXTRA_DIST += tests/u74-arty/core.dts
 EXTRA_DIST += tests/u74-arty/design.dts
 TESTS      += tests/u74-arty/test-bare_header-generator.bash
-TESTS      += tests/u74-arty/test-ldscript-generator.bash
 TESTS      += tests/u74-arty/test-makeattributes-generator.bash
 TESTS      += tests/u74-arty/test-metal_header-generator.bash
 TESTS      += tests/u74-arty/test-openocdcfg-generator.bash
@@ -501,7 +395,6 @@ TESTS      += tests/u74-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/u74mc-arty/core.dts
 EXTRA_DIST += tests/u74mc-arty/design.dts
 TESTS      += tests/u74mc-arty/test-bare_header-generator.bash
-TESTS      += tests/u74mc-arty/test-ldscript-generator.bash
 TESTS      += tests/u74mc-arty/test-makeattributes-generator.bash
 TESTS      += tests/u74mc-arty/test-metal_header-generator.bash
 TESTS      += tests/u74mc-arty/test-openocdcfg-generator.bash
@@ -509,14 +402,12 @@ TESTS      += tests/u74mc-arty/test-openocdcfg-generator.bash
 EXTRA_DIST += tests/u74mc-rtl/core.dts
 EXTRA_DIST += tests/u74mc-rtl/design.dts
 TESTS      += tests/u74mc-rtl/test-bare_header-generator.bash
-TESTS      += tests/u74mc-rtl/test-ldscript-generator.bash
 TESTS      += tests/u74mc-rtl/test-makeattributes-generator.bash
 TESTS      += tests/u74mc-rtl/test-metal_header-generator.bash
 # u74-rtl
 EXTRA_DIST += tests/u74-rtl/core.dts
 EXTRA_DIST += tests/u74-rtl/design.dts
 TESTS      += tests/u74-rtl/test-bare_header-generator.bash
-TESTS      += tests/u74-rtl/test-ldscript-generator.bash
 TESTS      += tests/u74-rtl/test-makeattributes-generator.bash
 TESTS      += tests/u74-rtl/test-metal_header-generator.bash
 
