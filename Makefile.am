@@ -4,8 +4,7 @@
 # A linker script generator for SiFive's Freedom platform.
 bin_PROGRAMS =  freedom-openocdcfg-generator \
 		freedom-metal_header-generator \
-		freedom-bare_header-generator \
-		freedom-metal_specs-generator
+		freedom-bare_header-generator
 
 
 freedom_openocdcfg_generator_SOURCES = \
@@ -124,10 +123,6 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/ucb_htif0.h \
 	ranges.c++ \
 	ranges.h
-
-freedom_metal_specs_generator_SOURCES = \
-	freedom-metal_specs-generator.c++ \
-	fdt.c++
 
 AM_TESTS_ENVIRONMENT = \
   export SOURCE_DIR=$(abspath $(srcdir)); \
