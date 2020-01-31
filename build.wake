@@ -1,20 +1,3 @@
-def ./file = simplify "{here}/{file}"
-
-def configure_file     = ./ "configure"
-def configure_ac_file  = "{configure_file}.ac"
-def makefile_file      = ./ "Makefile"
-def makefile_in_file   = "{makefile_file}.in"
-def makefile_am_file   = "{makefile_file}.am"
-def git_version_script = ./ "scripts/git-version"
-def m4_dir             = ./ "m4"
-
-def doJob cmdline inputs =
-  makePlan cmdline inputs
-  | setPlanDirectory here
-  | setPlanFnOutputs (filter (\f !(matches `.*\.Po` f)) _)
-  | runJob
-  | getJobOutputs
-
 def installDir = simplify "build/{here}"
 global def freedomDevicetreeToolsInstallDir = "build/{here}"
 
@@ -44,48 +27,8 @@ def makeTool tool =
   | head
   | getOrElse "could not build {tool}!".makeError.makeBadPath
 
-global def freedom_ldscript_generator       _ = makeTool "freedom-ldscript-generator"
-global def freedom_makeattributes_generator _ = makeTool "freedom-makeattributes-generator"
 global def freedom_metal_header_generator   _ = makeTool "freedom-metal_header-generator"
-global def freedom_metal_specs_generator    _ = makeTool "freedom-metal_specs-generator"
-global def freedom_openocdcfg_generator     _ = makeTool "freedom-openocdcfg-generator"
-global def freedom_zephyrdtsfixup_generator _ = makeTool "freedom-zephyrdtsfixup-generator"
 global def freedom_bare_header_generator    _ = makeTool "freedom-bare_header-generator"
-
-
-### Linker Script Generator ###
-tuple FreedomLdScriptGeneratorOptions =
-  global DTBFile:    Path
-  global OutputFile: String
-  global Scratchpad: Boolean
-  global Ramrodata:  Boolean
-
-global def makeFreedomLdScriptGeneratorOptions dtbFile outputFile =
-  FreedomLdScriptGeneratorOptions dtbFile outputFile False False
-
-global def runFreedomLdScriptGenerator options =
-  def tool = freedom_ldscript_generator Unit
-  def dtbFile = options.getFreedomLdScriptGeneratorOptionsDTBFile
-  def cmdline =
-    def base =
-      tool.getPathName,
-      "-d", dtbFile.getPathName,
-      "-l", options.getFreedomLdScriptGeneratorOptionsOutputFile,
-      Nil
-
-    def scratchpad = match options.getFreedomLdScriptGeneratorOptionsScratchpad
-      True  = "--scratchpad", Nil
-      False = Nil
-
-    def ramrodata = match options.getFreedomLdScriptGeneratorOptionsRamrodata
-      True  = "--ramrodata", Nil
-      False = Nil
-
-    base ++ scratchpad ++ ramrodata
-
-  def inputs = tool, dtbFile, Nil
-  makePlan cmdline inputs | runJob | getJobOutput
-
 
 ### Metal header Generator ###
 tuple FreedomMetalHeaderGeneratorOptions =
@@ -111,11 +54,14 @@ global def runFreedomMetalHeaderGenerator options =
   def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   def outputs = makePlan cmdline inputs | runJob | getJobOutputs
 
-  def get file =
-    outputs
-    | filter (file ==* _.getPathName)
-    | head
-    | getOrElse "{tool.getPathName}: failed to produce {file}".makeError.makeBadPath
+  def result = findFailFn getPathResult outputs
+  def get file = match result
+    Fail e = makeBadPath e
+    Pass paths =
+      paths
+      | filter (file ==* _.getPathName)
+      | head
+      | getOrElse "{tool.getPathName}: failed to produce {file}".makeError.makeBadPath
 
   def inlineHeaderFile = replace `\.h$` "-inline.h" outputFile
 
@@ -142,82 +88,3 @@ global def runFreedomBareHeaderGenerator options =
     Nil
   def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   makePlan cmdline inputs | runJob | getJobOutput
-
-### Make Attributes Generator ###
-tuple FreedomMakeAttributesGeneratorOptions =
-  global DTBFile:    Path
-  global OutputFile: String
-
-global def makeFreedomMakeAttributesGeneratorOptions dtbFile outputFile =
-  FreedomMakeAttributesGeneratorOptions dtbFile outputFile
-
-tuple FreedomMakeAttributes =
-  File_: Path
-  MARCH_: String
-  MABI_:  String
-  CMODEL_: String
-global def getFreedomMakeAttributesFile  = getFreedomMakeAttributesFile_
-global def getFreedomMakeAttributesMARCH = getFreedomMakeAttributesMARCH_
-global def getFreedomMakeAttributesMABI  = getFreedomMakeAttributesMABI_
-global def getFreedomMakeAttributesCMODEL  = getFreedomMakeAttributesCMODEL_
-
-global def runFreedomMakeAttributesGenerator options =
-  def tool = freedom_makeattributes_generator Unit
-  def dtbFile = options.getFreedomMakeAttributesGeneratorOptionsDTBFile
-  def outputFile = options.getFreedomMakeAttributesGeneratorOptionsOutputFile
-  def cmdline =
-    tool.getPathName,
-    "-d", dtbFile.getPathName,
-    "-o", outputFile,
-    Nil
-  def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
-  def file = makePlan cmdline inputs | runJob | getJobOutput
-  def rlines = read file | rmap `\n`.tokenize
-  match rlines
-    Pass lines =
-      def getAttribute attribute =
-        def regex = regExpCat (`^`, attribute, `=(.*)$`, Nil)
-        lines
-        | map regex.extract
-        | flatten
-        | head
-      match `RISCV_ABI`.getAttribute `RISCV_ARCH`.getAttribute `RISCV_CMODEL`.getAttribute
-        (Some mabi) (Some march) (Some cmodel) = Pass (FreedomMakeAttributes file march mabi cmodel)
-        _ _ _ = Fail "Generated make attributes file not formatted correctly: {file.getPathName}".makeError
-    Fail fail = Fail fail
-
-tuple FreedomBSP =
-  global LinkerScript:   Path
-  global Header:         Path
-  global InlineHeader:   Path
-  global PlatformHeader: Path
-  global Attributes:     FreedomMakeAttributes
-
-global def makeFreedomBSP testDTS prefix =
-  def testDTB = dtsTodtb testDTS "{prefix}.dtb"
-  def ldScript =
-    makeFreedomLdScriptGeneratorOptions testDTB "{prefix}.lds"
-    | runFreedomLdScriptGenerator
-
-  def header =
-    makeFreedomMetalHeaderGeneratorOptions testDTB "{prefix}.h"
-    | runFreedomMetalHeaderGenerator
-
-  def platformHeader =
-    makeFreedomBareHeaderGeneratorOptions testDTB "{prefix}-platform.h"
-    | runFreedomBareHeaderGenerator
-
-  def attributesResult =
-    makeFreedomMakeAttributesGeneratorOptions testDTB "{prefix}.conf"
-    | runFreedomMakeAttributesGenerator
-
-  match attributesResult
-    Fail e = Fail e
-    Pass attributes = Pass (
-      FreedomBSP
-      ldScript
-      header.getFreedomMetalHeaderGeneratorOutputsHeader
-      header.getFreedomMetalHeaderGeneratorOutputsInlineHeader
-      platformHeader
-      attributes
-    )
