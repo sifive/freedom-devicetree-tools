@@ -1,8 +1,9 @@
 tuple DTCOptions =
-  global InFormat:   DTCFormat
-  global InputFile:  Path
-  global OutFormat:  DTCFormat
-  global OutputFile: String
+  global InFormat:    DTCFormat
+  global InputFile:   Path
+  global OtherInputs: List Path
+  global OutFormat:   DTCFormat
+  global OutputFile:  String
 
 global data DTCFormat =
   DTC_DTB
@@ -14,11 +15,11 @@ global def dtcFormatToString = match _
   DTC_DTS = "dts"
   DTC_FS  = "fs"
 
-global def makeDTCOptions inFormat outFormat inFile outputFile =
-  DTCOptions inFormat inFile outFormat outputFile
+global def makeDTCOptions inFormat outFormat inFile otherInputs outputFile =
+  DTCOptions inFormat inFile otherInputs outFormat outputFile
 
-global def dtsTodtb = makeDTCOptions DTC_DTS DTC_DTB _ _ | runDTC
-global def dtbTodts = makeDTCOptions DTC_DTB DTC_DTS _ _ | runDTC
+global def dtsTodtb = makeDTCOptions DTC_DTS DTC_DTB _ _ _ | runDTC
+global def dtbTodts = makeDTCOptions DTC_DTB DTC_DTS _ _ _ | runDTC
 
 global def runDTC options =
   def cmdline =
@@ -29,7 +30,7 @@ global def runDTC options =
     "-O", options.getDTCOptionsOutFormat.dtcFormatToString,
     Nil
   def outputDir = mkdir "{options.getDTCOptionsOutputFile}/.."
-  def inputs = outputDir, options.getDTCOptionsInputFile, Nil
+  def inputs = outputDir, options.getDTCOptionsInputFile, options.getDTCOptionsOtherInputs
   makePlan cmdline inputs
   | runJob
   | getJobOutput
