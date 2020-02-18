@@ -88,3 +88,38 @@ global def runFreedomBareHeaderGenerator options =
     Nil
   def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   makePlan cmdline inputs | runJob | getJobOutput
+
+global def freedomHeaderGeneratorBuildTarget =
+  baseBuildTargetPlan "freedom-header-generator"
+  | dependsOnFn "dtbFile" (_)
+  | dependsOn "metalHeaderFile" jString
+  | dependsOn "bareHeaderFile" jString
+  | definedAs (
+    \dtb
+    \metalHeaderFile
+    \bareHeaderFile
+    \_ (
+      def metalHeader =
+        makeFreedomMetalHeaderGeneratorOptions dtb metalHeaderFile
+        | runFreedomMetalHeaderGenerator
+      def inlineHeader = metalHeader.getFreedomMetalHeaderGeneratorOutputsInlineHeader
+      def header = metalHeader.getFreedomMetalHeaderGeneratorOutputsHeader
+      def platformHeader =
+        makeFreedomBareHeaderGeneratorOptions dtb bareHeaderFile
+        | runFreedomBareHeaderGenerator
+      match header.getPathResult inlineHeader.getPathResult platformHeader.getPathResult
+        (Fail e) _ _ = Fail e
+        _ (Fail e) _ = Fail e
+        _ _ (Fail e) = Fail e
+        (Pass header) (Pass inlineHeader) (Pass platformHeader) = Pass (Triple header inlineHeader platformHeader)
+    )
+  )
+  | exports (\(Triple header inlineHeader platformHeader) bObject (
+    "header" → bPath header,
+    "inlineHeader" → bPath inlineHeader,
+    "platformHeader" → bPath platformHeader,
+    Nil
+  ))
+  | makeBuildTarget
+
+publish buildTargets = freedomHeaderGeneratorBuildTarget, Nil

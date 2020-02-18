@@ -34,3 +34,33 @@ global def runDTC options =
   makePlan cmdline inputs
   | runJob
   | getJobOutput
+
+def jDTCFormat = jStringEnum (
+  "dtb" →  DTC_DTB,
+  "dts" → DTC_DTS,
+  "fs" → DTC_FS,
+  Nil
+)
+
+global def dtcBuildTarget =
+  baseBuildTargetPlan "dtc"
+  | dependsOnFn "inputFile" (_)
+  | dependsOn "inputFormat" jDTCFormat
+  | dependsOnFn "otherInputs" jNestedArrayMap
+  | dependsOn "outputFile" jString
+  | dependsOn "outputFormat" jDTCFormat
+  | definedAs (
+    \inFile
+    \inFormat
+    \otherInputs
+    \outFile
+    \outFormat
+    \_
+    makeDTCOptions inFormat outFormat inFile otherInputs outFile
+    | runDTC
+    | getPathResult
+  )
+  | exports bPath
+  | makeBuildTarget
+
+publish buildTargets = dtcBuildTarget, Nil
