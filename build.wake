@@ -22,19 +22,20 @@ global def freedomDevicetreeToolsPath = "{installDir}/bin"
 
 global target freedomDevicetreeToolsInstall Unit =
   def wrapperScript = source "{here}/scripts/autoconf_wrapper".simplify
-  def runDir = here
-  def cmdline =
-    relative runDir wrapperScript.getPathName,
-    "--configure-args=",
-    "--install-dir={relative runDir installDir}",
-    Nil
+  def cmdline = "bash", "-c", "%
+    set -eo pipefail
+    installDir=$(pwd)/%{installDir}
+    cd %{here}
+    ./configure --prefix=
+    make
+    make DESTDIR=$installDir install
+    %", Nil
   def inputs = mkdir installDir, sources here `.*\.(c|c\+\+|cpp|h|h\+\+|hpp)`
   def foutputs _ = files installDir `.*`
 
   makePlan cmdline inputs
   | setPlanLocalOnly True
   | setPlanFnOutputs foutputs
-  | setPlanDirectory runDir
   | runJob
   | getJobOutputs
 
@@ -111,11 +112,13 @@ global def runFreedomMetalHeaderGenerator options =
   def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   def outputs = makePlan cmdline inputs | runJob | getJobOutputs
 
-  def get file =
-    outputs
-    | filter (file ==* _.getPathName)
-    | head
-    | getOrElse "{tool.getPathName}: failed to produce {file}".makeError.makeBadPath
+  def get file = match (outputs | map getPathResult | findFail)
+    Fail e = makeBadPath e
+    Pass _ =
+      outputs
+      | filter (file ==* _.getPathName)
+      | head
+      | getOrElse "{tool.getPathName}: failed to produce {file}".makeError.makeBadPath
 
   def inlineHeaderFile = replace `\.h$` "-inline.h" outputFile
 
