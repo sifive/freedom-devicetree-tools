@@ -1,0 +1,8 @@
+/include/ "core.dts"
+/ {
+	chosen {
+		metal,entry = <&{/memory@80000000} 0 0>;
+		metal,boothart = <&{/cpus/cpu@0}>;
+		stdout-path = "/soc/uart@10013000:115200";
+	};
+};

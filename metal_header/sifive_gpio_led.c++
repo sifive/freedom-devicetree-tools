@@ -184,12 +184,18 @@ void sifive_gpio_led::create_handles() {
 
   emit_struct_pointer_begin("sifive_gpio_led", "__metal_led_table", "[]");
   if (num_leds) {
-    for (int i = 0; i < num_leds; i++) {
-      emit_struct_pointer_element(
-          "led", i / 3,
-          ((i % 3) == 0) ? "red" : ((i % 3) == 1) ? "green" : "blue",
-          ((i + 1) == num_leds) ? "};\n\n" : ",\n");
-    }
+    int i = 0;
+    dtb.match(std::regex(compat_string), [&](node n) {
+      os << "\t\t\t\t\t&__metal_dt_" << n.handle();
+
+      if ((i + 1) == num_leds) {
+        os << "};\n\n";
+      } else {
+        os << ",\n";
+      }
+
+      i++;
+    });
   } else {
     emit_struct_pointer_end("NULL");
   }

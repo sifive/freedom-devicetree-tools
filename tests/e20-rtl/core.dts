@@ -1,0 +1,74 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "SiFive,FE200-dev", "fe200-dev", "sifive-dev";
+	model = "SiFive,FE200";
+	L11: cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		L3: cpu@0 {
+			clock-frequency = <0>;
+			compatible = "sifive,caboose0", "riscv";
+			device_type = "cpu";
+			hardware-exec-breakpoint-count = <4>;
+			reg = <0x0>;
+			riscv,isa = "rv32imc";
+			status = "okay";
+			timebase-frequency = <1000000>;
+			L2: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+	L10: soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "SiFive,FE200-soc", "fe200-soc", "sifive-soc", "simple-bus";
+		ranges;
+		L7: ahb-sys-port@20000000 {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "sifive,ahb-sys-port", "sifive,ahb-port", "sifive,sys-port", "simple-external-bus", "simple-bus";
+			ranges = <0x20000000 0x20000000 0x20000000>;
+			sifive,port-width-bytes = <4>;
+		};
+		L1: debug-controller@0 {
+			compatible = "sifive,debug-013", "riscv,debug-013";
+			debug-attach = "jtag";
+			interrupts-extended = <&L2 65535>;
+			reg = <0x0 0x1000>;
+			reg-names = "control";
+		};
+		L0: interrupt-controller@2000000 {
+			#interrupt-cells = <1>;
+			compatible = "sifive,clic0";
+			interrupt-controller;
+			interrupts-extended = <&L2 3 &L2 7 &L2 11>;
+			reg = <0x2000000 0x1000000>;
+			reg-names = "control";
+			sifive,numintbits = <2>;
+			sifive,numints = <48>;
+			sifive,numlevels = <16>;
+		};
+		L6: local-external-interrupts-0 {
+			compatible = "sifive,local-external-interrupts0";
+			interrupt-parent = <&L0>;
+			interrupts = <16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47>;
+		};
+		L4: pbusclock {
+			#clock-cells = <0>;
+			clock-frequency = <100000000>;
+			clock-output-names = "pbusclock";
+			compatible = "fixed-clock";
+		};
+		L8: teststatus@4000 {
+			compatible = "sifive,test0";
+			reg = <0x4000 0x1000>;
+			reg-names = "control";
+		};
+	};
+};
