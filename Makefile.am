@@ -30,8 +30,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/riscv_plic0.h \
 	metal_header/riscv_pmp.c++ \
 	metal_header/riscv_pmp.h \
-        metal_header/sifive_ccache0.c++ \
-        metal_header/sifive_ccache0.h \
+	metal_header/sifive_ccache0.c++ \
+	metal_header/sifive_ccache0.h \
 	metal_header/sifive_clic0.c++ \
 	metal_header/sifive_clic0.h \
 	metal_header/sifive_fe310_g000_hfrosc.c++ \
@@ -60,6 +60,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_i2c0.h \
 	metal_header/sifive_local_external_interrupts0.c++ \
 	metal_header/sifive_local_external_interrupts0.h \
+	metal_header/sifive_pwm0.c++ \
+	metal_header/sifive_pwm0.h \
 	metal_header/sifive_rtc0.c++ \
 	metal_header/sifive_rtc0.h \
 	metal_header/sifive_spi0.c++ \
