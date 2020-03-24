@@ -46,20 +46,20 @@ void Device::emit_comment(const node &n) {
 string Device::def_handle(const node &n) {
   string name = n.get_fields<string>("compatible")[0];
 
-  return def_handle(name,n);
+  return def_handle(name, n);
 }
 
 string Device::def_handle(std::string name, const node &n) {
   string instance = n.instance();
 
   std::transform(name.begin(), name.end(), name.begin(),
-                [](unsigned char c) -> char {
-                  if (c == ',' || c == '-' ) {
-                    return '_';
-                  }
-                  return toupper(c);
-                });
-  
+                 [](unsigned char c) -> char {
+                   if (c == ',' || c == '-') {
+                     return '_';
+                   }
+                   return toupper(c);
+                 });
+
   std::transform(instance.begin(), instance.end(), instance.begin(), toupper);
 
   return "METAL_" + name + "_" + instance;
@@ -67,7 +67,7 @@ string Device::def_handle(std::string name, const node &n) {
 
 string Device::def_handle_index(const node &n) {
   string name = n.get_fields<string>("compatible")[0];
-  return def_handle_index(name ,n);
+  return def_handle_index(name, n);
 }
 
 string Device::def_handle_index(std::string name, const node &n) {
@@ -75,7 +75,7 @@ string Device::def_handle_index(std::string name, const node &n) {
 
   std::transform(name.begin(), name.end(), name.begin(),
                  [](unsigned char c) -> char {
-                   if (c == ',' || c == '-' ) {
+                   if (c == ',' || c == '-') {
                      return '_';
                    }
                    return toupper(c);
@@ -142,14 +142,15 @@ void Device::emit_base(const node &n) {
   }
 }
 
-void Device::emit_base(std::string compat,const node &n) {
-  os << "#define " << def_handle(compat, n) << "_" METAL_BASE_ADDRESS_LABEL << " "
-     << base_address(n) << "UL" << std::endl;
+void Device::emit_base(std::string compat, const node &n) {
+  os << "#define " << def_handle(compat, n) << "_" METAL_BASE_ADDRESS_LABEL
+     << " " << base_address(n) << "UL" << std::endl;
 
   // If the address is very small, it already is an index.
   if (n.instance().length() > 2) {
-    os << "#define " << def_handle_index(compat, n) << "_" METAL_BASE_ADDRESS_LABEL
-       << " " << base_address(n) << "UL" << std::endl;
+    os << "#define " << def_handle_index(compat, n)
+       << "_" METAL_BASE_ADDRESS_LABEL << " " << base_address(n) << "UL"
+       << std::endl;
   }
 }
 
@@ -167,13 +168,13 @@ void Device::emit_size(const node &n) {
 }
 
 void Device::emit_size(std::string compat, const node &n) {
-  os << "#define " << def_handle(compat, n) << "_" << METAL_SIZE_LABEL << " " << size(n)
-     << "UL" << std::endl;
+  os << "#define " << def_handle(compat, n) << "_" << METAL_SIZE_LABEL << " "
+     << size(n) << "UL" << std::endl;
 
   // If the address is very small, it already is an index.
   if (n.instance().length() > 2) {
-    os << "#define " << def_handle_index(compat, n) << "_" << METAL_SIZE_LABEL << " "
-       << size(n) << "UL" << std::endl;
+    os << "#define " << def_handle_index(compat, n) << "_" << METAL_SIZE_LABEL
+       << " " << size(n) << "UL" << std::endl;
   }
 }
 
