@@ -1,22 +1,34 @@
 /* Copyright 2019 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#ifndef __BARE_HEADER_SIFIVE_HCA_0_5_0__H
-#define __BARE_HEADER_SIFIVE_HCA_0_5_0__H
+#ifndef __BARE_HEADER_SIFIVE_HCA_0_5_x__H
+#define __BARE_HEADER_SIFIVE_HCA_0_5_x__H
 
 #include "bare_header/device.h"
 
 #include <regex>
 #include <set>
+#include <cstdio>
 
-class sifive_hca_0_5_0 : public Device {
+class sifive_hca_0_5_x : public Device {
 public:
-  sifive_hca_0_5_0(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "sifive,hca-0.5.0") {}
+  sifive_hca_0_5_x(std::ostream &os, const fdt &dtb)
+      : Device(os, dtb, "sifive,hca-0.5.(\\d+)") {}
 
   void emit_defines() override {
+    emit_compat("sifive,hca");
+    os << std::endl;
+
     dtb.match(std::regex(compat_string), [&](node n) {
+      string instance = n.get_fields<string>("compatible")[0];
+      int major, minor, patch;
+
       emit_comment(n);
+      int ret = std::sscanf(instance.c_str(), "sifive,hca-%d.%d.%d", &major, &minor, &patch);
+      if (ret == 3) {
+        emit_offset("sifive,hca", "VERSION", (major << 16) + (minor << 8) + patch);
+        os << std::endl;
+      }
 
       emit_base("sifive,hca", n);
       emit_size("sifive,hca", n);
@@ -26,17 +38,15 @@ public:
   }
 
   void emit_offsets() override {
-    if (dtb.match(std::regex(compat_string), [](const node n) {}) != 0) {
-      emit_compat();
-
+    if (dtb.match(std::regex(compat_string), [](node n) {}) != 0) {
       /* Add offsets here */
-      emit_offset("sifive,hca", "VERSION", 0x000500);
       emit_offset("sifive,hca", "CR", 0x0);
       emit_offset("sifive,hca", "AES_CR", 0x10);
       emit_offset("sifive,hca", "AES_ALEN", 0x20);
       emit_offset("sifive,hca", "AES_PDLEN", 0x28);
       emit_offset("sifive,hca", "AES_KEY", 0x30);
       emit_offset("sifive,hca", "AES_INITV", 0x50);
+      emit_offset("sifive,hca", "SHA_CR", 0x60);
       emit_offset("sifive,hca", "FIFO_IN", 0x70);
       emit_offset("sifive,hca", "AES_OUT", 0x80);
       emit_offset("sifive,hca", "AES_AUTH", 0x90);

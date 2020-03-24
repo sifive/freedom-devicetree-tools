@@ -121,7 +121,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_uart0.h \
 	bare_header/sifive_wdog0.h \
 	bare_header/ucb_htif0.h \
-	bare_header/sifive_hca_0_5_0.h \
+	bare_header/sifive_hca_0_5_x.h \
 	ranges.c++ \
 	ranges.h
 
