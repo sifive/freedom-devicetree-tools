@@ -36,12 +36,16 @@ public:
   void emit_comment(const node &n);
 
   string def_handle(const node &n);
+  string def_handle(string name, const node &n);
   string def_handle_index(const node &n);
+  string def_handle_index(string name, const node &n);
   virtual uint64_t base_address(const node &n);
   void emit_base(const node &n);
+  void emit_base(string name, const node &n);
 
   virtual uint64_t size(const node &n);
   void emit_size(const node &n);
+  void emit_size(string name, const node &n);
 
   void emit_compat();
   void emit_compat(string compat);
