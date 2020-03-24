@@ -39,6 +39,7 @@
 #include "bare_header/sifive_gpio_buttons.h"
 #include "bare_header/sifive_gpio_leds.h"
 #include "bare_header/sifive_gpio_switches.h"
+#include "bare_header/sifive_hca_0_5_0.h"
 #include "bare_header/sifive_i2c0.h"
 #include "bare_header/sifive_local_external_interrupts0.h"
 #include "bare_header/sifive_pwm0.h"
@@ -168,6 +169,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_uart0(os, dtb));
   devices.push_back(new sifive_wdog0(os, dtb));
   devices.push_back(new ucb_htif0(os, dtb));
+  devices.push_back(new sifive_hca_0_5_0(os, dtb));
 
   for (auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->emit_defines();
