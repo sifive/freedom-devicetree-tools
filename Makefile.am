@@ -99,6 +99,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_buserror0.h \
 	bare_header/sifive_ccache0.h \
 	bare_header/sifive_clic0.h \
+	bare_header/sifive_error0.h \
 	bare_header/sifive_fe310_g000_hfrosc.h \
 	bare_header/sifive_fe310_g000_hfxosc.h \
 	bare_header/sifive_fe310_g000_lfrosc.h \
