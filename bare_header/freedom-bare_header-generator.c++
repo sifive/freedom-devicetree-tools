@@ -26,8 +26,10 @@
 
 /* SiFive Blocks */
 #include "bare_header/sifive_aon0.h"
+#include "bare_header/sifive_buserror0.h"
 #include "bare_header/sifive_ccache0.h"
 #include "bare_header/sifive_clic0.h"
+#include "bare_header/sifive_error0.h"
 #include "bare_header/sifive_fe310_g000_hfrosc.h"
 #include "bare_header/sifive_fe310_g000_hfxosc.h"
 #include "bare_header/sifive_fe310_g000_lfrosc.h"
@@ -145,8 +147,10 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
 
   /* SiFive Blocks */
   devices.push_back(new sifive_aon0(os, dtb));
+  devices.push_back(new sifive_buserror0(os, dtb));
   devices.push_back(new sifive_ccache0(os, dtb));
   devices.push_back(new sifive_clic0(os, dtb));
+  devices.push_back(new sifive_error0(os, dtb));
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_hfxosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_lfrosc(os, dtb));

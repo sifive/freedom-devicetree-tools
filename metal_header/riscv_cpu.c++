@@ -36,6 +36,10 @@ void riscv_cpu::declare_inlines() {
       func =
           create_inline_dec("num_pmp_regions", "int", "struct metal_cpu *cpu");
       extern_inlines.push_back(func);
+
+      func = create_inline_dec("buserror", "struct metal_buserror *",
+                               "struct metal_cpu *cpu");
+      extern_inlines.push_back(func);
     }
     count++;
   });
@@ -55,6 +59,7 @@ void riscv_cpu::define_inlines() {
   Inline *func_tf;
   Inline *func_ic;
   Inline *func_pmpregions;
+  Inline *func_buserror;
   std::list<Inline *> extern_inlines;
 
   int count = 0;
@@ -64,6 +69,12 @@ void riscv_cpu::define_inlines() {
     n.maybe_tuple("riscv,pmpregions", tuple_t<uint32_t>(),
                   [&]() { num_pmp_regions = 0; },
                   [&](uint32_t num) { num_pmp_regions = num; });
+
+    std::string buserror_instance = "";
+    n.maybe_tuple(
+        "sifive,buserror", tuple_t<node>(),
+        [&]() { buserror_instance = "NULL"; },
+        [&](node n) { buserror_instance = "&__metal_dt_" + n.handle(); });
 
     /* Get the timebase frequency from the CPU node or its parent */
     int tf;
@@ -97,6 +108,12 @@ void riscv_cpu::define_inlines() {
           "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
           std::to_string(num_pmp_regions), "struct metal_cpu *cpu");
       extern_inlines.push_back(func_pmpregions);
+
+      func_buserror = create_inline_def(
+          "buserror", "struct metal_buserror *",
+          "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
+          buserror_instance, "struct metal_cpu *cpu");
+      extern_inlines.push_back(func_buserror);
     } else {
       add_inline_body(func_hartid,
                       "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
@@ -110,12 +127,16 @@ void riscv_cpu::define_inlines() {
       add_inline_body(func_pmpregions,
                       "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
                       std::to_string(num_pmp_regions));
+      add_inline_body(func_buserror,
+                      "(uintptr_t)cpu == (uintptr_t)&__metal_dt_" + n.handle(),
+                      buserror_instance);
     }
     if ((count + 1) == num_cpus) {
       add_inline_body(func_hartid, "else", "-1");
       add_inline_body(func_tf, "else", "0");
       add_inline_body(func_ic, "else", "NULL");
       add_inline_body(func_pmpregions, "else", "0");
+      add_inline_body(func_buserror, "else", "NULL");
     }
     count++;
   });
