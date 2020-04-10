@@ -102,11 +102,9 @@ void sifive_uart0::define_inlines() {
     std::string int_parent_value = "NULL";
     n.maybe_tuple("interrupt-parent", tuple_t<node>(), [&]() {},
                   [&](node m) {
-                    if (count == 0) {
-                      int_parent_value =
-                          "(struct metal_interrupt *)&__metal_dt_" +
-                          m.handle() + ".controller";
-                    }
+                    int_parent_value =
+                        "(struct metal_interrupt *)&__metal_dt_" + m.handle() +
+                        ".controller";
                   });
     std::string int_line_value = "0";
     n.maybe_tuple(
