@@ -29,6 +29,7 @@
 #include <sifive_gpio_switch.h>
 #include <sifive_i2c0.h>
 #include <sifive_local_external_interrupts0.h>
+#include <sifive_lpdma0.h>
 #include <sifive_rtc0.h>
 #include <sifive_spi0.h>
 #include <sifive_test0.h>
@@ -150,6 +151,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_ccache0(os, dtb));
   devices.push_back(new sifive_clic0(os, dtb));
   devices.push_back(new sifive_local_external_interrupts0(os, dtb));
+  devices.push_back(new sifive_lpdma0(os, dtb));
   devices.push_back(new sifive_global_external_interrupts0(os, dtb));
   devices.push_back(new sifive_gpio0(os, dtb));
   devices.push_back(new sifive_gpio_button(os, dtb));
