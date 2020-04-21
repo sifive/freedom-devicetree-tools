@@ -180,9 +180,3 @@ void sifive_local_external_interrupts0::define_structs() {
     emit_struct_end();
   });
 }
-
-void sifive_local_external_interrupts0::create_handles() {
-  dtb.match(std::regex(compat_string), [&](node n) {
-    emit_def_handle("__METAL_DT_SIFIVE_LOCAL_EXINTR0_HANDLE", n, ".irc");
-  });
-}
