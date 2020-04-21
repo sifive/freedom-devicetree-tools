@@ -35,8 +35,8 @@ class sifive_lpdma0 : public Device {
 	emit_offset("CONTROL", 0x4);
 	emit_offset("STATUS", 0x8);
 
-	emit_offset("JOB_QUEUE", 0xC);
-	emit_offset("SEC_FAULT", 0x10);
+	emit_offset("JOBQ_PTR", 0xC);
+	emit_offset("EXEC", 0x10);
 
 	os << std::endl;
       }
