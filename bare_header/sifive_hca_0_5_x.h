@@ -6,9 +6,9 @@
 
 #include "bare_header/device.h"
 
+#include <cstdio>
 #include <regex>
 #include <set>
-#include <cstdio>
 
 class sifive_hca_0_5_x : public Device {
 public:
@@ -24,9 +24,11 @@ public:
       int major, minor, patch;
 
       emit_comment(n);
-      int ret = std::sscanf(instance.c_str(), "sifive,hca-%d.%d.%d", &major, &minor, &patch);
+      int ret = std::sscanf(instance.c_str(), "sifive,hca-%d.%d.%d", &major,
+                            &minor, &patch);
       if (ret == 3) {
-        emit_offset("sifive,hca", "VERSION", (major << 16) + (minor << 8) + patch);
+        emit_offset("sifive,hca", "VERSION",
+                    (major << 16) + (minor << 8) + patch);
         os << std::endl;
       }
 

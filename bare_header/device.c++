@@ -94,22 +94,21 @@ static mem_map_t extract_mem_map(const node &n) {
   mem_map_t m;
 
   if (n.field_exists("reg-names")) {
-    n.named_tuples(
-        "reg-names", "reg",
-        /* "control" goes first, if this exists then it will return
-         * the control registers and not the "mem" registers */
-        "control", tuple_t<target_addr, target_size>(),
-        [&](target_addr b, target_size s) {
-          m.base = b;
-          m.size = s;
-        },
-        /* Return the "mem" registers if and only if there is no
-         * "control" registers */
-        "mem", tuple_t<target_addr, target_size>(),
-        [&](target_addr b, target_size s) {
-          m.base = b;
-          m.size = s;
-        });
+    n.named_tuples("reg-names", "reg",
+                   /* "control" goes first, if this exists then it will return
+                    * the control registers and not the "mem" registers */
+                   "control", tuple_t<target_addr, target_size>(),
+                   [&](target_addr b, target_size s) {
+                     m.base = b;
+                     m.size = s;
+                   },
+                   /* Return the "mem" registers if and only if there is no
+                    * "control" registers */
+                   "mem", tuple_t<target_addr, target_size>(),
+                   [&](target_addr b, target_size s) {
+                     m.base = b;
+                     m.size = s;
+                   });
   } else if (n.field_exists("ranges")) {
     ranges_t ranges = get_ranges(n);
 
