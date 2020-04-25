@@ -16,9 +16,6 @@ public:
       : Device(os, dtb, "sifive,hca-0.5.(\\d+)") {}
 
   void emit_defines() override {
-    emit_compat("sifive,hca");
-    os << std::endl;
-
     dtb.match(std::regex(compat_string), [&](node n) {
       string instance = n.get_fields<string>("compatible")[0];
       int major, minor, patch;
@@ -40,7 +37,7 @@ public:
   }
 
   void emit_offsets() override {
-    if (dtb.match(std::regex(compat_string), [](node n) {}) != 0) {
+    if (dtb.match(std::regex(compat_string), [](const node n) {}) != 0) {
       /* Add offsets here */
       emit_offset("sifive,hca", "CR", 0x0);
       emit_offset("sifive,hca", "AES_CR", 0x10);
