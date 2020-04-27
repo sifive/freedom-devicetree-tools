@@ -102,7 +102,7 @@ global def runFreedomBareHeaderGenerator options =
 global target installFreedomDevicetreeTools installPath =
   def generatorSources =
     # The regex picks up file extensions for C++ and autotools
-    def extRegex = `.*\.(h,h\+\+,c,c\+\+,m4,am,in,ac)` 
+    def extRegex = `.*\.(h|h\+\+|c|c\+\+|m4|am|in|ac)`
     # Include the README in installations
     source "{here}/README.md",
     # Include the relevant scripts installed by autoreconf -i
