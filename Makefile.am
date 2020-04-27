@@ -74,6 +74,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_trace.h \
 	metal_header/sifive_uart0.c++ \
 	metal_header/sifive_uart0.h \
+	metal_header/sifive_simuart0.c++ \
+	metal_header/sifive_simuart0.h \
 	metal_header/sifive_wdog0.c++ \
 	metal_header/sifive_wdog0.h \
 	metal_header/stdout_path.c++ \
@@ -118,7 +120,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_spi0.h \
 	bare_header/sifive_test0.h \
 	bare_header/sifive_trace.h \
-	bare_header/sifive_uart0.h \
+	bare_header/sifive_simuart0.h \
 	bare_header/sifive_wdog0.h \
 	bare_header/ucb_htif0.h \
 	ranges.c++ \
