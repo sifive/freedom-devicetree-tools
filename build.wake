@@ -88,3 +88,37 @@ global def runFreedomBareHeaderGenerator options =
     Nil
   def inputs = mkdir "{outputFile}/..".simplify, tool, dtbFile, Nil
   makePlan cmdline inputs | runJob | getJobOutput
+
+#########################################################################
+# installFreedomDevicetreeTools allows wake flows to install
+# devicetree tools in customer deliveries and exclude all content which
+# does not directly contribute to the generation of customer BSP content.
+# It takes the following parameter
+#   - installPath: the path to install the generator in
+# For example, if you call `installFreedomDevicetreeTools freedom-e-sdk"`
+# the customer-relevant sources for devicetree tools will be found in
+#   freedom-e-sdk/freedom-devicetree-tools
+#########################################################################
+global target installFreedomDevicetreeTools installPath =
+  def generatorSources =
+    # The regex picks up file extensions for C++ and autotools
+    def extRegex = `.*\.(h,h\+\+,c,c\+\+,m4,am,in,ac)` 
+    # Include the README in installations
+    source "{here}/README.md",
+    # Include the relevant scripts installed by autoreconf -i
+    source "{here}/compile",
+    source "{here}/configure",
+    source "{here}/depcomp",
+    source "{here}/install-sh",
+    source "{here}/missing",
+    source "{here}/test-driver",
+    # Include the LICENSE files
+    sources here `LICENSE.*` ++
+    # Include all source code and autotools content by file extension
+    sources here                  extRegex ++
+    sources "{here}/m4"           extRegex ++
+    sources "{here}/bare_header"  extRegex ++
+    sources "{here}/metal_header" extRegex
+
+  mkdir installPath,
+  map (installIn installPath) generatorSources
