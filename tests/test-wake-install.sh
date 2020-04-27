@@ -20,4 +20,4 @@ if [ ! -f ${INSTALL_PATH}/freedom-devicetree-tools/README.md ] ; then
         exit 2
 fi
 
-cd ${INSTALL_PATH}/freedom-devicetree-tools && ./configure && make
+cd ${INSTALL_PATH}/freedom-devicetree-tools && ./configure && make -j$(nproc)
