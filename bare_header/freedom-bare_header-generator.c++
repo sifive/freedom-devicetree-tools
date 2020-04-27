@@ -50,6 +50,7 @@
 #include "bare_header/sifive_test0.h"
 #include "bare_header/sifive_trace.h"
 #include "bare_header/sifive_uart0.h"
+#include "bare_header/sifive_simuart0.h"
 #include "bare_header/sifive_wdog0.h"
 #include "bare_header/ucb_htif0.h"
 
@@ -171,6 +172,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_trace(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
+  devices.push_back(new sifive_simuart0(os, dtb));
   devices.push_back(new sifive_wdog0(os, dtb));
   devices.push_back(new ucb_htif0(os, dtb));
   devices.push_back(new sifive_hca_0_5_x(os, dtb));
