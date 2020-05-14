@@ -32,11 +32,11 @@
 #include <sifive_local_external_interrupts0.h>
 #include <sifive_pwm0.h>
 #include <sifive_rtc0.h>
+#include <sifive_simuart0.h>
 #include <sifive_spi0.h>
 #include <sifive_test0.h>
 #include <sifive_trace.h>
 #include <sifive_uart0.h>
-#include <sifive_simuart0.h>
 #include <sifive_wdog0.h>
 #include <ucb_htif0.h>
 

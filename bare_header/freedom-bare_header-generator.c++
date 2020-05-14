@@ -46,11 +46,11 @@
 #include "bare_header/sifive_local_external_interrupts0.h"
 #include "bare_header/sifive_pwm0.h"
 #include "bare_header/sifive_rtc0.h"
+#include "bare_header/sifive_simuart0.h"
 #include "bare_header/sifive_spi0.h"
 #include "bare_header/sifive_test0.h"
 #include "bare_header/sifive_trace.h"
 #include "bare_header/sifive_uart0.h"
-#include "bare_header/sifive_simuart0.h"
 #include "bare_header/sifive_wdog0.h"
 #include "bare_header/ucb_htif0.h"
 
