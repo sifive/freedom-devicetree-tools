@@ -147,7 +147,7 @@ void sifive_buserror0::define_inlines() {
 void sifive_buserror0::declare_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
     emit_comment(n);
-    os << "struct metal_buserror"
+    os << "extern struct metal_buserror"
           " __metal_dt_"
        << n.handle() << ";\n\n";
   });

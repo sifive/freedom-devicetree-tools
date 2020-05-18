@@ -247,15 +247,15 @@ std::string Device::platform_define_offset(node n, std::string suffix) {
  * "__metal_" namespace */
 void Device::emit_struct_decl(std::string type, const node &n) {
   emit_comment(n);
-  os << "struct __metal_driver_" << type << " __metal_dt_" << n.handle()
+  os << "extern struct __metal_driver_" << type << " __metal_dt_" << n.handle()
      << ";\n\n";
 }
 
 void Device::emit_struct_decl(std::string type, std::string suffix,
                               const node &n) {
   emit_comment(n);
-  os << "struct __metal_driver_" << type << "_" << suffix << " __metal_dt_"
-     << n.handle() << "_" << suffix << ";\n\n";
+  os << "extern struct __metal_driver_" << type << "_" << suffix
+     << " __metal_dt_" << n.handle() << "_" << suffix << ";\n\n";
 }
 
 void Device::emit_struct_begin(std::string type, const node &n) {
