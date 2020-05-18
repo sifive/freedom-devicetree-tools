@@ -317,3 +317,25 @@ void sifive_simuart0::define_structs()
       emit_struct_end();
     });
 }
+
+void sifive_simuart0::create_handles() {
+  emit_def("__METAL_DT_MAX_SIMUARTS", std::to_string(num_uarts));
+
+  emit_struct_pointer_begin("sifive_simuart0", "__metal_simuart_table", "[]");
+  if (num_uarts) {
+    int i = 0;
+    dtb.match(std::regex(compat_string), [&](node n) {
+      os << "\t\t\t\t\t&__metal_dt_" << n.handle();
+
+      if ((i + 1) == num_uarts) {
+        os << "};\n\n";
+      } else {
+        os << ",\n";
+      }
+
+      i++;
+    });
+  } else {
+    emit_struct_pointer_end("NULL");
+  }
+}
