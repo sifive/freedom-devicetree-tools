@@ -258,9 +258,7 @@ void sifive_i2c0::declare_structs() {
 
 void sifive_i2c0::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_i2c0", n);
-    emit_struct_field("i2c.vtable", "&__metal_driver_vtable_sifive_i2c0.i2c");
-    emit_struct_end();
+    emit_struct_empty_define("sifive_i2c0", n);
   });
 }
 
