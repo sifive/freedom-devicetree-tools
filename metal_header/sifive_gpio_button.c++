@@ -228,12 +228,7 @@ void sifive_gpio_button::declare_structs() {
 
 void sifive_gpio_button::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_gpio_button", n);
-
-    emit_struct_field("button.vtable",
-                      "&__metal_driver_vtable_sifive_button.button_vtable");
-
-    emit_struct_end();
+    emit_struct_empty_define("sifive_gpio_button", n);
   });
 }
 
