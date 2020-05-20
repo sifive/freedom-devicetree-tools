@@ -78,6 +78,8 @@ public:
   void emit_struct_decl(std::string type, const node &n);
   void emit_struct_decl(std::string type, std::string suffix, const node &n);
 
+  void emit_struct_empty_define(std::string type, const node &n);
+  void emit_struct_empty_define(std::string type, std::string suffix, const node &n);
   void emit_struct_begin(std::string type, const node &n);
   void emit_struct_begin(std::string type, std::string suffix, const node &n);
 
