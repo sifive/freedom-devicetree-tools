@@ -186,11 +186,7 @@ void sifive_rtc0::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
     emit_comment(n);
     os << "struct __metal_driver_sifive_rtc0 __metal_dt_rtc_" << n.instance()
-       << " = {\n";
-
-    emit_struct_field("rtc.vtable", "&__metal_driver_vtable_sifive_rtc0.rtc");
-
-    emit_struct_end();
+       << ";\n";
   });
 }
 
