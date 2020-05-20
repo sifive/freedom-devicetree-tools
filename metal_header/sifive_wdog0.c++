@@ -182,12 +182,7 @@ void sifive_wdog0::declare_structs() {
 
 void sifive_wdog0::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_wdog0", n);
-
-    emit_struct_field("watchdog.vtable",
-                      "&__metal_driver_vtable_sifive_wdog0.watchdog");
-
-    emit_struct_end();
+    emit_struct_empty_define("sifive_wdog0", n);
   });
 }
 
