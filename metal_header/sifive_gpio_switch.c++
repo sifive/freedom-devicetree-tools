@@ -224,12 +224,7 @@ void sifive_gpio_switch::declare_structs() {
 
 void sifive_gpio_switch::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_gpio_switch", n);
-
-    emit_struct_field("flip.vtable",
-                      "&__metal_driver_vtable_sifive_switch.switch_vtable");
-
-    emit_struct_end();
+    emit_struct_empty_define("sifive_gpio_switch", n);
   });
 }
 
