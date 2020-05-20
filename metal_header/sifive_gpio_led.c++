@@ -170,12 +170,7 @@ void sifive_gpio_led::declare_structs() {
 
 void sifive_gpio_led::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_gpio_led", n);
-
-    emit_struct_field("led.vtable",
-                      "&__metal_driver_vtable_sifive_led.led_vtable");
-
-    emit_struct_end();
+    emit_struct_empty_define("sifive_gpio_led", n);
   });
 }
 
