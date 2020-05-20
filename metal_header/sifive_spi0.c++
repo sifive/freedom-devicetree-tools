@@ -179,11 +179,7 @@ void sifive_spi0::declare_structs() {
 
 void sifive_spi0::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_spi0", n);
-
-    emit_struct_field("spi.vtable", "&__metal_driver_vtable_sifive_spi0.spi");
-
-    emit_struct_end();
+    emit_struct_empty_define("sifive_spi0", n);
   });
 }
 
