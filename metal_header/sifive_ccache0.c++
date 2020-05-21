@@ -72,17 +72,12 @@ void sifive_ccache0::declare_structs() {
 
 void sifive_ccache0::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_ccache0", n);
-
-    emit_struct_field("cache.vtable",
-                      "&__metal_driver_vtable_sifive_ccache0.cache");
-
-    emit_struct_end();
+    emit_struct_empty_define("sifive_ccache0", n);
   });
 }
 
 void sifive_ccache0::create_handles() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_def_handle("__METAL_DT_SIFIVE_CCACHE0_HANDLE", n, ".cache");
+    emit_def_handle("__METAL_DT_SIFIVE_CCACHE0_HANDLE", n, "");
   });
 }
