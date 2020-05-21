@@ -181,9 +181,8 @@ void sifive_wdog0::declare_structs() {
 }
 
 void sifive_wdog0::define_structs() {
-  dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_empty_define("sifive_wdog0", n);
-  });
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_struct_empty_define("sifive_wdog0", n); });
 }
 
 void sifive_wdog0::create_handles() {

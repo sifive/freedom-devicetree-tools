@@ -335,9 +335,8 @@ void sifive_pwm0::declare_structs() {
 }
 
 void sifive_pwm0::define_structs() {
-  dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_empty_define("sifive_pwm0", n);
-  });
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_struct_empty_define("sifive_pwm0", n); });
 }
 
 void sifive_pwm0::create_handles() {

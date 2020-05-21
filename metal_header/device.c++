@@ -264,10 +264,11 @@ void Device::emit_struct_empty_define(std::string type, const node &n) {
      << ";\n";
 }
 
-void Device::emit_struct_empty_define(std::string type, std::string suffix, const node &n) {
+void Device::emit_struct_empty_define(std::string type, std::string suffix,
+                                      const node &n) {
   emit_comment(n);
-  os << "struct __metal_driver_" << type << "_" << suffix << " __metal_dt_" << n.handle()
-     << "_" << suffix << ";\n";
+  os << "struct __metal_driver_" << type << "_" << suffix << " __metal_dt_"
+     << n.handle() << "_" << suffix << ";\n";
 }
 
 void Device::emit_struct_begin(std::string type, const node &n) {

@@ -169,9 +169,8 @@ void sifive_gpio_led::declare_structs() {
 }
 
 void sifive_gpio_led::define_structs() {
-  dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_empty_define("sifive_gpio_led", n);
-  });
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_struct_empty_define("sifive_gpio_led", n); });
 }
 
 void sifive_gpio_led::create_handles() {

@@ -223,9 +223,8 @@ void sifive_gpio_switch::declare_structs() {
 }
 
 void sifive_gpio_switch::define_structs() {
-  dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_empty_define("sifive_gpio_switch", n);
-  });
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_struct_empty_define("sifive_gpio_switch", n); });
 }
 
 void sifive_gpio_switch::create_handles() {

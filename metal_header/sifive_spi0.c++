@@ -178,9 +178,8 @@ void sifive_spi0::declare_structs() {
 }
 
 void sifive_spi0::define_structs() {
-  dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_empty_define("sifive_spi0", n);
-  });
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_struct_empty_define("sifive_spi0", n); });
 }
 
 void sifive_spi0::create_handles() {

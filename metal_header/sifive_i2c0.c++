@@ -257,9 +257,8 @@ void sifive_i2c0::declare_structs() {
 }
 
 void sifive_i2c0::define_structs() {
-  dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_empty_define("sifive_i2c0", n);
-  });
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_struct_empty_define("sifive_i2c0", n); });
 }
 
 void sifive_i2c0::create_handles() {
