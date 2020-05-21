@@ -161,8 +161,6 @@ void riscv_cpu::declare_structs() {
 void riscv_cpu::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
     emit_struct_begin("cpu", n);
-
-    emit_struct_field("cpu.vtable", "&__metal_driver_vtable_cpu.cpu_vtable");
     emit_struct_field("hpm_count", "0");
     emit_struct_end();
   });
