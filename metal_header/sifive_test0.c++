@@ -97,17 +97,12 @@ void sifive_test0::declare_structs() {
 
 void sifive_test0::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_test0", n);
-
-    emit_struct_field("shutdown.vtable",
-                      "&__metal_driver_vtable_sifive_test0.shutdown");
-
-    emit_struct_end();
+    emit_struct_empty_define("sifive_test0", n);
   });
 }
 
 void sifive_test0::create_handles() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_def_handle("__METAL_DT_SHUTDOWN_HANDLE", n, ".shutdown");
+    emit_def_handle("__METAL_DT_SHUTDOWN_HANDLE", n, "");
   });
 }

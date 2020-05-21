@@ -20,11 +20,7 @@ void ucb_htif0::declare_structs() {
 
 void ucb_htif0::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("ucb_htif0", "shutdown", n);
-    emit_struct_field("vtable", "&__metal_driver_vtable_ucb_htif0_shutdown");
-    emit_struct_field("shutdown.vtable",
-                      "&__metal_driver_vtable_ucb_htif0_shutdown.shutdown");
-    emit_struct_end();
+    emit_struct_empty_define("ucb_htif0", "shutdown", n);
 
     emit_struct_begin("ucb_htif0", "uart", n);
     emit_struct_field("vtable", "&__metal_driver_vtable_ucb_htif0_uart");
@@ -36,6 +32,6 @@ void ucb_htif0::define_structs() {
 
 void ucb_htif0::create_handles() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_def_handle("__METAL_DT_SHUTDOWN_HANDLE", "shutdown", n, ".shutdown");
+    emit_def_handle("__METAL_DT_SHUTDOWN_HANDLE", "shutdown", n, "");
   });
 }
