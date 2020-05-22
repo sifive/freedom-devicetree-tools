@@ -70,8 +70,6 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_spi0.h \
 	metal_header/sifive_test0.c++ \
 	metal_header/sifive_test0.h \
-	metal_header/sifive_trace.c++ \
-	metal_header/sifive_trace.h \
 	metal_header/sifive_uart0.c++ \
 	metal_header/sifive_uart0.h \
 	metal_header/sifive_simuart0.c++ \
