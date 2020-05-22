@@ -38,9 +38,6 @@ void stdout_path::create_handles() {
     for (auto it = compat_strings.begin(); it != compat_strings.end(); it++) {
       if (it->find("ucb,htif0") != string::npos) {
         emit_def("METAL_STDOUT_UCB_HTIF0", "");
-        emit_def_handle("__METAL_DT_STDOUT_UART_HANDLE", "uart", target,
-                        ".uart");
-        emit_def("__METAL_DT_STDOUT_UART_BAUD", baud);
         return;
       } else if (it->find("sifive,uart0") != string::npos) {
         emit_def("METAL_STDOUT_SIFIVE_UART0", "");

@@ -14,7 +14,6 @@ void ucb_htif0::include_headers() {
 void ucb_htif0::declare_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
     emit_struct_decl("ucb_htif0", "shutdown", n);
-    emit_struct_decl("ucb_htif0", "uart", n);
   });
 }
 
@@ -24,12 +23,6 @@ void ucb_htif0::define_structs() {
     emit_struct_field("vtable", "&__metal_driver_vtable_ucb_htif0_shutdown");
     emit_struct_field("shutdown.vtable",
                       "&__metal_driver_vtable_ucb_htif0_shutdown.shutdown");
-    emit_struct_end();
-
-    emit_struct_begin("ucb_htif0", "uart", n);
-    emit_struct_field("vtable", "&__metal_driver_vtable_ucb_htif0_uart");
-    emit_struct_field("uart.vtable",
-                      "&__metal_driver_vtable_ucb_htif0_uart.uart");
     emit_struct_end();
   });
 }
