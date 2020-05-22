@@ -41,11 +41,11 @@ void stdout_path::create_handles() {
         return;
       } else if (it->find("sifive,uart0") != string::npos) {
         emit_def("METAL_STDOUT_SIFIVE_UART0", "");
-        emit_def_handle("__METAL_DT_STDOUT_UART_HANDLE", target, ".uart");
+        emit_def_handle("__METAL_DT_STDOUT_UART_HANDLE", target, "");
         emit_def("__METAL_DT_STDOUT_UART_BAUD", baud);
       } else if (it->find("sifive,simuart0") != string::npos) {
         emit_def("METAL_STDOUT_SIFIVE_SIMUART0", "");
-        emit_def_handle("__METAL_DT_STDOUT_UART_HANDLE", target, ".uart");
+        emit_def_handle("__METAL_DT_STDOUT_UART_HANDLE", target, "");
         emit_def("__METAL_DT_STDOUT_UART_BAUD", baud);
       } else if (it->find("sifive,trace") != string::npos) {
         emit_def("METAL_STDOUT_SIFIVE_TRACE", "");

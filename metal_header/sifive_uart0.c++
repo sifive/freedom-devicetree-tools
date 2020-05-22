@@ -262,12 +262,7 @@ void sifive_uart0::declare_structs() {
 
 void sifive_uart0::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_uart0", n);
-
-    emit_struct_field("uart.vtable",
-                      "&__metal_driver_vtable_sifive_uart0.uart");
-
-    emit_struct_end();
+    emit_struct_empty_define("sifive_uart0", n);
   });
 }
 
