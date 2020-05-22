@@ -51,6 +51,5 @@ void stdout_path::create_handles() {
         emit_def("METAL_STDOUT_SIFIVE_TRACE", "");
       }
     }
-
   });
 }

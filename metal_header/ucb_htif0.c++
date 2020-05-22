@@ -12,9 +12,8 @@ void ucb_htif0::include_headers() {
 }
 
 void ucb_htif0::declare_structs() {
-  dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_decl("ucb_htif0", "shutdown", n);
-  });
+  dtb.match(std::regex(compat_string),
+            [&](node n) { emit_struct_decl("ucb_htif0", "shutdown", n); });
 }
 
 void ucb_htif0::define_structs() {
