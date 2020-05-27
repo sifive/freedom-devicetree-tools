@@ -25,7 +25,7 @@ void memory::include_headers() { os << "#include <metal/memory.h>\n"; }
 
 void memory::declare_structs() {
   auto declare = [&](node n) {
-    os << "struct metal_memory __metal_dt_mem_" << n.handle() << ";\n\n";
+    os << "extern struct metal_memory __metal_dt_mem_" << n.handle() << ";\n\n";
   };
 
   dtb.match(std::regex("sifive,sram0"), declare, std::regex("sifive,testram0"),

@@ -14,6 +14,7 @@ public:
   riscv_pmp(std::ostream &os, const fdt &dtb);
   void include_headers();
   void declare_structs();
+  void define_structs();
   void create_handles();
 };
 

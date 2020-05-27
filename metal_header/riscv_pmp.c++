@@ -20,6 +20,15 @@ void riscv_pmp::include_headers() { os << "#include <metal/pmp.h>\n"; }
 
 void riscv_pmp::declare_structs() {
   if (pmp_present) {
+    os << "extern struct metal_pmp __metal_dt_pmp;\n\n";
+  } else if (dtb.match(std::regex("riscv,pmp"), [](const node n) {}) != 0) {
+    /* This handles the old-style nodes with the riscv,pmp compat strings. */
+    os << "extern struct metal_pmp __metal_dt_pmp;\n\n";
+  }
+}
+
+void riscv_pmp::define_structs() {
+  if (pmp_present) {
     os << "struct metal_pmp __metal_dt_pmp;\n\n";
   } else if (dtb.match(std::regex("riscv,pmp"), [](const node n) {}) != 0) {
     /* This handles the old-style nodes with the riscv,pmp compat strings. */
