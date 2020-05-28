@@ -190,7 +190,7 @@ void sifive_gpio0::define_inlines() {
 
     count++;
     if(count == num_gpios)
-    add_inline_body(func5, "else", "0");
+      add_inline_body(func5, "else", "0");
   });
   os << "\n";
   os << "/* --------------------- sifive_gpio0 ------------ */\n";
