@@ -154,7 +154,14 @@ am_freedom_metal_header_generator_OBJECTS =  \
 	metal_header/freedom_metal_header_generator-sifive_wdog0.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-stdout_path.$(OBJEXT) \
 	metal_header/freedom_metal_header_generator-template_device.$(OBJEXT) \
-	metal_header/freedom_metal_header_generator-ucb_htif0.$(OBJEXT)
+	metal_header/freedom_metal_header_generator-ucb_htif0.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-sifive_nb2emmc.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-sifive_flash.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-sifive_nb2gpio0.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-sifive_nb2i2c0.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-sifive_nb2qspi0.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-sifive_nb2uart0.$(OBJEXT) \
+	metal_header/freedom_metal_header_generator-sifive_nb2wdt.$(OBJEXT)
 freedom_metal_header_generator_OBJECTS =  \
 	$(am_freedom_metal_header_generator_OBJECTS)
 freedom_metal_header_generator_LDADD = $(LDADD)
@@ -626,7 +633,21 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/template_device.c++ \
 	metal_header/template_device.h \
 	metal_header/ucb_htif0.c++ \
-	metal_header/ucb_htif0.h
+	metal_header/ucb_htif0.h \
+	metal_header/sifive_nb2emmc.c++ \
+	metal_header/sifive_nb2emmc.h \
+	metal_header/sifive_flash.c++ \
+	metal_header/sifive_flash.h \
+	metal_header/sifive_nb2gpio0.c++ \
+	metal_header/sifive_nb2gpio0.h \
+	metal_header/sifive_nb2i2c0.c++ \
+	metal_header/sifive_nb2i2c0.h \
+	metal_header/sifive_nb2qspi0.c++ \
+	metal_header/sifive_nb2qspi0.h \
+	metal_header/sifive_nb2uart0.c++ \
+	metal_header/sifive_nb2uart0.h \
+	metal_header/sifive_nb2wdt.c++ \
+	metal_header/sifive_nb2wdt.h
 
 freedom_bare_header_generator_CPPFLAGS = -I$(srcdir) -I$(srcdir)/bare_header
 freedom_bare_header_generator_SOURCES = \
@@ -667,6 +688,12 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_wdog0.h \
 	bare_header/ucb_htif0.h \
 	bare_header/sifive_hca_0_5_x.h \
+	bare_header/sifive_nb2emmc.h \
+	bare_header/sifive_nb2gpio0.h \
+	bare_header/sifive_nb2i2c0.h \
+	bare_header/sifive_nb2qspi0.h \
+	bare_header/sifive_nb2uart0.h \
+	bare_header/sifive_nb2wdt.h \
 	ranges.c++ \
 	ranges.h
 
@@ -1062,6 +1089,27 @@ metal_header/freedom_metal_header_generator-template_device.$(OBJEXT):  \
 metal_header/freedom_metal_header_generator-ucb_htif0.$(OBJEXT):  \
 	metal_header/$(am__dirstamp) \
 	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-sifive_nb2emmc.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-sifive_flash.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-sifive_nb2gpio0.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-sifive_nb2i2c0.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-sifive_nb2qspi0.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-sifive_nb2uart0.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
+metal_header/freedom_metal_header_generator-sifive_nb2wdt.$(OBJEXT):  \
+	metal_header/$(am__dirstamp) \
+	metal_header/$(DEPDIR)/$(am__dirstamp)
 
 freedom-metal_header-generator$(EXEEXT): $(freedom_metal_header_generator_OBJECTS) $(freedom_metal_header_generator_DEPENDENCIES) $(EXTRA_freedom_metal_header_generator_DEPENDENCIES) 
 	@rm -f freedom-metal_header-generator$(EXEEXT)
@@ -1098,6 +1146,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_fe310_g000_lfrosc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_fe310_g000_pll.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_fe310_g000_prci.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_flash.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_fu540_c000_l2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_global_external_interrupts0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_gpio0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_gpio_button.Po@am__quote@
@@ -1106,6 +1156,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_i2c0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_l2pf0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_local_external_interrupts0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2emmc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2gpio0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2i2c0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2qspi0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2uart0.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2wdt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_pwm0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_rtc0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_simuart0.Po@am__quote@
@@ -1721,6 +1777,104 @@ metal_header/freedom_metal_header_generator-ucb_htif0.obj: metal_header/ucb_htif
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/ucb_htif0.c++' object='metal_header/freedom_metal_header_generator-ucb_htif0.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-ucb_htif0.obj `if test -f 'metal_header/ucb_htif0.c++'; then $(CYGPATH_W) 'metal_header/ucb_htif0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/ucb_htif0.c++'; fi`
+
+metal_header/freedom_metal_header_generator-sifive_nb2emmc.o: metal_header/sifive_nb2emmc.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2emmc.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2emmc.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2emmc.o `test -f 'metal_header/sifive_nb2emmc.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2emmc.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2emmc.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2emmc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2emmc.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2emmc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2emmc.o `test -f 'metal_header/sifive_nb2emmc.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2emmc.c++
+
+metal_header/freedom_metal_header_generator-sifive_nb2emmc.obj: metal_header/sifive_nb2emmc.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2emmc.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2emmc.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2emmc.obj `if test -f 'metal_header/sifive_nb2emmc.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2emmc.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2emmc.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2emmc.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2emmc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2emmc.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2emmc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2emmc.obj `if test -f 'metal_header/sifive_nb2emmc.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2emmc.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2emmc.c++'; fi`
+
+metal_header/freedom_metal_header_generator-sifive_flash.o: metal_header/sifive_flash.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_flash.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_flash.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_flash.o `test -f 'metal_header/sifive_flash.c++' || echo '$(srcdir)/'`metal_header/sifive_flash.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_flash.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_flash.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_flash.c++' object='metal_header/freedom_metal_header_generator-sifive_flash.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_flash.o `test -f 'metal_header/sifive_flash.c++' || echo '$(srcdir)/'`metal_header/sifive_flash.c++
+
+metal_header/freedom_metal_header_generator-sifive_flash.obj: metal_header/sifive_flash.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_flash.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_flash.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_flash.obj `if test -f 'metal_header/sifive_flash.c++'; then $(CYGPATH_W) 'metal_header/sifive_flash.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_flash.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_flash.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_flash.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_flash.c++' object='metal_header/freedom_metal_header_generator-sifive_flash.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_flash.obj `if test -f 'metal_header/sifive_flash.c++'; then $(CYGPATH_W) 'metal_header/sifive_flash.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_flash.c++'; fi`
+
+metal_header/freedom_metal_header_generator-sifive_nb2gpio0.o: metal_header/sifive_nb2gpio0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2gpio0.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2gpio0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2gpio0.o `test -f 'metal_header/sifive_nb2gpio0.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2gpio0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2gpio0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2gpio0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2gpio0.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2gpio0.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2gpio0.o `test -f 'metal_header/sifive_nb2gpio0.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2gpio0.c++
+
+metal_header/freedom_metal_header_generator-sifive_nb2gpio0.obj: metal_header/sifive_nb2gpio0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2gpio0.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2gpio0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2gpio0.obj `if test -f 'metal_header/sifive_nb2gpio0.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2gpio0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2gpio0.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2gpio0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2gpio0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2gpio0.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2gpio0.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2gpio0.obj `if test -f 'metal_header/sifive_nb2gpio0.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2gpio0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2gpio0.c++'; fi`
+
+metal_header/freedom_metal_header_generator-sifive_nb2i2c0.o: metal_header/sifive_nb2i2c0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2i2c0.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2i2c0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2i2c0.o `test -f 'metal_header/sifive_nb2i2c0.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2i2c0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2i2c0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2i2c0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2i2c0.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2i2c0.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2i2c0.o `test -f 'metal_header/sifive_nb2i2c0.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2i2c0.c++
+
+metal_header/freedom_metal_header_generator-sifive_nb2i2c0.obj: metal_header/sifive_nb2i2c0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2i2c0.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2i2c0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2i2c0.obj `if test -f 'metal_header/sifive_nb2i2c0.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2i2c0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2i2c0.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2i2c0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2i2c0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2i2c0.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2i2c0.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2i2c0.obj `if test -f 'metal_header/sifive_nb2i2c0.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2i2c0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2i2c0.c++'; fi`
+
+metal_header/freedom_metal_header_generator-sifive_nb2qspi0.o: metal_header/sifive_nb2qspi0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2qspi0.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2qspi0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2qspi0.o `test -f 'metal_header/sifive_nb2qspi0.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2qspi0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2qspi0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2qspi0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2qspi0.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2qspi0.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2qspi0.o `test -f 'metal_header/sifive_nb2qspi0.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2qspi0.c++
+
+metal_header/freedom_metal_header_generator-sifive_nb2qspi0.obj: metal_header/sifive_nb2qspi0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2qspi0.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2qspi0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2qspi0.obj `if test -f 'metal_header/sifive_nb2qspi0.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2qspi0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2qspi0.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2qspi0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2qspi0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2qspi0.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2qspi0.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2qspi0.obj `if test -f 'metal_header/sifive_nb2qspi0.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2qspi0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2qspi0.c++'; fi`
+
+metal_header/freedom_metal_header_generator-sifive_nb2uart0.o: metal_header/sifive_nb2uart0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2uart0.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2uart0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2uart0.o `test -f 'metal_header/sifive_nb2uart0.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2uart0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2uart0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2uart0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2uart0.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2uart0.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2uart0.o `test -f 'metal_header/sifive_nb2uart0.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2uart0.c++
+
+metal_header/freedom_metal_header_generator-sifive_nb2uart0.obj: metal_header/sifive_nb2uart0.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2uart0.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2uart0.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2uart0.obj `if test -f 'metal_header/sifive_nb2uart0.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2uart0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2uart0.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2uart0.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2uart0.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2uart0.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2uart0.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2uart0.obj `if test -f 'metal_header/sifive_nb2uart0.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2uart0.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2uart0.c++'; fi`
+
+metal_header/freedom_metal_header_generator-sifive_nb2wdt.o: metal_header/sifive_nb2wdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2wdt.o -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2wdt.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2wdt.o `test -f 'metal_header/sifive_nb2wdt.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2wdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2wdt.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2wdt.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2wdt.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2wdt.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2wdt.o `test -f 'metal_header/sifive_nb2wdt.c++' || echo '$(srcdir)/'`metal_header/sifive_nb2wdt.c++
+
+metal_header/freedom_metal_header_generator-sifive_nb2wdt.obj: metal_header/sifive_nb2wdt.c++
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT metal_header/freedom_metal_header_generator-sifive_nb2wdt.obj -MD -MP -MF metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2wdt.Tpo -c -o metal_header/freedom_metal_header_generator-sifive_nb2wdt.obj `if test -f 'metal_header/sifive_nb2wdt.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2wdt.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2wdt.c++'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2wdt.Tpo metal_header/$(DEPDIR)/freedom_metal_header_generator-sifive_nb2wdt.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='metal_header/sifive_nb2wdt.c++' object='metal_header/freedom_metal_header_generator-sifive_nb2wdt.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freedom_metal_header_generator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o metal_header/freedom_metal_header_generator-sifive_nb2wdt.obj `if test -f 'metal_header/sifive_nb2wdt.c++'; then $(CYGPATH_W) 'metal_header/sifive_nb2wdt.c++'; else $(CYGPATH_W) '$(srcdir)/metal_header/sifive_nb2wdt.c++'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
