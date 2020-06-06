@@ -49,9 +49,16 @@
 #include "bare_header/sifive_spi0.h"
 #include "bare_header/sifive_test0.h"
 #include "bare_header/sifive_trace.h"
-#include "bare_header/sifive_uart0.h"
-#include "bare_header/sifive_wdog0.h"
+//#include "bare_header/sifive_uart0.h"
+//#include "bare_header/sifive_wdog0.h"
 #include "bare_header/ucb_htif0.h"
+
+#include "bare_header/sifive_nb2emmc.h"
+//#include "bare_header/sifive_nb2gpio0.h"
+//#include "bare_header/sifive_nb2i2c0.h"
+#include "bare_header/sifive_nb2qspi0.h"
+#include "bare_header/sifive_nb2uart0.h"
+#include "bare_header/sifive_nb2wdt.h"
 
 using std::cerr;
 using std::endl;
@@ -170,10 +177,16 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_trace(os, dtb));
-  devices.push_back(new sifive_uart0(os, dtb));
-  devices.push_back(new sifive_wdog0(os, dtb));
+//  devices.push_back(new sifive_uart0(os, dtb));
+//  devices.push_back(new sifive_wdog0(os, dtb));
   devices.push_back(new ucb_htif0(os, dtb));
   devices.push_back(new sifive_hca_0_5_x(os, dtb));
+  devices.push_back(new sifive_nb2emmc(os, dtb));
+//  devices.push_back(new sifive_nb2gpio0(os, dtb));
+//  devices.push_back(new synopsys_i2c_v2_02a_standard(os, dtb));
+  devices.push_back(new sifive_nb2qspi0(os, dtb));
+  devices.push_back(new sifive_nb2uart0(os, dtb));
+  devices.push_back(new sifive_nb2wdt(os, dtb));
 
   for (auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->emit_defines();
