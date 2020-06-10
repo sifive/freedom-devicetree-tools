@@ -321,7 +321,7 @@ void sifive_nb2uart0::define_structs()
 
 void sifive_nb2uart0::create_handles()
 {
-  emit_def("__METAL_DT_MAX_UART", std::to_string(num_uarts));
+  emit_def("__METAL_DT_MAX_UARTS", std::to_string(num_uarts));
 
   emit_struct_pointer_begin("sifive_nb2uart0", "__metal_uart_table", "[]");
   if (num_uarts) {
