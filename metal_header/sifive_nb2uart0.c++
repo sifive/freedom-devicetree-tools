@@ -46,12 +46,12 @@ void sifive_nb2uart0::declare_inlines()
     [&](node n) {
       if (count == 0) {
         func = create_inline_dec("control_base",
-                                 "unsigned long",
+                                 "unsigned long long",
                                  "struct metal_uart *uart");
         extern_inlines.push_back(func);
 
         func = create_inline_dec("control_size",
-                                 "unsigned long",
+                                 "unsigned long long",
                                  "struct metal_uart *uart");
         extern_inlines.push_back(func);
 
@@ -164,13 +164,13 @@ void sifive_nb2uart0::define_inlines()
 
       if (count == 0) {
         base_func = create_inline_def("control_base",
-                                      "unsigned long",
+                                      "unsigned long long",
                                       "(uintptr_t)uart == (uintptr_t)&__metal_dt_" + n.handle(),
                                       platform_define(n, METAL_BASE_ADDRESS_LABEL),
                                       "struct metal_uart *uart");
 
         size_func = create_inline_def("control_size",
-                                      "unsigned long",
+                                      "unsigned long long",
                                       "(uintptr_t)uart == (uintptr_t)&__metal_dt_" + n.handle(),
                                       platform_define(n, METAL_SIZE_LABEL),
                                       "struct metal_uart *uart");
