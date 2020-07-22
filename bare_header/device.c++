@@ -133,23 +133,23 @@ uint64_t Device::base_address(const node &n) { return extract_mem_map(n).base; }
 
 void Device::emit_base(const node &n) {
   os << "#define " << def_handle(n) << "_" METAL_BASE_ADDRESS_LABEL << " "
-     << base_address(n) << "UL" << std::endl;
+     << base_address(n) << "ULL" << std::endl;
 
   // If the address is very small, it already is an index.
   if (n.instance().length() > 2) {
     os << "#define " << def_handle_index(n) << "_" METAL_BASE_ADDRESS_LABEL
-       << " " << base_address(n) << "UL" << std::endl;
+       << " " << base_address(n) << "ULL" << std::endl;
   }
 }
 
 void Device::emit_base(std::string compat, const node &n) {
   os << "#define " << def_handle(compat, n) << "_" METAL_BASE_ADDRESS_LABEL
-     << " " << base_address(n) << "UL" << std::endl;
+     << " " << base_address(n) << "ULL" << std::endl;
 
   // If the address is very small, it already is an index.
   if (n.instance().length() > 2) {
     os << "#define " << def_handle_index(compat, n)
-       << "_" METAL_BASE_ADDRESS_LABEL << " " << base_address(n) << "UL"
+       << "_" METAL_BASE_ADDRESS_LABEL << " " << base_address(n) << "ULL"
        << std::endl;
   }
 }
@@ -158,23 +158,23 @@ uint64_t Device::size(const node &n) { return extract_mem_map(n).size; }
 
 void Device::emit_size(const node &n) {
   os << "#define " << def_handle(n) << "_" << METAL_SIZE_LABEL << " " << size(n)
-     << "UL" << std::endl;
+     << "ULL" << std::endl;
 
   // If the address is very small, it already is an index.
   if (n.instance().length() > 2) {
     os << "#define " << def_handle_index(n) << "_" << METAL_SIZE_LABEL << " "
-       << size(n) << "UL" << std::endl;
+       << size(n) << "ULL" << std::endl;
   }
 }
 
 void Device::emit_size(std::string compat, const node &n) {
   os << "#define " << def_handle(compat, n) << "_" << METAL_SIZE_LABEL << " "
-     << size(n) << "UL" << std::endl;
+     << size(n) << "ULL" << std::endl;
 
   // If the address is very small, it already is an index.
   if (n.instance().length() > 2) {
     os << "#define " << def_handle_index(compat, n) << "_" << METAL_SIZE_LABEL
-       << " " << size(n) << "UL" << std::endl;
+       << " " << size(n) << "ULL" << std::endl;
   }
 }
 

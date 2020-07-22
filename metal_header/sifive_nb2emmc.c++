@@ -66,12 +66,12 @@ void sifive_nb2emmc::declare_inlines()
     [&](node n) {
       if (count == 0) {
 	func = create_inline_dec("base",
-				 "unsigned long",
+				 "unsigned long long",
 				 "struct metal_emmc *emmc");
 	extern_inlines.push_back(func);
 
 	func = create_inline_dec("size",
-				 "unsigned long",
+				 "unsigned long long",
 				 "struct metal_emmc *emmc");
 	extern_inlines.push_back(func);
 
@@ -117,14 +117,14 @@ void sifive_nb2emmc::define_inlines()
     [&](node n) {
       if (num_emmc == 0) {
 	func = create_inline_def("base",
-				 "unsigned long",
+				 "unsigned long long",
 				 "empty",
 				 "0",
 				 "struct metal_emmc *emmc");
 	extern_inlines.push_back(func);
 
 	func = create_inline_def("size",
-				 "unsigned long",
+				 "unsigned long long",
 				 "empty",
 				 "0",
 				 "struct metal_emmc *emmc");
@@ -139,14 +139,14 @@ void sifive_nb2emmc::define_inlines()
       } else {
 	if (count == 0) {
 	  func1 = create_inline_def("base",
-				   "unsigned long",
+				   "unsigned long long",
 				   "(uintptr_t)emmc == (uintptr_t)&__metal_dt_" + n.handle(),
 				   platform_define(n, METAL_BASE_ADDRESS_LABEL),
 				   "struct metal_emmc *emmc");
 	  extern_inlines.push_back(func1);
 
 	  func2 = create_inline_def("size",
-				   "unsigned long",
+				   "unsigned long long",
 				   "(uintptr_t)emmc == (uintptr_t)&__metal_dt_" + n.handle(),
 				   platform_define(n, METAL_SIZE_LABEL),
 				   "struct metal_emmc *emmc");

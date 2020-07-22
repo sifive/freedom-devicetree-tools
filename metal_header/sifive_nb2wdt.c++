@@ -23,11 +23,11 @@ void sifive_nb2wdt::declare_inlines() {
 
   dtb.match(std::regex(compat_string), [&](node n) {
     if (count == 0) {
-      func = create_inline_dec("control_base", "unsigned long",
+      func = create_inline_dec("control_base", "unsigned long long",
                                "const struct metal_watchdog *const watchdog");
       extern_inlines.push_back(func);
 
-      func = create_inline_dec("control_size", "unsigned long",
+      func = create_inline_dec("control_size", "unsigned long long",
                                "const struct metal_watchdog *const watchdog");
       extern_inlines.push_back(func);
 
@@ -96,13 +96,13 @@ void sifive_nb2wdt::define_inlines() {
 
     if (count == 0) {
       base_func = create_inline_def(
-          "control_base", "unsigned long",
+          "control_base", "unsigned long long",
           "(uintptr_t)watchdog == (uintptr_t)&__metal_dt_" + n.handle(),
           platform_define(n, METAL_BASE_ADDRESS_LABEL),
           "const struct metal_watchdog *const watchdog");
 
       size_func = create_inline_def(
-          "control_size", "unsigned long",
+          "control_size", "unsigned long long",
           "(uintptr_t)watchdog == (uintptr_t)&__metal_dt_" + n.handle(),
           platform_define(n, METAL_SIZE_LABEL),
           "const struct metal_watchdog *const watchdog");

@@ -20,13 +20,19 @@ void sifive_nb2qspi0::create_defines(){
 	std::regex(compat_string),
 	[&](node n) {
 	if (n.field_exists("axi-base-addr")) {
-		auto regs = n.get_fields<std::tuple<uint32_t, uint32_t>>("axi-base-addr");
-		if (!regs.empty()) {
-			uint32_t base = std::get<0>(regs.front());
-			uint32_t size = std::get<1>(regs.front());
+			uint64_t base = 0;
+			uint64_t size = 0;
+			
+			base = n.get_fields<uint32_t>("axi-base-addr")[0];
+			base <<= 32;
+			base |= n.get_fields<uint32_t>("axi-base-addr")[1];
+
+			size = n.get_fields<uint32_t>("axi-base-addr")[2];
+			size <<= 32;
+			size |= n.get_fields<uint32_t>("axi-base-addr")[3];
+
 			emit_def("METAL_QSPI_AXI_BASE_ADDR", std::to_string(base));
 			emit_def("METAL_QSPI_AXI_SIZE", std::to_string(size));
-		}
 	}
 	});
 }
@@ -51,12 +57,12 @@ void sifive_nb2qspi0::declare_inlines()
     [&](node n) {
       if (count == 0) {
         func = create_inline_dec("control_base",
-                                 "unsigned long",
+                                 "unsigned long long",
                                  "struct metal_qspi *qspi");
         extern_inlines.push_back(func);
 
         func = create_inline_dec("control_size",
-                                 "unsigned long",
+                                 "unsigned long long",
                                  "struct metal_qspi *qspi");
         extern_inlines.push_back(func);
 
@@ -129,13 +135,13 @@ void sifive_nb2qspi0::define_inlines()
       /* Define inline functions */
       if (count == 0) {
         control_base_func = create_inline_def("control_base",
-                                              "unsigned long",
+                                              "unsigned long long",
                                               "(uintptr_t)qspi == (uintptr_t)&__metal_dt_" + n.handle(),
                                               platform_define(n, METAL_BASE_ADDRESS_LABEL),
                                               "struct metal_qspi *qspi");
 
         control_size_func = create_inline_def("control_size",
-                                              "unsigned long",
+                                              "unsigned long long",
                                               "(uintptr_t)qspi == (uintptr_t)&__metal_dt_" + n.handle(),
                                               platform_define(n, METAL_SIZE_LABEL),
                                               "struct metal_qspi *qspi");
