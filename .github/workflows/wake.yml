@@ -7,74 +7,23 @@ on:
       - 'LICENSE'
 
 jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: sifive/wit/actions/init@v0.13.2
+    - uses: sifive/environment-blockci-sifive/actions/wake@0.7.1
+
   test:
     runs-on: ubuntu-latest
-    env:
-      # $WIT_WORKSPACE path is relative to $GITHUB_WORKSPACE
-      WIT_WORKSPACE: wit-workspace
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Init Workspace
+        uses: sifive/wit/actions/init@v0.13.2
         with:
-          path: wit-packages/freedom-devicetree-tools
+          additional_packages: git@github.com:sifive/environment-blockci-sifive.git::0.7.1
 
-      - name: 'Init Wit Workspace'
-        uses: sifive/wit/actions/wit@v0.12.0
+      - name: Run test script
+        uses: sifive/environment-blockci-sifive/actions/shell@0.7.1
         with:
-          command: init
-          arguments: |
-            ${{ env.WIT_WORKSPACE }}
-            -a ./wit-packages/freedom-devicetree-tools
-            -a git@github.com:sifive/environment-blockci-sifive.git::0.3.0
-          force_github_https: true
-
-      - name: 'Run generator install test'
-        run: |
-          set -euo pipefail
-          docker run \
-            --volume="$GITHUB_WORKSPACE/$WIT_WORKSPACE:/mnt/workspace" \
-            --workdir="/mnt/workspace" \
-            --rm \
-            sifive/environment-blockci:0.3.0 \
-            freedom-devicetree-tools/tests/test-wake-install.sh
-
-  typecheck:
-    name: 'Wake 0.18.1 typecheck'
-    runs-on: ubuntu-latest
-    env:
-      # $WIT_WORKSPACE path is relative to $GITHUB_WORKSPACE
-      WIT_WORKSPACE: wit-workspace
-
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        path: wit-packages/freedom-devicetree-tools
-        # Fetch all history and tags
-        fetch-depth: 0
-
-    - name: 'Wit Init'
-      uses: sifive/wit/actions/wit@v0.13.1
-      with:
-        command: init
-        arguments: |
-          ${{ env.WIT_WORKSPACE }}
-          -a ./wit-packages/freedom-devicetree-tools
-        force_github_https: true
-
-    - name: Run wake typecheck
-      working-directory: ${{ env.WIT_WORKSPACE }}
-      run: |
-        set -euxo pipefail
-        # Take back ownership of wit workspace, since it was created while
-        # under a Docker container and permissions default to root.
-        uid=$(id -u)
-        gid=$(id -g)
-        sudo chown -R "$uid:$gid" .
-        # Install Wake
-        curl -L -o /tmp/wake.deb https://github.com/sifive/wake/releases/download/v0.18.1/ubuntu-18-04-wake_0.18.1-1_amd64.deb && \
-            sudo dpkg -i /tmp/wake.deb && \
-            rm /tmp/wake.deb
-        # Initialize Wake workspace
-        wake --init .
-        # Run a dummy target, which still triggers a compilation of Wake code.
-        wake -x Unit
+          command: freedom-devicetree-tools/tests/test-wake-install.sh
