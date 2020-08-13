@@ -7,33 +7,23 @@ on:
       - 'LICENSE'
 
 jobs:
-  test:
+  typecheck:
     runs-on: ubuntu-latest
-    env:
-      # $WIT_WORKSPACE path is relative to $GITHUB_WORKSPACE
-      WIT_WORKSPACE: wit-workspace
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          path: wit-packages/freedom-devicetree-tools
+    - uses: sifive/wit/actions/init@v0.13.2
+    - uses: sifive/environment-blockci-sifive/actions/wake@0.7.1
 
-      - name: 'Init Wit Workspace'
-        uses: sifive/wit/actions/wit@v0.12.0
-        with:
-          command: init
-          arguments: |
-            ${{ env.WIT_WORKSPACE }}
-            -a ./wit-packages/freedom-devicetree-tools
-            -a git@github.com:sifive/environment-blockci-sifive.git::0.3.0
-          force_github_https: true
+  test:
+    runs-on: ubuntu-latest
 
-      - name: 'Run generator install test'
-        run: |
-          set -euo pipefail
-          docker run \
-            --volume="$GITHUB_WORKSPACE/$WIT_WORKSPACE:/mnt/workspace" \
-            --workdir="/mnt/workspace" \
-            --rm \
-            sifive/environment-blockci:0.3.0 \
-            freedom-devicetree-tools/tests/test-wake-install.sh
+    steps:
+      - name: Init Workspace
+        uses: sifive/wit/actions/init@v0.13.2
+        with:
+          additional_packages: git@github.com:sifive/environment-blockci-sifive.git::0.7.1
+
+      - name: Run test script
+        uses: sifive/environment-blockci-sifive/actions/shell@0.7.1
+        with:
+          command: freedom-devicetree-tools/tests/test-wake-install.sh
