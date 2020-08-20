@@ -47,9 +47,6 @@
 #include <sifive_fe310_g000_pll.h>
 #include <sifive_fe310_g000_prci.h>
 
-/* FU540-C000 Devices */
-#include <sifive_fu540_c000_l2.h>
-
 /* STL */
 #include <ctime>
 #include <fstream>
@@ -176,9 +173,6 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_fe310_g000_lfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
-
-  /* FU540-C000 Devices */
-  devices.push_back(new sifive_fu540_c000_l2(os, dtb));
 }
 
 static void write_h_file(const fdt &dtb, fstream &os, std::string h_file,
