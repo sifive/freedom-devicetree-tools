@@ -43,6 +43,7 @@
 #include "bare_header/sifive_gpio_switches.h"
 #include "bare_header/sifive_i2c0.h"
 #include "bare_header/sifive_local_external_interrupts0.h"
+#include "bare_header/riscv_dma0.h"
 #include "bare_header/sifive_pwm0.h"
 #include "bare_header/sifive_rtc0.h"
 #include "bare_header/sifive_spi0.h"
@@ -164,12 +165,13 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_gpio_switches(os, dtb));
   devices.push_back(new sifive_i2c0(os, dtb));
   devices.push_back(new sifive_local_external_interrupts0(os, dtb));
+  devices.push_back(new riscv_dma0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_trace(os, dtb));
-  devices.push_back(new sifive_uart0(os, dtb));
+  //devices.push_back(new sifive_uart0(os, dtb));
   devices.push_back(new sifive_wdog0(os, dtb));
   devices.push_back(new ucb_htif0(os, dtb));
 

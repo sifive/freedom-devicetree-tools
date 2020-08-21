@@ -30,6 +30,7 @@
 #include <sifive_gpio_switch.h>
 #include <sifive_i2c0.h>
 #include <sifive_local_external_interrupts0.h>
+#include <riscv_dma0.h>
 #include <sifive_pwm0.h>
 #include <sifive_rtc0.h>
 #include <sifive_spi0.h>
@@ -159,12 +160,13 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_gpio_led(os, dtb));
   devices.push_back(new sifive_gpio_switch(os, dtb));
   devices.push_back(new sifive_i2c0(os, dtb));
+  devices.push_back(new riscv_dma0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_trace(os, dtb));
-  devices.push_back(new sifive_uart0(os, dtb));
+//  devices.push_back(new sifive_uart0(os, dtb));
   devices.push_back(new sifive_wdog0(os, dtb));
   devices.push_back(new ucb_htif0(os, dtb));
 
