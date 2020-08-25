@@ -12,7 +12,6 @@ class sifive_l2pf0 : public Device {
 public:
   sifive_l2pf0(std::ostream &os, const fdt &dtb);
   void include_headers();
-  void create_defines();
 };
 
 #endif
