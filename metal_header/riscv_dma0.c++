@@ -51,6 +51,10 @@ void riscv_dma0::declare_inlines() {
                                "struct metal_dma *dma");
       extern_inlines.push_back(func);
 
+      func = create_inline_dec("interrupt_lines", "int",
+                               "struct metal_dma *dma", "int idx");
+      extern_inlines.push_back(func);
+
       func =
           create_inline_dec("interrupt_line", "int", "struct metal_dma *dma");
       extern_inlines.push_back(func);
@@ -90,6 +94,7 @@ void riscv_dma0::define_inlines() {
   Inline *num_int_func;
   Inline *int_parent_func;
   Inline *int_line_func;
+  Inline *interrupt_line_func;
   Inline *clock_func;
   Inline *pinmux_func;
   Inline *pinmux_out_func;
@@ -107,9 +112,41 @@ void riscv_dma0::define_inlines() {
                         ".controller";
                   });
     std::string int_line_value = "0";
-    n.maybe_tuple(
-        "interrupts", tuple_t<uint32_t>(), [&]() {},
-        [&](uint32_t irline) { int_line_value = std::to_string(irline); });
+
+    /* Interrupt lines */
+    n.maybe_tuple_index(
+        "interrupts", tuple_t<uint32_t>(),
+        [&]() {
+          if (count == 0) {
+            interrupt_line_func =
+                create_inline_def("interrupt_lines", "int", "empty", "0",
+                                  "struct metal_dma *dma", "int idx");
+          }
+        },
+
+        [&](int i, uint32_t irline) {
+          uint32_t num_interrupts = n.get_fields_count<uint32_t>("interrupts");
+          if ((count == 0) && (i == 0)) {
+            interrupt_line_func = create_inline_def(
+                "interrupt_lines", "int",
+                "((uintptr_t)dma == (uintptr_t)&__metal_dt_" + n.handle() +
+                    ") && (" + "idx == " + std::to_string(i) + ")",
+                std::to_string(irline), "struct metal_dma *dma", "int idx");
+          } else if (((count + 1) == num_dmas) && ((i + 1) == num_interrupts)) {
+            add_inline_body(interrupt_line_func,
+                            "(((uintptr_t)dma == (uintptr_t)&__metal_dt_" +
+                                n.handle() + ") && (" +
+                                "idx == " + std::to_string(i) + "))",
+                            std::to_string(irline));
+            add_inline_body(interrupt_line_func, "else", "0");
+          } else {
+            add_inline_body(interrupt_line_func,
+                            "(((uintptr_t)dma == (uintptr_t)&__metal_dt_" +
+                                n.handle() + ") && (" +
+                                "idx == " + std::to_string(i) + "))",
+                            std::to_string(irline));
+          }
+        });
 
     /* Clock driving the DMA peripheral */
     std::string clock_value = "NULL";
@@ -243,6 +280,8 @@ void riscv_dma0::define_inlines() {
     delete int_parent_func;
     emit_inline_def(int_line_func, "riscv_dma0");
     delete int_line_func;
+    emit_inline_def(interrupt_line_func, "riscv_dma0");
+    delete interrupt_line_func;
     emit_inline_def(clock_func, "riscv_dma0");
     delete clock_func;
     emit_inline_def(pinmux_func, "riscv_dma0");
