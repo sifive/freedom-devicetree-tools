@@ -11,8 +11,10 @@
 class sifive_spi0 : public Device {
 public:
   int num_spis;
+  uint32_t max_interrupts = 0;
 
   sifive_spi0(std::ostream &os, const fdt &dtb);
+  void create_defines();
   void include_headers();
   void declare_inlines();
   void define_inlines();
