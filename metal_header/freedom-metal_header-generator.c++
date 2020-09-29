@@ -29,6 +29,7 @@
 #include <sifive_gpio_led.h>
 #include <sifive_gpio_switch.h>
 #include <sifive_i2c0.h>
+#include <sifive_l2pf0.h>
 #include <sifive_local_external_interrupts0.h>
 #include <sifive_pwm0.h>
 #include <sifive_rtc0.h>
@@ -45,9 +46,6 @@
 #include <sifive_fe310_g000_lfrosc.h>
 #include <sifive_fe310_g000_pll.h>
 #include <sifive_fe310_g000_prci.h>
-
-/* FU540-C000 Devices */
-#include <sifive_fu540_c000_l2.h>
 
 /* STL */
 #include <ctime>
@@ -159,6 +157,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_gpio_led(os, dtb));
   devices.push_back(new sifive_gpio_switch(os, dtb));
   devices.push_back(new sifive_i2c0(os, dtb));
+  devices.push_back(new sifive_l2pf0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
@@ -174,9 +173,6 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_fe310_g000_lfrosc(os, dtb));
   devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_fe310_g000_prci(os, dtb));
-
-  /* FU540-C000 Devices */
-  devices.push_back(new sifive_fu540_c000_l2(os, dtb));
 }
 
 static void write_h_file(const fdt &dtb, fstream &os, std::string h_file,
