@@ -14,16 +14,18 @@ void sifive_l2pf0::include_headers() {
 }
 
 void sifive_l2pf0::create_defines() {
-  uint32_t count = 0;
-  std::string l2pf_base = "{ ";
+  uint32_t count = 0, index = 0;
+  std::string l2pf_base = "{\\\n\t\t\t\t";
 
   dtb.match(std::regex("cpu"), [&](node n) {
     if (n.field_exists("sifive,l2pf")) {
       node t = n.get_fields<node>("sifive,l2pf")[0];
-      l2pf_base += std::to_string(t.get_fields<uint32_t>("reg")[0]);
-      l2pf_base += "UL, ";
+      l2pf_base +=
+          platform_define_offset(t, std::to_string(index) + "_BASE_ADDRESS");
+      l2pf_base += ",\\\n\t\t\t\t";
+      index++;
     } else {
-      l2pf_base += "0, ";
+      l2pf_base += "0UL,\\\n\t\t\t\t";
     }
   });
   l2pf_base += "}";
