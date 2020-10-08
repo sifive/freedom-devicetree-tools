@@ -1,4 +1,4 @@
-def installDir ="build/freedom-devicetree-tools"
+def installDir = "build/freedom-devicetree-tools"
 global def freedomDevicetreeToolsInstallDir = installDir
 
 global def freedomDevicetreeToolsPath = "{installDir}/bin"
