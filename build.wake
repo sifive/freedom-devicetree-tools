@@ -11,7 +11,7 @@ global target freedomDevicetreeToolsInstall Unit =
     "--configure-args=",
     "--install-dir={relative runDir installDir}",
     Nil
-  def inputs = mkdir installDir, sources here `.*`
+  def inputs = mkdir installDir, sources here `.*\.(c|c\+\+|cpp|h|h\+\+|hpp)`
   def foutputs _ = files installDir `.*`
 
   makePlan cmdline inputs
