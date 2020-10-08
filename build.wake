@@ -1,5 +1,5 @@
-def installDir = simplify "build/{here}"
-global def freedomDevicetreeToolsInstallDir = "build/{here}"
+def installDir = "build/freedom-devicetree-tools"
+global def freedomDevicetreeToolsInstallDir = installDir
 
 global def freedomDevicetreeToolsPath = "{installDir}/bin"
 
@@ -119,6 +119,9 @@ global target installFreedomDevicetreeTools installPath =
     sources "{here}/m4"           extRegex ++
     sources "{here}/bare_header"  extRegex ++
     sources "{here}/metal_header" extRegex
-
+  def installWithStructure dir file =
+    def oneDown = simplify "{here}/.."
+    def into = "{dir}/{relative oneDown file.getPathName}"
+    installAs into file
   mkdir installPath,
-  map (installIn installPath) generatorSources
+  map (installWithStructure installPath) generatorSources
