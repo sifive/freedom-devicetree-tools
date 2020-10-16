@@ -32,6 +32,20 @@ public:
       emit_base("sifive,hca", n);
       emit_size("sifive,hca", n);
 
+      if (n.field_exists("interrupts")) {
+        auto regs =
+            n.get_fields<std::tuple<target_addr, target_addr>>("interrupts");
+
+        if (!regs.empty()) {
+          int irq_crypto = std::get<0>(regs.front());
+          int irq_trng = std::get<1>(regs.front());
+
+          os << std::endl;
+          emit_offset("sifive,hca", "CRYPTO_IRQ", irq_crypto);
+          emit_offset("sifive,hca", "TRNG_IRQ", irq_trng);
+        }
+      }
+
       os << std::endl;
     });
   }
@@ -57,7 +71,7 @@ public:
       emit_offset("sifive,hca", "DMA_CR", 0x110);
       emit_offset("sifive,hca", "DMA_LEN", 0x114);
       emit_offset("sifive,hca", "DMA_SRC", 0x118);
-      emit_offset("sifive,hca", "DMA_DEST", 0x11C);
+      emit_offset("sifive,hca", "DMA_DEST", 0x120);
       emit_offset("sifive,hca", "HCA_REV", 0x200);
       emit_offset("sifive,hca", "AES_REV", 0x204);
       emit_offset("sifive,hca", "SHA_REV", 0x208);
