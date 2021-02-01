@@ -16,6 +16,7 @@ public:
       : Device(os, dtb, "sifive,hca-1.(\\d+).(\\d+)") {}
 
   void emit_defines() override {
+    int option = 0;
     dtb.match(std::regex(compat_string), [&](node n) {
       string instance = n.get_fields<string>("compatible")[0];
       int major, minor, patch;
@@ -41,6 +42,7 @@ public:
       if (ret == 1) {
         os << "#define METAL_SIFIVE_HCA1_AES_BASE_ADDRESS " << base << "UL"
            << std::endl;
+        option = 1;
       }
       if (n.field_exists("aesmac_present")) {
         os << "#define METAL_SIFIVE_HCA1_AES_HAS_AESMAC " << std::endl;
@@ -52,6 +54,7 @@ public:
       if (ret == 1) {
         os << "#define METAL_SIFIVE_HCA1_SHA_BASE_ADDRESS " << base << "UL"
            << std::endl;
+        option = 1;
       }
     });
     dtb.match(std::regex("sifive,hca-pka"), [&](node n) {
@@ -60,6 +63,7 @@ public:
       if (ret == 1) {
         os << "#define METAL_SIFIVE_HCA1_PKA_BASE_ADDRESS " << base << "UL"
            << std::endl;
+        option = 1;
       }
     });
     dtb.match(std::regex("sifive,hca-trng"), [&](node n) {
@@ -68,9 +72,12 @@ public:
       if (ret == 1) {
         os << "#define METAL_SIFIVE_HCA1_TRNG_BASE_ADDRESS " << base << "UL"
            << std::endl;
+        option = 1;
       }
     });
-    os << std::endl;
+    if (option == 1) {
+      os << std::endl;
+    }
   }
 };
 
