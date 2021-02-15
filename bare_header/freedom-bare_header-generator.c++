@@ -25,6 +25,7 @@
 #include "bare_header/riscv_plic0.h"
 
 /* SiFive Blocks */
+#include "bare_header/riscv_dma0.h"
 #include "bare_header/sifive_aon0.h"
 #include "bare_header/sifive_buserror0.h"
 #include "bare_header/sifive_ccache0.h"
@@ -166,6 +167,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_gpio_switches(os, dtb));
   devices.push_back(new sifive_i2c0(os, dtb));
   devices.push_back(new sifive_local_external_interrupts0(os, dtb));
+  devices.push_back(new riscv_dma0(os, dtb));
   devices.push_back(new sifive_l2pf0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
