@@ -60,6 +60,7 @@
 #include "bare_header/sifive_nb2qspi0.h"
 #include "bare_header/sifive_nb2uart0.h"
 #include "bare_header/sifive_nb2wdt.h"
+#include "bare_header/sifive_nb2otp.h"
 
 using std::cerr;
 using std::endl;
@@ -188,6 +189,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_nb2qspi0(os, dtb));
   devices.push_back(new sifive_nb2uart0(os, dtb));
   devices.push_back(new sifive_nb2wdt(os, dtb));
+  devices.push_back(new sifive_nb2otp(os, dtb));
 
   for (auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->emit_defines();

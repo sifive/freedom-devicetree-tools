@@ -97,7 +97,9 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_nb2uart0.c++ \
 	metal_header/sifive_nb2uart0.h \
 	metal_header/sifive_nb2wdt.c++ \
-	metal_header/sifive_nb2wdt.h
+	metal_header/sifive_nb2otp.c++ \
+	metal_header/sifive_nb2wdt.h\
+	metal_header/sifive_nb2otp.h
 
 freedom_bare_header_generator_CPPFLAGS = -I$(srcdir) -I$(srcdir)/bare_header
 
@@ -145,6 +147,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_nb2qspi0.h \
 	bare_header/sifive_nb2uart0.h \
 	bare_header/sifive_nb2wdt.h \
+	bare_header/sifive_nb2otp.h \
 	ranges.c++ \
 	ranges.h
 

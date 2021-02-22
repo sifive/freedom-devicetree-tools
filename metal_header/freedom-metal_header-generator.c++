@@ -47,6 +47,7 @@
 #include <sifive_nb2qspi0.h>
 #include <sifive_nb2uart0.h>
 #include <sifive_nb2wdt.h>
+#include <sifive_nb2otp.h>
 
 /* FE310-G000 Devices */
 #include <sifive_fe310_g000_hfrosc.h>
@@ -181,6 +182,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_nb2qspi0(os, dtb));
   devices.push_back(new sifive_nb2uart0(os, dtb));
   devices.push_back(new sifive_nb2wdt(os, dtb));
+  devices.push_back(new sifive_nb2otp(os, dtb));
 
   /* FE310-G000 Devices */
   devices.push_back(new sifive_fe310_g000_hfrosc(os, dtb));
