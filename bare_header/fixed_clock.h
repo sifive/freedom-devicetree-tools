@@ -17,8 +17,9 @@ public:
     dtb.match(std::regex(compat_string), [&](node n) {
       emit_comment(n);
 
-      emit_property_u32(n, METAL_CLOCK_FREQUENCY_LABEL,
-                        n.get_field<uint32_t>("clock-frequency"));
+      std::string str = n.handle();
+      std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+      emit_property_u32(n, str,n.get_field<uint32_t>("clock-frequency"));
 
       os << std::endl;
     });

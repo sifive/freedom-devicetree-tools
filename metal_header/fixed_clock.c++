@@ -46,13 +46,13 @@ void fixed_clock::define_inlines() {
       rate_func = create_inline_def(
           "rate", "unsigned long",
           "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
-          platform_define(n, METAL_CLOCK_FREQUENCY_LABEL),
+	  platform_define(n,n.handle()),
           "const struct metal_clock *clock");
     }
     if (count > 0) {
       add_inline_body(
           rate_func, "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
-          platform_define(n, METAL_CLOCK_FREQUENCY_LABEL));
+	  platform_define(n,n.handle()));
     }
     if ((count + 1) == num_clocks) {
       add_inline_body(rate_func, "else", "0");
