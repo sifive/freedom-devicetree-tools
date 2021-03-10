@@ -232,6 +232,31 @@ static void write_h_file(const fdt &dtb, fstream &os, std::string h_file,
   }
   os << std::endl;
 
+  /*  Add #defines to print debug info message. */
+  os << "#ifdef PRINT_DEBUG_INFO" << std::endl;
+  os << "#define DEBUG_INFO(...)" << " " << "do { fprintf(stdout, __VA_ARGS__);fflush(stdout);} while (0)" << std::endl;
+  os << "#else" << std::endl;
+  os << "#define DEBUG_INFO(fmt, ...)" << " " << "do {} while (0)" << std::endl;
+  os << "#endif" << std::endl;
+  os << std::endl;
+
+  /* Add #defines to print debug message. */
+  os << "#ifdef PRINT_DEBUG" << std::endl;
+  os << "#define DEBUG_PRINT(...)" << " " << "do { fprintf(stdout, __VA_ARGS__);fflush(stdout);} while (0)" << std::endl;
+  os << "#else" << std::endl;
+  os << "#define DEBUG_PRINT(fmt, ...)" << " " << "do {} while (0)" << std::endl;
+  os << "#endif" << std::endl;
+  os << std::endl;
+
+  /* Add #defines to print debug error message. */
+  os << "#ifdef PRINT_DEBUG_ERROR" << std::endl;
+  os << "#define DEBUG_ERROR(...)" << " " << "do { fprintf(stderr, __VA_ARGS__);"
+	<< "fflush(stderr);fflush(stdout);} while (0)" << std::endl;
+  os << "#else" << std::endl;
+  os << "#define DEBUG_ERROR(fmt, ...)" << " " << "do {} while (0)" << std::endl;
+  os << "#endif" << std::endl;
+  os << std::endl;
+
   for (auto it = devices.begin(); it != devices.end(); it++) {
     (*it)->declare_structs();
   }
