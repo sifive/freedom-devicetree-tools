@@ -39,20 +39,23 @@ void fixed_clock::declare_inlines() {
 void fixed_clock::define_inlines() {
   Inline *rate_func;
   std::list<Inline *> extern_inlines;
-
   int count = 0;
+
   dtb.match(std::regex(compat_string), [&](node n) {
+    std::string handle;
+    handle = n.handle();
+    std::transform(handle.begin(), handle.end(), handle.begin(), toupper);
     if (count == 0) {
       rate_func = create_inline_def(
           "rate", "unsigned long",
           "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
-          platform_define(n, METAL_CLOCK_FREQUENCY_LABEL),
+          platform_define(n, handle + "_" + METAL_CLOCK_FREQUENCY_LABEL),
           "const struct metal_clock *clock");
     }
     if (count > 0) {
       add_inline_body(
           rate_func, "(uintptr_t)clock == (uintptr_t)&__metal_dt_" + n.handle(),
-          platform_define(n, METAL_CLOCK_FREQUENCY_LABEL));
+          platform_define(n, handle + "_" + METAL_CLOCK_FREQUENCY_LABEL));
     }
     if ((count + 1) == num_clocks) {
       add_inline_body(rate_func, "else", "0");

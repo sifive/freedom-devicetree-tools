@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <fstream>
 #include <string>
+#include <map>
 #include <sys/stat.h>
 #include <unistd.h>
 
