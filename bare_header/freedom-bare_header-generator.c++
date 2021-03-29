@@ -45,6 +45,7 @@
 #include "bare_header/sifive_l2pf0.h"
 #include "bare_header/sifive_local_external_interrupts0.h"
 #include "bare_header/sifive_pwm0.h"
+#include "bare_header/sifive_remapper2.h"
 #include "bare_header/sifive_rtc0.h"
 #include "bare_header/sifive_simuart0.h"
 #include "bare_header/sifive_spi0.h"
@@ -167,6 +168,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_local_external_interrupts0(os, dtb));
   devices.push_back(new sifive_l2pf0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
+  devices.push_back(new sifive_remapper2(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));

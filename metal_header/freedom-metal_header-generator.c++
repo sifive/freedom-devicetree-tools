@@ -32,6 +32,7 @@
 #include <sifive_l2pf0.h>
 #include <sifive_local_external_interrupts0.h>
 #include <sifive_pwm0.h>
+#include <sifive_remapper2.h>
 #include <sifive_rtc0.h>
 #include <sifive_simuart0.h>
 #include <sifive_spi0.h>
@@ -160,6 +161,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_i2c0(os, dtb));
   devices.push_back(new sifive_l2pf0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
+  devices.push_back(new sifive_remapper2(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));

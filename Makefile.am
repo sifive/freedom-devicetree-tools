@@ -30,6 +30,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/riscv_plic0.h \
 	metal_header/riscv_pmp.c++ \
 	metal_header/riscv_pmp.h \
+	metal_header/sifive_remapper2.c++ \
+	metal_header/sifive_remapper2.h \
 	metal_header/sifive_buserror0.c++ \
 	metal_header/sifive_buserror0.h \
 	metal_header/sifive_ccache0.c++ \
@@ -97,6 +99,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/fixed_factor_clock.h \
 	bare_header/riscv_clint0.h \
 	bare_header/riscv_plic0.h \
+	bare_header/sifive_remapper2.h \
 	bare_header/sifive_aon0.h \
 	bare_header/sifive_buserror0.h \
 	bare_header/sifive_ccache0.h \
