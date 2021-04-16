@@ -189,8 +189,8 @@ void Device::emit_inline_def(Inline *func, std::string device) {
 
 void Device::emit_struct_pointer_begin(std::string type, std::string name,
                                        std::string ext) {
-  os << "__asm__ (\".weak " << name << "\");\n";
-  os << "struct __metal_driver_" << type << " *" << name << ext << " = {\n";
+  os << "struct __metal_driver_" << type << " *" << name << ext
+     << " __attribute__((weak))  = {\n";
 }
 void Device::emit_struct_pointer_element(std::string type, uint32_t id,
                                          std::string field,
@@ -373,9 +373,8 @@ void Device::emit_struct_end(void) { os << "};\n\n"; }
 void Device::emit_struct_array_def_begin(std::string type, std::string name,
                                          std::string size) {
   os << "/* Custom array definition */\n";
-  os << "__asm__ (\".weak __metal_dt_" << name << "\");\n";
   os << "struct __metal_driver_" << type << " __metal_dt_" << name
-     << "[ ] = {\n";
+     << "[ ] __attribute__((weak)) = {\n";
 }
 
 void Device::emit_struct_array_elem_node(const node &n) {
