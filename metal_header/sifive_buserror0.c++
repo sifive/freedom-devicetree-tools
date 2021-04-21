@@ -160,7 +160,8 @@ void sifive_buserror0::define_structs() {
     emit_comment(n);
     os << "struct metal_buserror"
           " __metal_dt_"
-       << n.handle() << " = {\n";
+       << n.handle() << " = {\n"
+          "\t.__no_empty_structs = 0,\n";
 
     /* Emit struct fields here */
 
