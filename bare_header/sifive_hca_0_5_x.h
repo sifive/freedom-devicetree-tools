@@ -57,7 +57,7 @@ public:
       emit_offset("sifive,hca", "DMA_CR", 0x110);
       emit_offset("sifive,hca", "DMA_LEN", 0x114);
       emit_offset("sifive,hca", "DMA_SRC", 0x118);
-      emit_offset("sifive,hca", "DMA_DEST", 0x11C);
+      emit_offset("sifive,hca", "DMA_DEST", 0x120);
       emit_offset("sifive,hca", "HCA_REV", 0x200);
       emit_offset("sifive,hca", "AES_REV", 0x204);
       emit_offset("sifive,hca", "SHA_REV", 0x208);
