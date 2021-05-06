@@ -20,6 +20,7 @@
 #include <riscv_pmp.h>
 
 /* SiFive Blocks */
+#include <riscv_dma0.h>
 #include <sifive_buserror0.h>
 #include <sifive_ccache0.h>
 #include <sifive_clic0.h>
@@ -159,6 +160,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_gpio_switch(os, dtb));
   devices.push_back(new sifive_i2c0(os, dtb));
   devices.push_back(new sifive_l2pf0(os, dtb));
+  devices.push_back(new riscv_dma0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
