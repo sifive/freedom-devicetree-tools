@@ -43,6 +43,10 @@ void sifive_nb2emmc::create_defines()
 		uint32_t max_freq = n.get_fields<uint32_t>("max-frequency").back();
 		emit_def("METAL_EMMC_MAX_FREQUENCY", std::to_string(max_freq));
 	}
+	if(n.field_exists("emmc-std-clk")) {
+		uint32_t mmc_clk = n.get_fields<uint32_t>("emmc-std-clk").back();
+		emit_def("METAL_EMMC_STD_CLK", std::to_string(mmc_clk));
+	}
 	});
 }
 
