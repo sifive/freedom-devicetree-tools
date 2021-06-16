@@ -11,41 +11,41 @@ sifive_remapper2::sifive_remapper2(std::ostream &os, const fdt &dtb)
     : Device(os, dtb, "sifive,remapper2") {}
 
 void sifive_remapper2::create_defines() {
-    dtb.match(std::regex(compat_string), [&](node n) {
-        uint32_t low, high;
-        uint64_t from_region_base, from_region_size;
-        uint64_t to_region_base, to_region_size;
-        uint32_t max_from_entry_addr_width;
+  dtb.match(std::regex(compat_string), [&](node n) {
+    uint32_t low, high;
+    uint64_t from_region_base, from_region_size;
+    uint64_t to_region_base, to_region_size;
+    uint32_t max_from_entry_addr_width;
 
-        low = n.get_fields<uint32_t>("sifive,remapper-frm-region-base").at(1);
-        high = n.get_fields<uint32_t>("sifive,remapper-frm-region-base").at(0);
-        from_region_base = ((uint64_t)high << 32) | low;
-        emit_def(platform_define(n, "FROM_REGION_BASE"),
-                 std::to_string(from_region_base));
+    low = n.get_fields<uint32_t>("sifive,remapper-frm-region-base").at(1);
+    high = n.get_fields<uint32_t>("sifive,remapper-frm-region-base").at(0);
+    from_region_base = ((uint64_t)high << 32) | low;
+    emit_def(platform_define(n, "FROM_REGION_BASE"),
+             std::to_string(from_region_base));
 
-        low = n.get_fields<uint32_t>("sifive,remapper-frm-region-size").at(1);
-        high = n.get_fields<uint32_t>("sifive,remapper-frm-region-size").at(0);
-        from_region_size = ((uint64_t)high << 32) | low;
-        emit_def(platform_define(n, "FROM_REGION_SIZE"),
-                 std::to_string(from_region_size));
+    low = n.get_fields<uint32_t>("sifive,remapper-frm-region-size").at(1);
+    high = n.get_fields<uint32_t>("sifive,remapper-frm-region-size").at(0);
+    from_region_size = ((uint64_t)high << 32) | low;
+    emit_def(platform_define(n, "FROM_REGION_SIZE"),
+             std::to_string(from_region_size));
 
-        low = n.get_fields<uint32_t>("sifive,remapper-to-region-base").at(1);
-        high = n.get_fields<uint32_t>("sifive,remapper-to-region-base").at(0);
-        to_region_base = ((uint64_t)high << 32) | low;
-        emit_def(platform_define(n, "TO_REGION_BASE"),
-                 std::to_string(to_region_base));
+    low = n.get_fields<uint32_t>("sifive,remapper-to-region-base").at(1);
+    high = n.get_fields<uint32_t>("sifive,remapper-to-region-base").at(0);
+    to_region_base = ((uint64_t)high << 32) | low;
+    emit_def(platform_define(n, "TO_REGION_BASE"),
+             std::to_string(to_region_base));
 
-        low = n.get_fields<uint32_t>("sifive,remapper-to-region-size").at(1);
-        high = n.get_fields<uint32_t>("sifive,remapper-to-region-size").at(0);
-        to_region_size = ((uint64_t)high << 32) | low;
-        emit_def(platform_define(n, "TO_REGION_SIZE"),
-                 std::to_string(to_region_size));
+    low = n.get_fields<uint32_t>("sifive,remapper-to-region-size").at(1);
+    high = n.get_fields<uint32_t>("sifive,remapper-to-region-size").at(0);
+    to_region_size = ((uint64_t)high << 32) | low;
+    emit_def(platform_define(n, "TO_REGION_SIZE"),
+             std::to_string(to_region_size));
 
-        max_from_entry_addr_width = n.get_field<uint32_t>(
-                "sifive,remapper-max-frm-width");
-        emit_def(platform_define(n, "MAX_FROM_ENTRY_REGION_ADDR_WIDTH"),
-                 std::to_string(max_from_entry_addr_width));
-    });
+    max_from_entry_addr_width =
+        n.get_field<uint32_t>("sifive,remapper-max-frm-width");
+    emit_def(platform_define(n, "MAX_FROM_ENTRY_REGION_ADDR_WIDTH"),
+             std::to_string(max_from_entry_addr_width));
+  });
 }
 
 void sifive_remapper2::include_headers() {
@@ -82,8 +82,9 @@ void sifive_remapper2::declare_inlines() {
             func = create_inline_dec("to_region_size", "unsigned long long",
                                      "const struct metal_remapper *remapper");
             extern_inlines.push_back(func);
-            func = create_inline_dec("max_from_entry_addr_width", "unsigned int",
-                                     "const struct metal_remapper *remapper");
+            func =
+                create_inline_dec("max_from_entry_addr_width", "unsigned int",
+                                  "const struct metal_remapper *remapper");
             extern_inlines.push_back(func);
           }
         });
@@ -119,11 +120,11 @@ void sifive_remapper2::define_inlines() {
           platform_define(n, METAL_BASE_ADDRESS_LABEL),
           "const struct metal_remapper *remapper");
 
-      size_func = create_inline_def("size", "unsigned long",
-                                    "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" +
-                                        n.handle(),
-                                    platform_define(n, METAL_SIZE_LABEL),
-                                    "const struct metal_remapper *remapper");
+      size_func = create_inline_def(
+          "size", "unsigned long",
+          "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" + n.handle(),
+          platform_define(n, METAL_SIZE_LABEL),
+          "const struct metal_remapper *remapper");
 
       from_region_base_func = create_inline_def(
           "from_region_base", "unsigned long long",
@@ -155,25 +156,32 @@ void sifive_remapper2::define_inlines() {
           "const struct metal_remapper *remapper");
     } else {
       add_inline_body(base_func,
-                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" +
+                          n.handle(),
                       platform_define(n, METAL_BASE_ADDRESS_LABEL));
       add_inline_body(size_func,
-                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" +
+                          n.handle(),
                       platform_define(n, METAL_SIZE_LABEL));
       add_inline_body(from_region_base_func,
-                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" +
+                          n.handle(),
                       platform_define(n, "FROM_REGION_BASE"));
       add_inline_body(from_region_size_func,
-                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" +
+                          n.handle(),
                       platform_define(n, "FROM_REGION_SIZE"));
       add_inline_body(to_region_base_func,
-                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" +
+                          n.handle(),
                       platform_define(n, "TO_REGION_BASE"));
       add_inline_body(to_region_size_func,
-                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" +
+                          n.handle(),
                       platform_define(n, "TO_REGION_SIZE"));
       add_inline_body(max_from_entry_addr_width_func,
-                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "(uintptr_t)remapper == (uintptr_t)&__metal_dt_" +
+                          n.handle(),
                       platform_define(n, "MAX_FROM_ENTRY_REGION_ADDR_WIDTH"));
     }
 

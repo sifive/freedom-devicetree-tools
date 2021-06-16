@@ -28,13 +28,13 @@ public:
     if (dtb.match(std::regex(compat_string), [](const node n) {}) != 0) {
       emit_compat();
 
-      emit_offset("CFG",              0x0);
-      emit_offset("VALID_BASE",       0x4);
-      emit_offset("FLUSH",            0x20);
-      emit_offset("VERSION",          0x1f4);
-      emit_offset("ENTRIES",          0x1f8);
-      emit_offset("KEY",              0x1fc);
-      emit_offset("FROM_BASE",        0x200);
+      emit_offset("CFG", 0x0);
+      emit_offset("VALID_BASE", 0x4);
+      emit_offset("FLUSH", 0x20);
+      emit_offset("VERSION", 0x1f4);
+      emit_offset("ENTRIES", 0x1f8);
+      emit_offset("KEY", 0x1fc);
+      emit_offset("FROM_BASE", 0x200);
 
       os << std::endl;
     }
