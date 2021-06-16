@@ -32,25 +32,25 @@ jobs:
 
       - name: 'Debug'
         run: |
-          docker run --rm freedom-devicetree-tools -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools "pwd; ls -l"
+          docker run --rm -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
+            freedom-devicetree-tools "pwd; ls -l"
 
       - name: 'Run Clang code style test'
         run: |
-          docker run --rm freedom-devicetree-tools \
-            -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
-          ./scripts/check-format
+          docker run --rm -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
+            freedom-devicetree-tools ./scripts/check-format
 
       - name: 'Build and check'
         run: |
-          docker run --rm freedom-devicetree-tools \
-            -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
+          docker run --rm -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
+            freedom-devicetree-tools \
             "./configure && make && make install && make check && cat test-suite.log \
              make dist && make distcheck"
 
       - name: 'Build from distribution and check'
         run: |
-          docker run --rm freedom-devicetree-tools \
-            -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
+          docker run --rm -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
+            freedom-devicetree-tools \
             "tar -xvzpf freedom-devicetree-tools-*.tar.gz && \
              cd freedom-devicetree-tools-*/ && \
              configure && make && make install && make check && cat test-suite.log"
