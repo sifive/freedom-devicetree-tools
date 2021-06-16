@@ -1,6 +1,6 @@
 name: tests
 
-on: push # pull_request
+on: pull_request
 
 jobs:
   test:
@@ -29,11 +29,6 @@ jobs:
           docker build -t freedom-devicetree-tools \
             -f freedom-devicetree-tools/docker/Dockerfile \
             freedom-devicetree-tools
-
-      - name: 'Debug'
-        run: |
-          docker run --rm -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
-            freedom-devicetree-tools sh -c "pwd; ls -l"
 
       - name: 'Run Clang code style test'
         run: |
