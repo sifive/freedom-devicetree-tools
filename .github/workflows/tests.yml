@@ -30,9 +30,15 @@ jobs:
             -f freedom-devicetree-tools/docker/Dockerfile \
             freedom-devicetree-tools
 
+      - name: 'Debug'
+        run: |
+          docker run --rm freedom-devicetree-tools -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools "pwd; ls -l"
+
       - name: 'Run Clang code style test'
         run: |
-          docker run --rm freedom-devicetree-tools ./scripts/check-format
+          docker run --rm freedom-devicetree-tools \
+            -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
+          ./scripts/check-format
 
       - name: 'Build and check'
         run: |
