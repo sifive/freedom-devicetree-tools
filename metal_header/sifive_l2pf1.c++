@@ -24,8 +24,8 @@ void sifive_l2pf1::create_defines() {
   dtb.match(std::regex("cpu"), [&](node n) {
     if (n.field_exists("sifive,l2pf")) {
       node t = n.get_fields<node>("sifive,l2pf")[0];
-      l2pf_base +=
-          platform_define_offset(t, std::to_string(index) + "_" + METAL_BASE_ADDRESS_LABEL);
+      l2pf_base += platform_define_offset(t, std::to_string(index) + "_" +
+                                                 METAL_BASE_ADDRESS_LABEL);
       l2pf_base += ",\\\n\t";
 
       l2pf_queue_entries +=
@@ -75,29 +75,29 @@ void sifive_l2pf1::create_defines() {
     if (n.field_exists("sifive,l2pf-queue-entries")) {
       val = n.get_fields<uint32_t>("sifive,l2pf-queue-entries")[0];
     }
-    emit_def("METAL_SIFIVE_L2PF1_" + std::to_string(count) +
-            "_QUEUE_ENTRIES", std::to_string(val));
+    emit_def("METAL_SIFIVE_L2PF1_" + std::to_string(count) + "_QUEUE_ENTRIES",
+             std::to_string(val));
 
     val = 0;
     if (n.field_exists("sifive,l2pf-window-bits")) {
-        val = n.get_fields<uint32_t>("sifive,l2pf-window-bits")[0];
+      val = n.get_fields<uint32_t>("sifive,l2pf-window-bits")[0];
     }
-    emit_def("METAL_SIFIVE_L2PF1_" + std::to_string(count) +
-            "_WINDOW_BITS", std::to_string(val));
+    emit_def("METAL_SIFIVE_L2PF1_" + std::to_string(count) + "_WINDOW_BITS",
+             std::to_string(val));
 
     val = 0;
     if (n.field_exists("sifive,l2pf-distance-bits")) {
-        val = n.get_fields<uint32_t>("sifive,l2pf-distance-bits")[0];
+      val = n.get_fields<uint32_t>("sifive,l2pf-distance-bits")[0];
     }
-    emit_def("METAL_SIFIVE_L2PF1_" + std::to_string(count) +
-            "_DISTANCE_BITS", std::to_string(val));
+    emit_def("METAL_SIFIVE_L2PF1_" + std::to_string(count) + "_DISTANCE_BITS",
+             std::to_string(val));
 
     val = 0;
     if (n.field_exists("sifive,l2pf-streams")) {
-        val = n.get_fields<uint32_t>("sifive,l2pf-streams")[0];
+      val = n.get_fields<uint32_t>("sifive,l2pf-streams")[0];
     }
-    emit_def("METAL_SIFIVE_L2PF1_" + std::to_string(count) +
-            "_STREAMS", std::to_string(val));
+    emit_def("METAL_SIFIVE_L2PF1_" + std::to_string(count) + "_STREAMS",
+             std::to_string(val));
 
     count++;
   });
