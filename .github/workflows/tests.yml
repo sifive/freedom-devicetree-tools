@@ -44,13 +44,13 @@ jobs:
         run: |
           docker run --rm -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
             freedom-devicetree-tools \
-            sh -c "./configure && make && make install && make check && cat test-suite.log \
-             make dist && make distcheck"
+            sh -c "./configure && make && make install && make check && \
+                   cat test-suite.log && make dist && make distcheck"
 
       - name: 'Build from distribution and check'
         run: |
           docker run --rm -v $(pwd)/freedom-devicetree-tools:/freedom-devicetree-tools \
             freedom-devicetree-tools \
             sh -c "tar -xvzpf freedom-devicetree-tools-*.tar.gz && \
-             cd freedom-devicetree-tools-*/ && \
-             configure && make && make install && make check && cat test-suite.log"
+                   cd freedom-devicetree-tools-*/ && ./configure && \
+                   make && make install && make check && cat test-suite.log"
