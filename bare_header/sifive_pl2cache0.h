@@ -32,20 +32,20 @@ public:
       emit_compat("sifive,pl2cache0");
       emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_CONFIG_LABEL,
                   0x0000);
-      emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_ECCINJECTERROR_LABEL,
-                  0X0040);
-      emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_ECCINJECTERRORDONE_LABEL,
-                  0X0060);
+      emit_offset("sifive,pl2cache0",
+                  METAL_SIFIVE_PL2CACHE_ECCINJECTERROR_LABEL, 0X0040);
+      emit_offset("sifive,pl2cache0",
+                  METAL_SIFIVE_PL2CACHE_ECCINJECTERRORDONE_LABEL, 0X0060);
       emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_CFLUSH64_LABEL,
                   0X0200);
       emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_FLUSHCOUNT_LABEL,
                   0X0208);
-      emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_PMEVENTSELECT0_LABEL,
-                  0X2000);
-      emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_PMCLIENTFILTER_LABEL,
-                  0X2800);
-      emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_PMEVENTCOUNTER0_LABEL,
-                  0X3000);
+      emit_offset("sifive,pl2cache0",
+                  METAL_SIFIVE_PL2CACHE_PMEVENTSELECT0_LABEL, 0X2000);
+      emit_offset("sifive,pl2cache0",
+                  METAL_SIFIVE_PL2CACHE_PMCLIENTFILTER_LABEL, 0X2800);
+      emit_offset("sifive,pl2cache0",
+                  METAL_SIFIVE_PL2CACHE_PMEVENTCOUNTER0_LABEL, 0X3000);
 
       os << std::endl;
     }

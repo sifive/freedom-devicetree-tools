@@ -27,18 +27,18 @@ void sifive_pl2cache0::create_defines() {
         if (it->compare("sifive,pL2Cache0") == 0) {
           uint32_t idx = 0;
           dtb.match(std::regex(compat_string), [&](node p) {
-              if ( p.handle() == t.handle() ) {
-                found = true;
-                pl2cache_base +=
-                    platform_define_offset(t, std::to_string(idx) + "_BASE_ADDRESS");
-                pl2cache_base += ",\\\n\t\t\t\t";
-              }
-              idx++;
+            if (p.handle() == t.handle()) {
+              found = true;
+              pl2cache_base += platform_define_offset(t, std::to_string(idx) +
+                                                             "_BASE_ADDRESS");
+              pl2cache_base += ",\\\n\t\t\t\t";
+            }
+            idx++;
           });
         }
       }
     }
-    if ( !found ) {
+    if (!found) {
       pl2cache_base += "0UL,\\\n\t\t\t\t";
     }
   });
@@ -46,7 +46,6 @@ void sifive_pl2cache0::create_defines() {
 
   uint32_t count = 0;
   dtb.match(std::regex(compat_string), [&](node n) {
-
     if (count == 0) {
       emit_def("METAL_PL2CACHE_DRIVER_PREFIX", "sifive_pl2cache0");
       /* Array of base addresses with HART IDs as the index */
@@ -62,7 +61,8 @@ void sifive_pl2cache0::create_defines() {
                std::to_string(perfmon_count));
 
       /* Set handle as NULL, for API compatibility */
-      emit_def("__METAL_DT_SIFIVE_PL2CACHE0_HANDLE", "(struct metal_cache *)NULL");
+      emit_def("__METAL_DT_SIFIVE_PL2CACHE0_HANDLE",
+               "(struct metal_cache *)NULL");
       count++;
     }
   });
