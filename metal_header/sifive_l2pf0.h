@@ -13,6 +13,9 @@ public:
   sifive_l2pf0(std::ostream &os, const fdt &dtb);
   void include_headers();
   void create_defines();
+
+private:
+  bool skip;
 };
 
 #endif
