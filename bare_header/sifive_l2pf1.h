@@ -10,11 +10,11 @@
 
 class sifive_l2pf1 : public Device {
 private:
-    bool skip;
+  bool skip;
+
 public:
   sifive_l2pf1(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "sifive,l2pf1"),
-        skip(false) {
+      : Device(os, dtb, "sifive,l2pf1"), skip(false) {
     bool l2pf_compat = false;
     dtb.match(std::regex("cpu"), [&](node n) {
       if (!skip && !l2pf_compat && n.field_exists("sifive,l2pf")) {
@@ -25,12 +25,12 @@ public:
           std::regex lp2f_regex("sifive,l2pf\\d+");
           std::smatch l2pf_match;
           std::regex_match(*it, l2pf_match, lp2f_regex);
-          if (! l2pf_match.empty()) {
-              l2pf_compat = true;
-              if (l2pf_match[0].str() != compat_string) {
-                  skip = true;
-                  break;
-              }
+          if (!l2pf_match.empty()) {
+            l2pf_compat = true;
+            if (l2pf_match[0].str() != compat_string) {
+              skip = true;
+              break;
+            }
           }
         }
       }
@@ -40,7 +40,7 @@ public:
   int get_index(const node &n) { return Device::get_index(n, compat_string); }
 
   void emit_defines() {
-    if (! skip) {
+    if (!skip) {
       dtb.match(std::regex(compat_string), [&](node n) {
         emit_comment(n);
 
@@ -53,7 +53,7 @@ public:
   }
 
   void emit_offsets() {
-    if(! skip) {
+    if (!skip) {
       if (dtb.match(std::regex(compat_string), [](const node n) {}) != 0) {
         emit_compat();
         emit_offset("BASIC_CONTROL", 0x00);

@@ -6,8 +6,7 @@
 #include <regex>
 
 sifive_l2pf0::sifive_l2pf0(std::ostream &os, const fdt &dtb)
-    : Device(os, dtb, "sifive,l2pf0"),
-      skip(false) {
+    : Device(os, dtb, "sifive,l2pf0"), skip(false) {
   bool l2pf_compat = false;
   dtb.match(std::regex("cpu"), [&](node n) {
     if (!skip && !l2pf_compat && n.field_exists("sifive,l2pf")) {
@@ -18,12 +17,12 @@ sifive_l2pf0::sifive_l2pf0(std::ostream &os, const fdt &dtb)
         std::regex lp2f_regex("sifive,l2pf\\d+");
         std::smatch l2pf_match;
         std::regex_match(*it, l2pf_match, lp2f_regex);
-        if (! l2pf_match.empty()) {
-            l2pf_compat = true;
-            if (l2pf_match[0].str() != compat_string) {
-                skip = true;
-                break;
-            }
+        if (!l2pf_match.empty()) {
+          l2pf_compat = true;
+          if (l2pf_match[0].str() != compat_string) {
+            skip = true;
+            break;
+          }
         }
       }
     }
@@ -31,7 +30,7 @@ sifive_l2pf0::sifive_l2pf0(std::ostream &os, const fdt &dtb)
 }
 
 void sifive_l2pf0::include_headers() {
-  if (! skip) {
+  if (!skip) {
     dtb.match(std::regex(compat_string),
               [&](node n) { emit_include(compat_string); });
   }
@@ -39,7 +38,7 @@ void sifive_l2pf0::include_headers() {
 
 void sifive_l2pf0::create_defines() {
   if (skip) {
-      return;
+    return;
   }
 
   uint32_t count = 0, index = 0;
