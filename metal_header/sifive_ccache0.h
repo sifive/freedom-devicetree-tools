@@ -13,6 +13,11 @@ public:
   sifive_ccache0(std::ostream &os, const fdt &dtb);
   void include_headers();
   void create_defines();
+  void declare_inlines();
+  void define_inlines();
+  void declare_structs();
+  void define_structs();
+  void create_handles();
 };
 
 #endif
