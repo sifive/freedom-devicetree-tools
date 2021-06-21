@@ -33,6 +33,7 @@
 #include <sifive_l2pf1.h>
 #include <sifive_local_external_interrupts0.h>
 #include <sifive_pl2cache0.h>
+#include <sifive_prci0.h>
 #include <sifive_pwm0.h>
 #include <sifive_remapper2.h>
 #include <sifive_rtc0.h>
@@ -164,6 +165,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_l2pf0(os, dtb));
   devices.push_back(new sifive_l2pf1(os, dtb));
   devices.push_back(new sifive_pl2cache0(os, dtb));
+  devices.push_back(new sifive_prci0(os, dtb));
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_remapper2(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
