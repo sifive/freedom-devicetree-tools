@@ -40,6 +40,8 @@ public:
                   0X0200);
       emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_FLUSHCOUNT_LABEL,
                   0X0208);
+      emit_offset("sifive,pl2cache0", METAL_SIFIVE_PL2CACHE_CONFIGBITS_LABEL,
+                  0x1008);
       emit_offset("sifive,pl2cache0",
                   METAL_SIFIVE_PL2CACHE_PMEVENTSELECT0_LABEL, 0X2000);
       emit_offset("sifive,pl2cache0",
