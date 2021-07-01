@@ -11,7 +11,7 @@
 class sifive_ccache0 : public Device {
 public:
   sifive_ccache0(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "sifive,(ccache0|fu540-c000,l2)") {}
+      : Device(os, dtb, "sifive,ccache0") {}
 
   int get_index(const node &n) { return Device::get_index(n, compat_string); }
 

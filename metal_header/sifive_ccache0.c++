@@ -6,7 +6,7 @@
 #include <regex>
 
 sifive_ccache0::sifive_ccache0(std::ostream &os, const fdt &dtb)
-    : Device(os, dtb, "sifive,(ccache0|fu540-c000,l2)") {}
+    : Device(os, dtb, "sifive,ccache0") {}
 
 void sifive_ccache0::include_headers() {
   dtb.match(std::regex(compat_string),
