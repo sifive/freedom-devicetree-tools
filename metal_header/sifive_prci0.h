@@ -1,16 +1,16 @@
-/* Copyright 2019 SiFive, Inc */
+/* Copyright 2021 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#ifndef __METAL_HEADER_TEMPLATE_DEVICE__H
-#define __METAL_HEADER_TEMPLATE_DEVICE__H
+#ifndef __METAL_HEADER_SIFIVE_PRCI0__H
+#define __METAL_HEADER_SIFIVE_PRCI0__H
 
 #include <device.h>
 
 #include <regex>
 
-class sifive_fu540_c000_l2 : public Device {
+class sifive_prci0 : public Device {
 public:
-  sifive_fu540_c000_l2(std::ostream &os, const fdt &dtb);
+  sifive_prci0(std::ostream &os, const fdt &dtb);
   void include_headers();
   void declare_inlines();
   void define_inlines();
@@ -19,4 +19,4 @@ public:
   void create_handles();
 };
 
-#endif
+#endif /* __METAL_HEADER_SIFIVE_PRCI0__H */

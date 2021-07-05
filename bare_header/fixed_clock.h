@@ -16,8 +16,11 @@ public:
   void emit_defines() {
     dtb.match(std::regex(compat_string), [&](node n) {
       emit_comment(n);
+      std::string handle;
+      handle = n.handle();
+      std::transform(handle.begin(), handle.end(), handle.begin(), toupper);
 
-      emit_property_u32(n, METAL_CLOCK_FREQUENCY_LABEL,
+      emit_property_u32(n, handle + "_" + METAL_CLOCK_FREQUENCY_LABEL,
                         n.get_field<uint32_t>("clock-frequency"));
 
       os << std::endl;
