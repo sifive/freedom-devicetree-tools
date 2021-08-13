@@ -52,6 +52,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_global_external_interrupts0.h \
 	metal_header/sifive_gpio0.c++ \
 	metal_header/sifive_gpio0.h \
+	metal_header/sifive_gpio2.c++ \
+	metal_header/sifive_gpio2.h \
 	metal_header/sifive_gpio_button.c++ \
 	metal_header/sifive_gpio_button.h \
 	metal_header/sifive_gpio_led.c++ \
@@ -118,6 +120,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_fe310_g000_pll.h \
 	bare_header/sifive_global_external_interrupts0.h \
 	bare_header/sifive_gpio0.h \
+	bare_header/sifive_gpio2.h \
 	bare_header/sifive_gpio_buttons.h \
 	bare_header/sifive_gpio_leds.h \
 	bare_header/sifive_gpio_switches.h \

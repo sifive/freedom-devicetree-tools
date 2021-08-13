@@ -1,4 +1,4 @@
-/* Copyright 2019 SiFive, Inc */
+/* Copyright 2021 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 /* DeviceTree Library */
@@ -37,6 +37,7 @@
 #include "bare_header/sifive_fe310_g000_prci.h"
 #include "bare_header/sifive_global_external_interrupts0.h"
 #include "bare_header/sifive_gpio0.h"
+#include "bare_header/sifive_gpio2.h"
 #include "bare_header/sifive_gpio_buttons.h"
 #include "bare_header/sifive_gpio_leds.h"
 #include "bare_header/sifive_gpio_switches.h"
@@ -165,6 +166,7 @@ static void write_config_file(const fdt &dtb, fstream &os, std::string cfg_file,
   devices.push_back(new sifive_fe310_g000_pll(os, dtb));
   devices.push_back(new sifive_global_external_interrupts0(os, dtb));
   devices.push_back(new sifive_gpio0(os, dtb));
+  devices.push_back(new sifive_gpio2(os, dtb));
   devices.push_back(new sifive_gpio_buttons(os, dtb));
   devices.push_back(new sifive_gpio_leds(os, dtb));
   devices.push_back(new sifive_gpio_switches(os, dtb));

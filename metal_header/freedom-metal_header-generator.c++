@@ -1,4 +1,4 @@
-/* Copyright 2018 SiFive, Inc */
+/* Copyright 2021 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 /* DeviceTree Library */
@@ -25,6 +25,7 @@
 #include <sifive_clic0.h>
 #include <sifive_global_external_interrupts0.h>
 #include <sifive_gpio0.h>
+#include <sifive_gpio2.h>
 #include <sifive_gpio_button.h>
 #include <sifive_gpio_led.h>
 #include <sifive_gpio_switch.h>
@@ -158,6 +159,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_local_external_interrupts0(os, dtb));
   devices.push_back(new sifive_global_external_interrupts0(os, dtb));
   devices.push_back(new sifive_gpio0(os, dtb));
+  devices.push_back(new sifive_gpio2(os, dtb));
   devices.push_back(new sifive_gpio_button(os, dtb));
   devices.push_back(new sifive_gpio_led(os, dtb));
   devices.push_back(new sifive_gpio_switch(os, dtb));
