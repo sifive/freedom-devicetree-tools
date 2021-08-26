@@ -41,6 +41,7 @@
 #include <sifive_spi0.h>
 #include <sifive_test0.h>
 #include <sifive_trace.h>
+#include <sifive_twinjet.h>
 #include <sifive_uart0.h>
 #include <sifive_wdog0.h>
 #include <ucb_htif0.h>
@@ -172,6 +173,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_trace(os, dtb));
+  devices.push_back(new sifive_twinjet(os, dtb));
   devices.push_back(new sifive_uart0(os, dtb));
   devices.push_back(new sifive_simuart0(os, dtb));
   devices.push_back(new sifive_wdog0(os, dtb));
