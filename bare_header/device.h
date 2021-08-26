@@ -53,6 +53,7 @@ public:
   void emit_offset(string name, string offset_name, uint32_t offset);
   void emit_offset(string offset_name, uint32_t offset);
 
+  void emit_property_u32(string name, string property_name, uint32_t value);
   void emit_property_u32(const node &n, string property_name, uint32_t value);
 };
 

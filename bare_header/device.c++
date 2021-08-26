@@ -208,13 +208,16 @@ void Device::emit_offset(string offset_name, uint32_t offset) {
   emit_offset(compat_string, offset_name, offset);
 }
 
+void Device::emit_property_u32(string name, string property_name,
+                               uint32_t value) {
+  os << "#define " << name << "_" << property_name << " " << value << "UL"
+     << std::endl;
+}
+
 void Device::emit_property_u32(const node &n, string property_name,
                                uint32_t value) {
-  os << "#define " << def_handle(n) << "_" << property_name << " " << value
-     << "UL" << std::endl;
+  emit_property_u32(def_handle(n), property_name, value);
   // If the address is very small, it already is an index.
-  if (n.instance().length() > 2) {
-    os << "#define " << def_handle_index(n) << "_" << property_name << " "
-       << value << "UL" << std::endl;
-  }
+  if (n.instance().length() > 2)
+    emit_property_u32(def_handle_index(n), property_name, value);
 }
