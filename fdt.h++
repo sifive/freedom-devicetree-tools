@@ -379,7 +379,8 @@ public:
     return match(r, f) + match(std::forward<args>(a)...);
   }
 
-  int match(const std::regex &r, std::function<void(const node &)> f) const;
+  int match(const std::regex &r, std::function<void(const node &)> f,
+            bool skip_device_type = false) const;
 
   template <typename... tuple_args, typename... args, typename func>
   int chosen(std::string r, tuple_t<tuple_args...> types, func f,
