@@ -66,6 +66,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_l2pf0.h \
 	metal_header/sifive_l2pf1.c++ \
 	metal_header/sifive_l2pf1.h \
+	metal_header/sifive_mallard0.c++ \
+	metal_header/sifive_mallard0.h \
 	metal_header/sifive_pl2cache0.c++ \
 	metal_header/sifive_pl2cache0.h \
 	metal_header/sifive_prci0.c++ \
@@ -125,6 +127,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_local_external_interrupts0.h \
 	bare_header/sifive_l2pf0.h \
 	bare_header/sifive_l2pf1.h \
+	bare_header/sifive_mallard0.h \
 	bare_header/sifive_pl2cache0.h \
 	bare_header/sifive_prci0.h \
 	bare_header/sifive_pwm0.h \
