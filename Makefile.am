@@ -84,6 +84,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_simuart0.h \
 	metal_header/sifive_wdog0.c++ \
 	metal_header/sifive_wdog0.h \
+	metal_header/sifive_wdog2.c++ \
+	metal_header/sifive_wdog2.h \
 	metal_header/stdout_path.c++ \
 	metal_header/stdout_path.h \
 	metal_header/template_device.c++ \
@@ -132,6 +134,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_uart0.h \
 	bare_header/sifive_simuart0.h \
 	bare_header/sifive_wdog0.h \
+	bare_header/sifive_wdog2.h \
 	bare_header/ucb_htif0.h \
 	bare_header/sifive_hca_0_5_x.h \
 	bare_header/sifive_hca_1_x_x.h \
