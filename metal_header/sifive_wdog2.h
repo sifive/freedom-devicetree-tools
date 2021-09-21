@@ -11,9 +11,10 @@
 class sifive_wdog2 : public Device {
 public:
   int num_wdogs;
+  uint32_t max_interrupts = 0;
 
   sifive_wdog2(std::ostream &os, const fdt &dtb);
-
+  void create_defines();
   void include_headers();
   void declare_inlines();
   void define_inlines();

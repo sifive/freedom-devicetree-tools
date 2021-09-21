@@ -1,4 +1,4 @@
-/* Copyright 2019 SiFive, Inc */
+/* Copyright 2021 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <sifive_wdog2.h>
@@ -6,9 +6,23 @@
 #include <regex>
 
 sifive_wdog2::sifive_wdog2(std::ostream &os, const fdt &dtb)
-    : Device(os, dtb, "sifive,(wdog2|aon0|wdt2)") {
-  num_wdogs = 0;
-  dtb.match(std::regex(compat_string), [&](node n) { num_wdogs += 1; });
+    : Device(os, dtb, "sifive,(wdog2|aon0|wdt2)") {}
+
+void sifive_wdog2::create_defines() {
+  dtb.match(std::regex(compat_string), [&](node n) {
+    num_wdogs += 1;
+
+    uint32_t num_interrupts = n.get_fields_count<uint32_t>("interrupts");
+
+    emit_def("__METAL_" + n.handle_cap() + "_INTERRUPTS",
+             std::to_string(num_interrupts));
+
+    if (num_interrupts > max_interrupts) {
+      max_interrupts = num_interrupts;
+    }
+  });
+
+  emit_def("METAL_MAX_WDOG_INTERRUPTS", std::to_string(max_interrupts));
 }
 
 void sifive_wdog2::include_headers() {
@@ -31,8 +45,16 @@ void sifive_wdog2::declare_inlines() {
                                "const struct metal_watchdog *const watchdog");
       extern_inlines.push_back(func);
 
+      func =
+          create_inline_dec("num_interrupts", "int", "struct metal_watchdog *watchdog");
+      extern_inlines.push_back(func);
+
       func = create_inline_dec("interrupt_parent", "struct metal_interrupt *",
                                "const struct metal_watchdog *const watchdog");
+      extern_inlines.push_back(func);
+
+      func = create_inline_dec("interrupt_lines", "int",
+                               "struct metal_watchdog *watchdog", "int idx");
       extern_inlines.push_back(func);
 
       func = create_inline_dec("interrupt_line", "int",
@@ -59,7 +81,9 @@ void sifive_wdog2::declare_inlines() {
 void sifive_wdog2::define_inlines() {
   Inline *base_func;
   Inline *size_func;
+  Inline *num_int_func;
   Inline *int_parent_func;
+  Inline *interrupt_line_func;
   Inline *int_line_func;
   Inline *clock_func;
 
@@ -78,13 +102,41 @@ void sifive_wdog2::define_inlines() {
                   });
     std::string int_line_value = "0";
 
-    if (n.field_exists("interrupts")) {
-      /* If the compatible string is "sifive,wdog2", then there should only be
-       * one interrupt line. If the compatible string is "sifive,aon0", the
-       * first interrupt line corresponds to the watchdog interrupt. */
-      int_line_value =
-          std::to_string(n.get_fields<uint32_t>("interrupts").at(0));
-    }
+
+    /* Interrupt lines */
+    n.maybe_tuple_index(
+        "interrupts", tuple_t<uint32_t>(),
+        [&]() {
+          if (count == 0) {
+            interrupt_line_func =
+                create_inline_def("interrupt_lines", "int", "empty", "0",
+                                  "struct metal_watchdog *watchdog", "int idx");
+          }
+        },
+
+        [&](int i, uint32_t irline) {
+          uint32_t num_interrupts = n.get_fields_count<uint32_t>("interrupts");
+          if ((count == 0) && (i == 0)) {
+            interrupt_line_func = create_inline_def(
+                "interrupt_lines", "int",
+                "((uintptr_t)watchdog == (uintptr_t)&__metal_dt_" + n.handle() +
+                    ") && (" + "idx == " + std::to_string(i) + ")",
+                std::to_string(irline), "struct metal_watchdog *watchdog", "int idx");
+          } else if (((count + 1) == num_wdogs) && ((i + 1) == num_interrupts)) {
+            add_inline_body(interrupt_line_func,
+                            "(((uintptr_t)watchdog == (uintptr_t)&__metal_dt_" +
+                                n.handle() + ") && (" +
+                                "idx == " + std::to_string(i) + "))",
+                            std::to_string(irline));
+            add_inline_body(interrupt_line_func, "else", "0");
+          } else {
+            add_inline_body(interrupt_line_func,
+                            "(((uintptr_t)watchdog == (uintptr_t)&__metal_dt_" +
+                                n.handle() + ") && (" +
+                                "idx == " + std::to_string(i) + "))",
+                            std::to_string(irline));
+          }
+        });
 
     /* Clock driving the UART peripheral */
     std::string clock_value = "NULL";
@@ -106,6 +158,11 @@ void sifive_wdog2::define_inlines() {
           "(uintptr_t)watchdog == (uintptr_t)&__metal_dt_" + n.handle(),
           platform_define(n, METAL_SIZE_LABEL),
           "const struct metal_watchdog *const watchdog");
+
+      num_int_func = create_inline_def(
+          "num_interrupts", "int",
+          "(uintptr_t)watchdog == (uintptr_t)&__metal_dt_" + n.handle(),
+          "METAL_MAX_WDOG_INTERRUPTS", "struct metal_watchdog *watchdog");
 
       int_parent_func = create_inline_def(
           "interrupt_parent", "struct metal_interrupt *",
@@ -132,6 +189,10 @@ void sifive_wdog2::define_inlines() {
                           n.handle(),
                       platform_define(n, METAL_SIZE_LABEL));
 
+      add_inline_body(num_int_func,
+                      "(uintptr_t)watchdog == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "METAL_MAX_WDOG_INTERRUPTS");
+
       add_inline_body(int_parent_func,
                       "(uintptr_t)watchdog == (uintptr_t)&__metal_dt_" +
                           n.handle(),
@@ -157,6 +218,7 @@ void sifive_wdog2::define_inlines() {
   if (num_wdogs != 0) {
     add_inline_body(base_func, "else", "0");
     add_inline_body(size_func, "else", "0");
+    add_inline_body(num_int_func, "else", "0");
     add_inline_body(int_parent_func, "else", "0");
     add_inline_body(int_line_func, "else", "0");
     add_inline_body(clock_func, "else", "0");
@@ -165,10 +227,14 @@ void sifive_wdog2::define_inlines() {
     delete base_func;
     emit_inline_def(size_func, "sifive_wdog2");
     delete size_func;
+    emit_inline_def(num_int_func, "sifive_wdog2");
+    delete num_int_func;
     emit_inline_def(int_parent_func, "sifive_wdog2");
     delete int_parent_func;
     emit_inline_def(int_line_func, "sifive_wdog2");
     delete int_line_func;
+    emit_inline_def(interrupt_line_func, "sifive_wdog2");
+    delete interrupt_line_func;
     emit_inline_def(clock_func, "sifive_wdog2");
     delete clock_func;
   }
