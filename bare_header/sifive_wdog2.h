@@ -40,8 +40,8 @@ public:
       emit_offset("sifive,wdog2", "WDOGKEY", 0x1c);
       emit_offset("sifive,wdog2", "WDOGCMP", 0x20);
       emit_offset("sifive,wdog2", "WDOGWIN", 0x24);
-      emit_offset("sifive,wdog2", "WDOGINTEN", 0x20);
-      emit_offset("sifive,wdog2", "WDOGINTPE", 0x20);
+      emit_offset("sifive,wdog2", "WDOGINTEN", 0x28);
+      emit_offset("sifive,wdog2", "WDOGINTPE", 0x2C);
 
       os << std::endl;
     }
