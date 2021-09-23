@@ -20,7 +20,7 @@ void sifive_uart1::create_defines() {
     }
   });
 
-  emit_def("METAL_MAX_UART_INTERRUPTS", std::to_string(max_interrupts));
+  emit_def("METAL_MAX_UART1_INTERRUPTS", std::to_string(max_interrupts));
 }
 
 void sifive_uart1::include_headers() {
@@ -147,7 +147,7 @@ void sifive_uart1::define_inlines() {
       num_int_func = create_inline_def(
           "num_interrupts", "int",
           "(uintptr_t)uart == (uintptr_t)&__metal_dt_" + n.handle(),
-          "METAL_MAX_UART_INTERRUPTS", "struct metal_uart *uart");
+          "METAL_MAX_UART1_INTERRUPTS", "struct metal_uart *uart");
 
       int_parent_func = create_inline_def(
           "interrupt_parent", "struct metal_interrupt *",
@@ -189,7 +189,7 @@ void sifive_uart1::define_inlines() {
 
       add_inline_body(num_int_func,
                       "(uintptr_t)uart == (uintptr_t)&__metal_dt_" + n.handle(),
-                      "METAL_MAX_UART_INTERRUPTS");
+                      "METAL_MAX_UART1_INTERRUPTS");
 
       add_inline_body(int_parent_func,
                       "(uintptr_t)uart == (uintptr_t)&__metal_dt_" + n.handle(),
@@ -272,7 +272,7 @@ void sifive_uart1::define_structs() {
 }
 
 void sifive_uart1::create_handles() {
-  emit_def("__METAL_DT_MAX_UARTS", std::to_string(num_uarts));
+  emit_def("__METAL_DT_MAX_UART1S", std::to_string(num_uarts));
 
   emit_struct_pointer_begin("sifive_uart1", "__metal_uart1_table", "[]");
   if (num_uarts) {
