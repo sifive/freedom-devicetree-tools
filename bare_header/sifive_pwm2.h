@@ -1,17 +1,17 @@
-/* Copyright 2019 SiFive, Inc */
+/* Copyright 2021 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#ifndef __BARE_HEADER_SIFIVE_PWM1__H
-#define __BARE_HEADER_SIFIVE_PWM1__H
+#ifndef __BARE_HEADER_SIFIVE_PWM2__H
+#define __BARE_HEADER_SIFIVE_PWM2__H
 
 #include "bare_header/device.h"
 
 #include <regex>
 
-class sifive_pwm1 : public Device {
+class sifive_pwm2 : public Device {
 public:
-  sifive_pwm1(std::ostream &os, const fdt &dtb)
-      : Device(os, dtb, "sifive,pwm1") {}
+  sifive_pwm2(std::ostream &os, const fdt &dtb)
+      : Device(os, dtb, "sifive,pwm2") {}
 
   void emit_defines() {
     dtb.match(std::regex(compat_string), [&](node n) {

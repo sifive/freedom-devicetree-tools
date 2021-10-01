@@ -1,16 +1,16 @@
-/* Copyright 2020 SiFive, Inc */
+/* Copyright 2021 SiFive, Inc */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <sifive_pwm1.h>
+#include <sifive_pwm2.h>
 
-sifive_pwm1::sifive_pwm1(std::ostream &os, const fdt &dtb)
-    : Device(os, dtb, "sifive,pwm1") {
+sifive_pwm2::sifive_pwm2(std::ostream &os, const fdt &dtb)
+    : Device(os, dtb, "sifive,pwm2") {
   /* Count the number of PWMs */
   num_pwms = 0;
   dtb.match(std::regex(compat_string), [&](node n) { num_pwms += 1; });
 }
 
-void sifive_pwm1::create_defines() {
+void sifive_pwm2::create_defines() {
   dtb.match(std::regex(compat_string), [&](node n) {
     uint32_t num_interrupts = n.get_fields_count<uint32_t>("interrupts");
     emit_def("__METAL_" + n.handle_cap() + "_INTERRUPTS",
@@ -29,16 +29,16 @@ void sifive_pwm1::create_defines() {
     }
   });
 
-  emit_def("METAL_MAX_PWM1_INTERRUPTS", std::to_string(max_interrupts));
-  emit_def("METAL_MAX_PWM1_NCMP", std::to_string(max_ncmp));
+  emit_def("METAL_MAX_PWM2_INTERRUPTS", std::to_string(max_interrupts));
+  emit_def("METAL_MAX_PWM2_NCMP", std::to_string(max_ncmp));
 }
 
-void sifive_pwm1::include_headers() {
+void sifive_pwm2::include_headers() {
   dtb.match(std::regex(compat_string),
             [&](node n) { emit_include(compat_string); });
 }
 
-void sifive_pwm1::declare_inlines() {
+void sifive_pwm2::declare_inlines() {
   Inline *func;
   std::list<Inline *> extern_inlines;
   int count = 0;
@@ -91,17 +91,17 @@ void sifive_pwm1::declare_inlines() {
     count++;
   });
   os << "\n";
-  os << "/* --------------------- sifive_pwm1 ------------ */\n";
+  os << "/* --------------------- sifive_pwm2 ------------ */\n";
   while (!extern_inlines.empty()) {
     func = extern_inlines.front();
     extern_inlines.pop_front();
-    emit_inline_dec(func, "sifive_pwm1");
+    emit_inline_dec(func, "sifive_pwm2");
     delete func;
   }
   os << "\n";
 }
 
-void sifive_pwm1::define_inlines() {
+void sifive_pwm2::define_inlines() {
 
   Inline *control_base_func;
   Inline *control_size_func;
@@ -290,7 +290,7 @@ void sifive_pwm1::define_inlines() {
   });
 
   os << "\n";
-  os << "/* --------------------- sifive_pwm1 ------------ */\n";
+  os << "/* --------------------- sifive_pwm2 ------------ */\n";
 
   if (num_pwms != 0) {
     add_inline_body(control_base_func, "else", "0");
@@ -303,49 +303,49 @@ void sifive_pwm1::define_inlines() {
     add_inline_body(comparator_count_func, "else", "0");
     add_inline_body(num_interrupts_func, "else", "0");
 
-    emit_inline_def(control_base_func, "sifive_pwm1");
+    emit_inline_def(control_base_func, "sifive_pwm2");
     delete control_base_func;
-    emit_inline_def(control_size_func, "sifive_pwm1");
+    emit_inline_def(control_size_func, "sifive_pwm2");
     delete control_size_func;
-    emit_inline_def(clock_func, "sifive_pwm1");
+    emit_inline_def(clock_func, "sifive_pwm2");
     delete clock_func;
-    emit_inline_def(pinmux_func, "sifive_pwm1");
+    emit_inline_def(pinmux_func, "sifive_pwm2");
     delete pinmux_func;
-    emit_inline_def(pinmux_output_selector_func, "sifive_pwm1");
+    emit_inline_def(pinmux_output_selector_func, "sifive_pwm2");
     delete pinmux_output_selector_func;
-    emit_inline_def(pinmux_source_selector_func, "sifive_pwm1");
+    emit_inline_def(pinmux_source_selector_func, "sifive_pwm2");
     delete pinmux_source_selector_func;
-    emit_inline_def(num_interrupts_func, "sifive_pwm1");
+    emit_inline_def(num_interrupts_func, "sifive_pwm2");
     delete num_interrupts_func;
-    emit_inline_def(interrupt_parent_func, "sifive_pwm1");
+    emit_inline_def(interrupt_parent_func, "sifive_pwm2");
     delete interrupt_parent_func;
-    emit_inline_def(interrupt_line_func, "sifive_pwm1");
+    emit_inline_def(interrupt_line_func, "sifive_pwm2");
     delete interrupt_line_func;
-    emit_inline_def(compare_width_func, "sifive_pwm1");
+    emit_inline_def(compare_width_func, "sifive_pwm2");
     delete compare_width_func;
-    emit_inline_def(comparator_count_func, "sifive_pwm1");
+    emit_inline_def(comparator_count_func, "sifive_pwm2");
     delete comparator_count_func;
   }
   os << "\n";
 }
 
-void sifive_pwm1::declare_structs() {
+void sifive_pwm2::declare_structs() {
   dtb.match(std::regex(compat_string),
-            [&](node n) { emit_struct_decl("sifive_pwm1", n); });
+            [&](node n) { emit_struct_decl("sifive_pwm2", n); });
 }
 
-void sifive_pwm1::define_structs() {
+void sifive_pwm2::define_structs() {
   dtb.match(std::regex(compat_string), [&](node n) {
-    emit_struct_begin("sifive_pwm1", n);
-    emit_struct_field("pwm.vtable", "&__metal_driver_vtable_sifive_pwm1.pwm");
+    emit_struct_begin("sifive_pwm2", n);
+    emit_struct_field("pwm.vtable", "&__metal_driver_vtable_sifive_pwm2.pwm");
     emit_struct_end();
   });
 }
 
-void sifive_pwm1::create_handles() {
-  emit_def("__METAL_DT_MAX_PWM1S", std::to_string(num_pwms));
+void sifive_pwm2::create_handles() {
+  emit_def("__METAL_DT_MAX_PWM2S", std::to_string(num_pwms));
 
-  emit_struct_pointer_begin("sifive_pwm1", "__metal_pwm1_table", "[]");
+  emit_struct_pointer_begin("sifive_pwm2", "__metal_pwm2_table", "[]");
   if (num_pwms) {
     int i = 0;
     dtb.match(std::regex(compat_string), [&](node n) {

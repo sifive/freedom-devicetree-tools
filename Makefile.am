@@ -1,4 +1,4 @@
-# Copyright 2018 SiFive, Inc
+# Copyright 2021 SiFive, Inc
 # SPDX-License-Identifier: Apache-2.0
 
 # A linker script generator for SiFive's Freedom platform.
@@ -70,8 +70,8 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_pl2cache0.h \
 	metal_header/sifive_pwm0.c++ \
 	metal_header/sifive_pwm0.h \
-	metal_header/sifive_pwm1.c++ \
-	metal_header/sifive_pwm1.h \
+	metal_header/sifive_pwm2.c++ \
+	metal_header/sifive_pwm2.h \
 	metal_header/sifive_rtc0.c++ \
 	metal_header/sifive_rtc0.h \
 	metal_header/sifive_spi0.c++ \
@@ -127,7 +127,7 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_l2pf1.h \
 	bare_header/sifive_pl2cache0.h \
 	bare_header/sifive_pwm0.h \
-	bare_header/sifive_pwm1.h \
+	bare_header/sifive_pwm2.h \
 	bare_header/sifive_rtc0.h \
 	bare_header/sifive_spi0.h \
 	bare_header/sifive_test0.h \
