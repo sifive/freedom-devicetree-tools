@@ -36,6 +36,7 @@
 #include <sifive_pwm0.h>
 #include <sifive_remapper2.h>
 #include <sifive_rtc0.h>
+#include <sifive_rtc1.h>
 #include <sifive_simuart0.h>
 #include <sifive_spi0.h>
 #include <sifive_test0.h>
@@ -167,6 +168,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_pwm0(os, dtb));
   devices.push_back(new sifive_remapper2(os, dtb));
   devices.push_back(new sifive_rtc0(os, dtb));
+  devices.push_back(new sifive_rtc1(os, dtb));
   devices.push_back(new sifive_spi0(os, dtb));
   devices.push_back(new sifive_test0(os, dtb));
   devices.push_back(new sifive_trace(os, dtb));
