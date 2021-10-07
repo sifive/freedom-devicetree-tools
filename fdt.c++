@@ -181,7 +181,8 @@ node fdt::node_by_path(std::string path) const {
   return node(_dts_blob, offset, 0);
 }
 
-int fdt::match(const std::regex &r, std::function<void(const node &)> f) const {
+int fdt::match(const std::regex &r, std::function<void(const node &)> f,
+               bool skip_device_type) const {
   int depth, offset;
   int matches = 0;
 
@@ -191,7 +192,7 @@ int fdt::match(const std::regex &r, std::function<void(const node &)> f) const {
     int compat_len;
     auto device_bytes = (const char *)fdt_getprop(_dts_blob, offset,
                                                   "device_type", &compat_len);
-    if (device_bytes != nullptr) {
+    if (device_bytes != nullptr && !skip_device_type) {
       for (int i = 0; i < compat_len; i += strlen(&device_bytes[i]) + 1) {
         auto compat = std::string(&device_bytes[i]);
         if (i >= compat_len)
