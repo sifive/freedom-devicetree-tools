@@ -22,6 +22,7 @@
 /* SiFive Blocks */
 #include <sifive_buserror0.h>
 #include <sifive_ccache0.h>
+#include <sifive_pmc0.h>
 #include <sifive_clic0.h>
 #include <sifive_global_external_interrupts0.h>
 #include <sifive_gpio0.h>
@@ -155,6 +156,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   /* SiFive Blocks */
   devices.push_back(new sifive_buserror0(os, dtb));
   devices.push_back(new sifive_ccache0(os, dtb));
+  devices.push_back(new sifive_pmc0(os, dtb));
   devices.push_back(new sifive_clic0(os, dtb));
   devices.push_back(new sifive_local_external_interrupts0(os, dtb));
   devices.push_back(new sifive_global_external_interrupts0(os, dtb));
