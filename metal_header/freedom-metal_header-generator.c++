@@ -22,7 +22,6 @@
 /* SiFive Blocks */
 #include <sifive_buserror0.h>
 #include <sifive_ccache0.h>
-#include <sifive_pmc0.h>
 #include <sifive_clic0.h>
 #include <sifive_global_external_interrupts0.h>
 #include <sifive_gpio0.h>
@@ -35,6 +34,7 @@
 #include <sifive_local_external_interrupts0.h>
 #include <sifive_mallard0.h>
 #include <sifive_pl2cache0.h>
+#include <sifive_pmc0.h>
 #include <sifive_prci0.h>
 #include <sifive_pwm0.h>
 #include <sifive_remapper2.h>
@@ -45,6 +45,7 @@
 #include <sifive_trace.h>
 #include <sifive_uart0.h>
 #include <sifive_wdog0.h>
+#include <sifive_zero0.h>
 #include <ucb_htif0.h>
 
 /* FE310-G000 Devices */
@@ -157,6 +158,7 @@ static void prepare_devices(const fdt &dtb, fstream &os,
   devices.push_back(new sifive_buserror0(os, dtb));
   devices.push_back(new sifive_ccache0(os, dtb));
   devices.push_back(new sifive_pmc0(os, dtb));
+  devices.push_back(new sifive_zero0(os, dtb));
   devices.push_back(new sifive_clic0(os, dtb));
   devices.push_back(new sifive_local_external_interrupts0(os, dtb));
   devices.push_back(new sifive_global_external_interrupts0(os, dtb));

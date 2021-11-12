@@ -36,6 +36,10 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_buserror0.h \
 	metal_header/sifive_ccache0.c++ \
 	metal_header/sifive_ccache0.h \
+	metal_header/sifive_pmc0.c++ \
+	metal_header/sifive_pmc0.h \
+	metal_header/sifive_zero0.c++ \
+	metal_header/sifive_zero0.h \
 	metal_header/sifive_clic0.c++ \
 	metal_header/sifive_clic0.h \
 	metal_header/sifive_fe310_g000_hfrosc.c++ \
@@ -70,8 +74,6 @@ freedom_metal_header_generator_SOURCES = \
 	metal_header/sifive_mallard0.h \
 	metal_header/sifive_pl2cache0.c++ \
 	metal_header/sifive_pl2cache0.h \
-	metal_header/sifive_pmc0.c++ \
-	metal_header/sifive_pmc0.h \
 	metal_header/sifive_prci0.c++ \
 	metal_header/sifive_prci0.h \
 	metal_header/sifive_pwm0.c++ \
@@ -113,6 +115,8 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_aon0.h \
 	bare_header/sifive_buserror0.h \
 	bare_header/sifive_ccache0.h \
+	bare_header/sifive_pmc0.h \
+	bare_header/sifive_zero0.h \
 	bare_header/sifive_clic0.h \
 	bare_header/sifive_error0.h \
 	bare_header/sifive_fe310_g000_hfrosc.h \
@@ -131,7 +135,6 @@ freedom_bare_header_generator_SOURCES = \
 	bare_header/sifive_l2pf1.h \
 	bare_header/sifive_mallard0.h \
 	bare_header/sifive_pl2cache0.h \
-	bare_header/sifive_pmc0.h \
 	bare_header/sifive_prci0.h \
 	bare_header/sifive_pwm0.h \
 	bare_header/sifive_rtc0.h \
