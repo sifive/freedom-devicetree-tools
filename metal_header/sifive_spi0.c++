@@ -10,6 +10,21 @@ sifive_spi0::sifive_spi0(std::ostream &os, const fdt &dtb)
   dtb.match(std::regex(compat_string), [&](node n) { num_spis += 1; });
 }
 
+void sifive_spi0::create_defines() {
+  dtb.match(std::regex(compat_string), [&](node n) {
+    uint32_t num_interrupts = n.get_fields_count<uint32_t>("interrupts");
+
+    emit_def("__METAL_" + n.handle_cap() + "_INTERRUPTS",
+             std::to_string(num_interrupts));
+
+    if (num_interrupts > max_interrupts) {
+      max_interrupts = num_interrupts;
+    }
+  });
+
+  emit_def("METAL_MAX_SPI_INTERRUPTS", std::to_string(max_interrupts));
+}
+
 void sifive_spi0::include_headers() {
   dtb.match(std::regex(compat_string),
             [&](node n) { emit_include(compat_string); });
@@ -28,6 +43,18 @@ void sifive_spi0::declare_inlines() {
 
       func = create_inline_dec("control_size", "unsigned long",
                                "struct metal_spi *spi");
+      extern_inlines.push_back(func);
+
+      func =
+          create_inline_dec("num_interrupts", "int", "struct metal_spi *spi");
+      extern_inlines.push_back(func);
+
+      func = create_inline_dec("interrupt_parent", "struct metal_interrupt *",
+                               "struct metal_spi *spi");
+      extern_inlines.push_back(func);
+
+      func = create_inline_dec("interrupt_lines", "int",
+                               "struct metal_spi *spi", "int idx");
       extern_inlines.push_back(func);
 
       func = create_inline_dec("pinmux", "struct __metal_driver_sifive_gpio0 *",
@@ -58,6 +85,9 @@ void sifive_spi0::declare_inlines() {
 void sifive_spi0::define_inlines() {
   Inline *control_base_func;
   Inline *control_size_func;
+  Inline *num_int_func;
+  Inline *int_parent_func;
+  Inline *int_line_func;
   Inline *clock_func;
   Inline *pinmux_func;
   Inline *pinmux_output_selector_func;
@@ -66,6 +96,19 @@ void sifive_spi0::define_inlines() {
   int count = 0;
 
   dtb.match(std::regex(compat_string), [&](node n) {
+    /* Interrupts */
+    std::string int_parent_value = "NULL";
+    n.maybe_tuple("interrupt-parent", tuple_t<node>(), [&]() {},
+                  [&](node m) {
+                    int_parent_value =
+                        "(struct metal_interrupt *)&__metal_dt_" + m.handle() +
+                        ".controller";
+                  });
+    std::string int_line_value = "0";
+    n.maybe_tuple(
+        "interrupts", tuple_t<uint32_t>(), [&]() {},
+        [&](uint32_t irline) { int_line_value = std::to_string(irline); });
+
     /* Clock driving the SPI peripheral */
     std::string clock_value = "NULL";
     n.maybe_tuple("clocks", tuple_t<node>(), [&]() {},
@@ -99,6 +142,21 @@ void sifive_spi0::define_inlines() {
           "control_size", "unsigned long",
           "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
           platform_define(n, METAL_SIZE_LABEL), "struct metal_spi *spi");
+      
+      num_int_func = create_inline_def(
+          "num_interrupts", "int",
+          "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
+          "METAL_MAX_SPI_INTERRUPTS", "struct metal_spi *spi");
+
+      int_parent_func = create_inline_def(
+          "interrupt_parent", "struct metal_interrupt *",
+          "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
+          int_parent_value, "struct metal_spi *spi");
+
+      int_line_func = create_inline_def(
+          "interrupt_line", "int",
+          "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
+          int_line_value, "struct metal_spi *spi");
 
       clock_func = create_inline_def(
           "clock", "struct metal_clock *",
@@ -128,6 +186,18 @@ void sifive_spi0::define_inlines() {
                       "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
                       platform_define(n, METAL_SIZE_LABEL));
 
+      add_inline_body(num_int_func,
+                      "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
+                      "METAL_MAX_SPI_INTERRUPTS");
+
+      add_inline_body(int_parent_func,
+                      "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
+                      int_parent_value);
+
+      add_inline_body(int_line_func,
+                      "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
+                      int_line_value);
+
       add_inline_body(clock_func,
                       "(uintptr_t)spi == (uintptr_t)&__metal_dt_" + n.handle(),
                       clock_value);
@@ -151,6 +221,9 @@ void sifive_spi0::define_inlines() {
   if (num_spis != 0) {
     add_inline_body(control_base_func, "else", "0");
     add_inline_body(control_size_func, "else", "0");
+    add_inline_body(num_int_func, "else", "0");
+    add_inline_body(int_parent_func, "else", "0");
+    add_inline_body(int_line_func, "else", "0");
     add_inline_body(clock_func, "else", "0");
     add_inline_body(pinmux_func, "else", "0");
     add_inline_body(pinmux_output_selector_func, "else", "0");
@@ -160,6 +233,12 @@ void sifive_spi0::define_inlines() {
     delete control_base_func;
     emit_inline_def(control_size_func, "sifive_spi0");
     delete control_size_func;
+    emit_inline_def(num_int_func, "sifive_spi0");
+    delete num_int_func;
+    emit_inline_def(int_parent_func, "sifive_spi0");
+    delete int_parent_func;
+    emit_inline_def(int_line_func, "sifive_spi0");
+    delete int_line_func;
     emit_inline_def(clock_func, "sifive_spi0");
     delete clock_func;
     emit_inline_def(pinmux_func, "sifive_spi0");
