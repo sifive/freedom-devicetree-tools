@@ -179,14 +179,6 @@ void sifive_gpio0::define_inlines() {
                     ") && (" + "idx == " + std::to_string(i) + ")",
                 std::to_string(irline), "struct metal_gpio *gpio", "int idx");
             extern_inlines.push_back(func5);
-          } else if (((count + 1) == num_gpios) &&
-                     ((i + 1) == max_interrupts)) {
-            add_inline_body(func5,
-                            "(((uintptr_t)gpio == (uintptr_t)&__metal_dt_" +
-                                n.handle() + ") && (" +
-                                "idx == " + std::to_string(i) + "))",
-                            std::to_string(irline));
-            add_inline_body(func5, "else", "0");
           } else {
             add_inline_body(func5,
                             "(((uintptr_t)gpio == (uintptr_t)&__metal_dt_" +
@@ -197,6 +189,8 @@ void sifive_gpio0::define_inlines() {
         });
 
     count++;
+    if (count == num_gpios)
+      add_inline_body(func5, "else", "0");
   });
   os << "\n";
   os << "/* --------------------- sifive_gpio0 ------------ */\n";
