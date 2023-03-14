@@ -16,7 +16,7 @@ public:
   uint64_t base_address(const node &n) {
     uint64_t b;
 
-    n.named_tuples("reg-names", "reg", "mem",
+    n.named_tuples("reg-names", "reg", "control",
                    tuple_t<target_addr, target_size>(),
                    [&](target_addr base, target_size size) { b = base; });
 
@@ -26,7 +26,7 @@ public:
   uint64_t size(const node &n) {
     uint64_t s;
 
-    n.named_tuples("reg-names", "reg", "mem",
+    n.named_tuples("reg-names", "reg", "control",
                    tuple_t<target_addr, target_size>(),
                    [&](target_addr base, target_size size) { s = size; });
 
